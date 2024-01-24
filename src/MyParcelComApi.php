@@ -518,7 +518,7 @@ class MyParcelComApi implements MyParcelComApiInterface
             'post',
             [
                 'data' => $shipment,
-                'meta' => $shipment->getMeta(),
+                'meta' => array_filter($shipment->getMeta()),
             ],
             $this->authenticator->getAuthorizationHeader() + [
                 AuthenticatorInterface::HEADER_ACCEPT => AuthenticatorInterface::MIME_TYPE_JSONAPI,
