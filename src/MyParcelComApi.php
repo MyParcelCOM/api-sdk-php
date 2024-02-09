@@ -12,10 +12,12 @@ use MyParcelCom\ApiSdk\Collection\ArrayCollection;
 use MyParcelCom\ApiSdk\Collection\CollectionInterface;
 use MyParcelCom\ApiSdk\Collection\RequestCollection;
 use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
+use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Http\Contracts\HttpClient\RequestExceptionInterface;
 use MyParcelCom\ApiSdk\Http\Exceptions\RequestException;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceFactoryInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceProxyInterface;
@@ -30,9 +32,9 @@ use MyParcelCom\ApiSdk\Resources\ServiceRate;
 use MyParcelCom\ApiSdk\Resources\Shipment;
 use MyParcelCom\ApiSdk\Shipments\ServiceMatcher;
 use MyParcelCom\ApiSdk\Utils\UrlBuilder;
+use MyParcelCom\ApiSdk\Validators\ManifestValidator;
 use MyParcelCom\ApiSdk\Validators\ShipmentValidator;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -79,7 +81,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         string $apiUri = 'https://sandbox-api.myparcel.com',
         ClientInterface $httpClient = null,
         CacheInterface $cache = null,
-        ResourceFactoryInterface $resourceFactory = null
+        ResourceFactoryInterface $resourceFactory = null,
     ) {
         if ($httpClient === null) {
             $httpClient = HttpClientDiscovery::find();
@@ -146,7 +148,8 @@ class MyParcelComApi implements MyParcelComApiInterface
     ): CollectionInterface|array {
         $carriers = $this->determineCarriersForPudoLocations($onlyActiveContracts, $specificCarrier);
 
-        $uri = new UrlBuilder($this->apiUri
+        $uri = new UrlBuilder(
+            $this->apiUri
             . str_replace(
                 [
                     '{country_code}',
@@ -156,8 +159,9 @@ class MyParcelComApi implements MyParcelComApiInterface
                     $countryCode,
                     $postalCode,
                 ],
-                self::PATH_PUDO_LOCATIONS
-            ));
+                self::PATH_PUDO_LOCATIONS,
+            ),
+        );
 
         if ($streetName) {
             $uri->addQuery(['street' => $streetName]);
@@ -255,10 +259,12 @@ class MyParcelComApi implements MyParcelComApiInterface
         $services = $this->getResourcesArray($url->getUrl(), $ttl);
 
         $matcher = new ServiceMatcher();
-        $services = array_values(array_filter(
-            $services,
-            fn (ServiceInterface $service) => $matcher->matchesDeliveryMethod($shipment, $service),
-        ));
+        $services = array_values(
+            array_filter(
+                $services,
+                fn (ServiceInterface $service) => $matcher->matchesDeliveryMethod($shipment, $service),
+            ),
+        );
 
         return new ArrayCollection($services);
     }
@@ -362,7 +368,7 @@ class MyParcelComApi implements MyParcelComApiInterface
 
     public function resolveDynamicServiceRates(
         ShipmentInterface|array $shipmentData,
-        ?ServiceRateInterface $dynamicServiceRate = null
+        ?ServiceRateInterface $dynamicServiceRate = null,
     ): array {
         $data = ($shipmentData instanceof ShipmentInterface) ? $shipmentData->jsonSerialize() : $shipmentData;
 
@@ -440,14 +446,14 @@ class MyParcelComApi implements MyParcelComApiInterface
             $shipment->setSenderAddress(
                 $shop->getSenderAddress()
                     ?: $shipment->getReturnAddress()
-                    ?: $shop->getReturnAddress()
+                    ?: $shop->getReturnAddress(),
             );
         }
         // If no return address is set, use the return address of the shop (or the sender address of the shipment).
         if ($shipment->getReturnAddress() === null) {
             $shipment->setReturnAddress(
                 $shop->getReturnAddress()
-                    ?: $shipment->getSenderAddress()
+                    ?: $shipment->getSenderAddress(),
             );
         }
     }
@@ -458,7 +464,7 @@ class MyParcelComApi implements MyParcelComApiInterface
 
         if (!$validator->isValid()) {
             $exception = new InvalidResourceException(
-                'This shipment contains invalid data. ' . implode('. ', $validator->getErrors()) . '.'
+                'This shipment contains invalid data. ' . implode('. ', $validator->getErrors()) . '.',
             );
             $exception->setErrors($validator->getErrors());
 
@@ -484,7 +490,7 @@ class MyParcelComApi implements MyParcelComApiInterface
     {
         if (!$shipment->getId()) {
             throw new InvalidResourceException(
-                'Could not update shipment. This shipment does not have an id, use createShipment() to save it.'
+                'Could not update shipment. This shipment does not have an id, use createShipment() to save it.',
             );
         }
 
@@ -522,7 +528,7 @@ class MyParcelComApi implements MyParcelComApiInterface
             ],
             $this->authenticator->getAuthorizationHeader() + [
                 AuthenticatorInterface::HEADER_ACCEPT => AuthenticatorInterface::MIME_TYPE_JSONAPI,
-            ] + $headers
+            ] + $headers,
         );
 
         $json = json_decode((string) $response->getBody(), true);
@@ -551,6 +557,77 @@ class MyParcelComApi implements MyParcelComApiInterface
         }
 
         return $registeredShipment;
+    }
+
+    /**
+     * Get all manifests from the API.
+     *
+     * @throws MyParcelComException
+     */
+    public function getManifests(int $ttl = self::TTL_10MIN): CollectionInterface
+    {
+        return $this->getRequestCollection($this->apiUri . self::PATH_MANIFESTS, $ttl);
+    }
+
+    /**
+     * Get a specific manifest from the API.
+     *
+     * @throws MyParcelComException
+     */
+    public function getManifest(string $id, int $ttl = self::TTL_NO_CACHE): ManifestInterface
+    {
+        return $this->getResourceById(ResourceInterface::TYPE_MANIFEST, $id, $ttl);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function createManifest(ManifestInterface $manifest): ManifestInterface
+    {
+        // If no address is set and the owner is a Shop, use the address of the owner.
+        if (
+            $manifest->getAddress() === null
+            && $manifest->getOwner()?->getType() === ResourceInterface::TYPE_SHOP
+        ) {
+            $shop = $manifest->getOwner();
+
+            $manifest->setAddress($shop->getSenderAddress() ?? $shop->getReturnAddress());
+        }
+
+        $validator = new ManifestValidator($manifest);
+        if (!$validator->isValid()) {
+            $message = 'This manifest contains invalid data. ' . implode('. ', $validator->getErrors()) . '.';
+            $exception = new InvalidResourceException($message);
+            $exception->setErrors($validator->getErrors());
+
+            throw $exception;
+        }
+
+        return $this->postResource($manifest);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function getManifestFile(string $manifestId, string $fileId): FileInterface
+    {
+        $url = str_replace(
+            ['{manifest_id}', '{file_id}'],
+            [$manifestId, $fileId],
+            self::PATH_MANIFESTS_ID_FILES_ID,
+        );
+
+        $headers = $this->authenticator->getAuthorizationHeader() + [
+                AuthenticatorInterface::HEADER_ACCEPT => AuthenticatorInterface::MIME_TYPE_PDF,
+            ];
+
+        $response = $this->doRequest($url, headers: $headers);
+
+        $json = json_decode((string) $response->getBody(), true);
+        $included = $json['included'] ?? null;
+        $resources = $this->jsonToResources($json['data'], $included);
+
+        return (string) $response->getBody();
     }
 
     /**
@@ -746,7 +823,7 @@ class MyParcelComApi implements MyParcelComApiInterface
             (string) $request->getUri(),
             $request->getMethod(),
             $jsonBody,
-            $authHeaders + $request->getHeaders()
+            $authHeaders + $request->getHeaders(),
         );
     }
 
@@ -754,12 +831,16 @@ class MyParcelComApi implements MyParcelComApiInterface
     {
         $resources = $this->getResourcesArray(
             $this->getResourceUri($resourceType, $id),
-            $ttl
+            $ttl,
         );
 
         return reset($resources);
     }
 
+    /**
+     * @return ResourceInterface[]
+     * @throws RequestException
+     */
     public function getResourcesFromUri(string $uri): array
     {
         return $this->getResourcesArray($uri);
@@ -811,7 +892,7 @@ class MyParcelComApi implements MyParcelComApiInterface
             ]),
             $this->authenticator->getAuthorizationHeader() + [
                 AuthenticatorInterface::HEADER_ACCEPT => AuthenticatorInterface::MIME_TYPE_JSONAPI,
-            ] + $headers
+            ] + $headers,
         );
 
         $json = json_decode((string) $response->getBody(), true);
@@ -829,7 +910,7 @@ class MyParcelComApi implements MyParcelComApiInterface
                 $this->apiUri,
                 $resourceType,
                 $id,
-            ])
+            ]),
         );
     }
 
@@ -868,7 +949,7 @@ class MyParcelComApi implements MyParcelComApiInterface
      */
     private function determineCarriersForPudoLocations(
         bool $onlyActiveContracts,
-        CarrierInterface $specificCarrier = null
+        CarrierInterface $specificCarrier = null,
     ): array {
         // If we're looking for a specific carrier but it doesn't
         // matter if it has active contracts, just return it immediately.

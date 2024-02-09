@@ -233,7 +233,7 @@ class ShipmentsTest extends TestCase
         $this->api->updateShipment($shipment);
     }
 
-    public function testGetShipments()
+    public function testGetShipments(): void
     {
         $shipments = $this->api->getShipments();
 
@@ -243,7 +243,7 @@ class ShipmentsTest extends TestCase
         }
     }
 
-    public function testGetShipmentsForShop()
+    public function testGetShipmentsForShop(): void
     {
         $shops = $this->api->getShops();
 
@@ -263,7 +263,7 @@ class ShipmentsTest extends TestCase
         }
     }
 
-    public function testGetShipment()
+    public function testGetShipment(): void
     {
         $shipments = $this->api->getShipments();
 

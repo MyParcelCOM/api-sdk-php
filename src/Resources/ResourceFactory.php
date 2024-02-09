@@ -11,6 +11,7 @@ use MyParcelCom\ApiSdk\MyParcelComApiInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierStatusInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ContactInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CustomsInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ErrorInterface;
@@ -36,6 +37,7 @@ use MyParcelCom\ApiSdk\Resources\Proxy\CarrierProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ContractProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\FileProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\FileStreamProxy;
+use MyParcelCom\ApiSdk\Resources\Proxy\ManifestProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\OrganizationProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\RegionProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ServiceOptionProxy;
@@ -61,7 +63,8 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
     private array $typeFactory = [
         ResourceInterface::TYPE_CARRIER         => Carrier::class,
         ResourceInterface::TYPE_CONTRACT        => Contract::class,
-        ResourceInterface::TYPE_ORGANIZATIONS   => Organization::class,
+        ResourceInterface::TYPE_MANIFEST        => Manifest::class,
+        ResourceInterface::TYPE_ORGANIZATION    => Organization::class,
         ResourceInterface::TYPE_PUDO_LOCATION   => PickUpDropOffLocation::class,
         ResourceInterface::TYPE_REGION          => Region::class,
         ResourceInterface::TYPE_SERVICE_OPTION  => ServiceOption::class,
@@ -95,7 +98,8 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         ResourceInterface::TYPE_CARRIER         => CarrierProxy::class,
         ResourceInterface::TYPE_CONTRACT        => ContractProxy::class,
         ResourceInterface::TYPE_FILE            => FileProxy::class,
-        ResourceInterface::TYPE_ORGANIZATIONS   => OrganizationProxy::class,
+        ResourceInterface::TYPE_MANIFEST        => ManifestProxy::class,
+        ResourceInterface::TYPE_ORGANIZATION    => OrganizationProxy::class,
         ResourceInterface::TYPE_REGION          => RegionProxy::class,
         ResourceInterface::TYPE_SERVICE         => ServiceProxy::class,
         ResourceInterface::TYPE_SERVICE_OPTION  => ServiceOptionProxy::class,
@@ -164,7 +168,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
             /** @var AddressInterface $pudoAddress */
             $pudoAddress = $this->create(
                 AddressInterface::class,
-                $properties['attributes']['pickup_location']['address']
+                $properties['attributes']['pickup_location']['address'],
             );
 
             $shipment->setPickupLocationAddress($pudoAddress);
@@ -178,8 +182,8 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
                     str_replace(
                         '{shipment_id}',
                         $properties['id'],
-                        MyParcelComApiInterface::PATH_SHIPMENT_STATUSES
-                    )
+                        MyParcelComApiInterface::PATH_SHIPMENT_STATUSES,
+                    ),
                 );
             });
         }
@@ -191,7 +195,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
                         ->setType(new TaxTypeEnum($taxIdentificationNumber['type']))
                         ->setNumber($taxIdentificationNumber['number'])
                         ->setCountryCode($taxIdentificationNumber['country_code'])
-                        ->setDescription($taxIdentificationNumber['description'] ?? null)
+                        ->setDescription($taxIdentificationNumber['description'] ?? null),
                 );
             }
             unset($properties['attributes']['sender_tax_identification_numbers']);
@@ -204,7 +208,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
                         ->setType(new TaxTypeEnum($taxIdentificationNumber['type']))
                         ->setNumber($taxIdentificationNumber['number'])
                         ->setCountryCode($taxIdentificationNumber['country_code'])
-                        ->setDescription($taxIdentificationNumber['description'] ?? null)
+                        ->setDescription($taxIdentificationNumber['description'] ?? null),
                 );
             }
             unset($properties['attributes']['recipient_tax_identification_numbers']);
@@ -295,11 +299,13 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         }
 
         if (isset($properties['id'])) {
-            $serviceRate->setResolveDynamicRateForShipmentCallback(function (ShipmentInterface $shipment, ServiceRateInterface $serviceRate) {
-                $serviceRates = $this->api->resolveDynamicServiceRates($shipment, $serviceRate);
+            $serviceRate->setResolveDynamicRateForShipmentCallback(
+                function (ShipmentInterface $shipment, ServiceRateInterface $serviceRate) {
+                    $serviceRates = $this->api->resolveDynamicServiceRates($shipment, $serviceRate);
 
-                return $serviceRates[0] ?? $serviceRate;
-            });
+                    return $serviceRates[0] ?? $serviceRate;
+                },
+            );
         }
 
         return $serviceRate;
@@ -320,7 +326,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         array_walk($properties['attributes']['formats'], function ($format) use ($file, $properties) {
             $file->setStream(
                 new FileStreamProxy($properties['id'], $format['mime_type'], $this->api),
-                $format['mime_type']
+                $format['mime_type'],
             );
         });
 
@@ -396,10 +402,12 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
     public function setFactoryForType(string $type, callable|string $factory): void
     {
         if (!is_callable($factory) && !class_exists($factory)) {
-            throw new ResourceFactoryException(sprintf(
-                'Cannot assign factory for type `%s`, given factory was not a valid callable or class',
-                $type
-            ));
+            throw new ResourceFactoryException(
+                sprintf(
+                    'Cannot assign factory for type `%s`, given factory was not a valid callable or class',
+                    $type,
+                ),
+            );
         }
 
         $this->typeFactory[$type] = $factory;
@@ -421,10 +429,12 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
     protected function createResource(string $type, array &$attributes = []): ResourceInterface|JsonSerializable
     {
         if (!$this->typeHasFactory($type)) {
-            throw new ResourceFactoryException(sprintf(
-                'Could not create resource of type `%s`, no class or factory specified',
-                $type
-            ));
+            throw new ResourceFactoryException(
+                sprintf(
+                    'Could not create resource of type `%s`, no class or factory specified',
+                    $type,
+                ),
+            );
         }
 
         $factory = $this->typeFactory[$type];
@@ -435,10 +445,12 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
             return new $factory();
         }
 
-        throw new ResourceFactoryException(sprintf(
-            'Could not determine how to create a resource of type `%s`, no factory method or class defined',
-            $type
-        ));
+        throw new ResourceFactoryException(
+            sprintf(
+                'Could not determine how to create a resource of type `%s`, no factory method or class defined',
+                $type,
+            ),
+        );
     }
 
     /**
@@ -449,7 +461,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
      */
     protected function hydrate(
         ResourceInterface|JsonSerializable $resource,
-        array $attributes
+        array $attributes,
     ): ResourceInterface|JsonSerializable {
         array_walk($attributes, function ($value, $key) use ($resource) {
             $setter = 'set' . StringUtils::snakeToPascalCase($key);
@@ -564,7 +576,9 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         $type = $identifier['type'];
 
         if (empty($this->proxies[$type])) {
-            throw new ResourceFactoryException("Cannot create proxy, no proxy configured for resource with type `{$type}`.");
+            throw new ResourceFactoryException(
+                "Cannot create proxy, no proxy configured for resource with type `{$type}`.",
+            );
         }
 
         $resource = new $this->proxies[$type]();
@@ -581,7 +595,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
 
     private function getFillableParam(
         ResourceInterface|JsonSerializable $resource,
-        string $method
+        string $method,
     ): ?ReflectionParameter {
         // Check if the method exists, if it doesn't return null.
         if (!method_exists($resource, $method)) {
