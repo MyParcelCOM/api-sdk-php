@@ -200,17 +200,27 @@ class ManifestProxyTest extends TestCase
         $this->assertCount(3, $shipments);
     }
 
+    public function testItSetsAndGetsMetaProperties()
+    {
+        $this->assertNull($this->manifestProxy->getUpdatesShipmentStatuses());
+        $this->assertEquals(true, $this->manifestProxy->setUpdatesShipmentStatuses(true)->getUpdatesShipmentStatuses());
+    }
+
     public function testJsonSerialize()
     {
-        $serviceProxy = new ManifestProxy();
-        $serviceProxy
+        $manifestProxy = new ManifestProxy();
+        $manifestProxy
             ->setMyParcelComApi($this->api)
             ->setResourceUri('https://api/manifests/b41dff15-efcf-4901-bd9f-6ed2f9d8ecc8')
-            ->setId('b41dff15-efcf-4901-bd9f-6ed2f9d8ecc8');
+            ->setId('b41dff15-efcf-4901-bd9f-6ed2f9d8ecc8')
+            ->setUpdatesShipmentStatuses(true);
 
         $this->assertEquals([
             'id'   => 'b41dff15-efcf-4901-bd9f-6ed2f9d8ecc8',
             'type' => ResourceInterface::TYPE_MANIFEST,
-        ], $serviceProxy->jsonSerialize());
+            'meta' => [
+                'update_shipment_statuses' => true,
+            ],
+        ], $manifestProxy->jsonSerialize());
     }
 }

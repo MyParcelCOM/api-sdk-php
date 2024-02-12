@@ -39,4 +39,8 @@ interface ManifestInterface extends ResourceInterface
     public function addShipment(ShipmentInterface $shipment): self;
 
     public function getShipments(): ArrayCollection|array;
+
+    public function setUpdatesShipmentStatuses(bool $updatesShipmentStatuses): self;
+
+    public function getUpdatesShipmentStatuses(): ?bool;
 }

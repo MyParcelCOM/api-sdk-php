@@ -44,6 +44,10 @@ class Manifest implements ManifestInterface
         ],
     ];
 
+    private array $meta = [
+        'update_shipment_statuses' => null,
+    ];
+
     public function setAddress(AddressInterface $address): self
     {
         $this->attributes['address'] = $address;
@@ -128,5 +132,17 @@ class Manifest implements ManifestInterface
     public function getOwner(): ShopInterface|BrokerInterface|OrganizationInterface|null
     {
         return $this->relationships['owner']['data'];
+    }
+
+    public function setUpdatesShipmentStatuses(bool $updatesShipmentStatuses): self
+    {
+        $this->meta['update_shipment_statuses'] = $updatesShipmentStatuses;
+
+        return $this;
+    }
+
+    public function getUpdatesShipmentStatuses(): ?bool
+    {
+        return $this->meta['update_shipment_statuses'];
     }
 }

@@ -33,6 +33,9 @@ class ManifestProxy implements ManifestInterface, ResourceProxyInterface
 
     private string $type = ResourceInterface::TYPE_MANIFEST;
 
+    private array $meta = [
+        'update_shipment_statuses' => null,
+    ];
 
     public function getAddress(): ?AddressInterface
     {
@@ -120,6 +123,18 @@ class ManifestProxy implements ManifestInterface, ResourceProxyInterface
         return $this->getResource()->getShipments();
     }
 
+    public function setUpdatesShipmentStatuses(bool $updatesShipmentStatuses): self
+    {
+        $this->meta['update_shipment_statuses'] = $updatesShipmentStatuses;
+
+        return $this;
+    }
+
+    public function getUpdatesShipmentStatuses(): ?bool
+    {
+        return $this->meta['update_shipment_statuses'];
+    }
+
     /**
      * This function puts all object properties in an array and returns it.
      */
@@ -130,6 +145,12 @@ class ManifestProxy implements ManifestInterface, ResourceProxyInterface
         unset($values['api']);
         unset($values['uri']);
 
-        return $this->arrayValuesToArray($values);
+        $json = $this->arrayValuesToArray($values);
+
+        if (isset($json['meta']) && $this->isEmpty($json['meta'])) {
+            unset($json['meta']);
+        }
+
+        return $json;
     }
 }

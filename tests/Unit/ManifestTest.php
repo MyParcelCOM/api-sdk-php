@@ -15,25 +15,25 @@ use PHPUnit\Framework\TestCase;
 
 class ManifestTest extends TestCase
 {
-    public function testId()
+    public function testId(): void
     {
         $manifest = new Manifest();
         $this->assertEquals('manifest-id', $manifest->setId('manifest-id')->getId());
     }
 
-    public function testType()
+    public function testType(): void
     {
         $manifest = new Manifest();
         $this->assertEquals('manifests', $manifest->getType());
     }
 
-    public function testName()
+    public function testName(): void
     {
         $manifest = new Manifest();
         $this->assertEquals('Manifest Name', $manifest->setName('Manifest Name')->getName());
     }
 
-    public function testAddress()
+    public function testAddress(): void
     {
         $manifest = new Manifest();
         $address = $this->getMockBuilder(AddressInterface::class)->getMock();
@@ -41,7 +41,7 @@ class ManifestTest extends TestCase
         $this->assertEquals($address, $manifest->setAddress($address)->getAddress());
     }
 
-    public function testFiles()
+    public function testFiles(): void
     {
         $manifest = new Manifest();
 
@@ -64,7 +64,7 @@ class ManifestTest extends TestCase
         $this->assertEquals($files, $manifest->getFiles());
     }
 
-    public function testShipments()
+    public function testShipments(): void
     {
         $manifest = new Manifest();
 
@@ -87,7 +87,7 @@ class ManifestTest extends TestCase
         $this->assertEquals($shipments, $manifest->getShipments());
     }
 
-    public function testOwner()
+    public function testOwner(): void
     {
         $manifest = new Manifest();
 
@@ -99,5 +99,13 @@ class ManifestTest extends TestCase
 
         $broker = $this->getMockBuilder(BrokerInterface::class)->getMock();
         $this->assertEquals($broker, $manifest->setOwner($broker)->getOwner());
+    }
+
+    public function testUpdatesShipmentStatuses(): void
+    {
+        $manifest = new Manifest();
+        $this->assertNull($manifest->getUpdatesShipmentStatuses());
+        $this->assertFalse($manifest->setUpdatesShipmentStatuses(false)->getUpdatesShipmentStatuses());
+        $this->assertTrue($manifest->setUpdatesShipmentStatuses(true)->getUpdatesShipmentStatuses());
     }
 }
