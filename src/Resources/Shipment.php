@@ -9,6 +9,7 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CustomsInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\PhysicalPropertiesInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceInterface;
@@ -57,6 +58,7 @@ class Shipment implements ShipmentInterface
 
     const RELATIONSHIP_CONTRACT = 'contract';
     const RELATIONSHIP_FILES = 'files';
+    const RELATIONSHIP_MANIFEST = 'manifest';
     const RELATIONSHIP_SERVICE = 'service';
     const RELATIONSHIP_SERVICE_OPTIONS = 'service_options';
     const RELATIONSHIP_STATUS = 'shipment_status';
@@ -123,6 +125,9 @@ class Shipment implements ShipmentInterface
             'data' => null,
         ],
         self::RELATIONSHIP_CONTRACT        => [
+            'data' => null,
+        ],
+        self::RELATIONSHIP_MANIFEST        => [
             'data' => null,
         ],
     ];
@@ -700,5 +705,17 @@ class Shipment implements ShipmentInterface
         $this->meta[self::META_LABEL_MIME_TYPE] = $labelMimeType;
 
         return $this;
+    }
+
+    public function setManifest(?ManifestInterface $manifest): self
+    {
+        $this->relationships[self::RELATIONSHIP_MANIFEST]['data'] = $manifest;
+
+        return $this;
+    }
+
+    public function getManifest(): ?ManifestInterface
+    {
+        return $this->relationships[self::RELATIONSHIP_MANIFEST]['data'];
     }
 }
