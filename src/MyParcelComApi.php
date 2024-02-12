@@ -15,6 +15,7 @@ use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Http\Contracts\HttpClient\RequestExceptionInterface;
 use MyParcelCom\ApiSdk\Http\Exceptions\RequestException;
+use MyParcelCom\ApiSdk\Resources\File;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
@@ -609,26 +610,24 @@ class MyParcelComApi implements MyParcelComApiInterface
     /**
      * @throws RequestException
      */
-    public function getManifestFile(string $manifestId, string $fileId): FileInterface
-    {
-        $url = str_replace(
-            ['{manifest_id}', '{file_id}'],
-            [$manifestId, $fileId],
-            self::PATH_MANIFESTS_ID_FILES_ID,
-        );
+public function getManifestFile(string $manifestId, string $fileId): FileInterface
+{
+    $url = str_replace(
+        ['{manifest_id}', '{file_id}'],
+        [$manifestId, $fileId],
+        self::PATH_MANIFESTS_ID_FILES_ID,
+    );
 
-        $headers = $this->authenticator->getAuthorizationHeader() + [
-                AuthenticatorInterface::HEADER_ACCEPT => AuthenticatorInterface::MIME_TYPE_PDF,
-            ];
+    $headers = $this->authenticator->getAuthorizationHeader() + [
+            AuthenticatorInterface::HEADER_ACCEPT => FileInterface::MIME_TYPE_PDF,
+        ];
 
-        $response = $this->doRequest($url, headers: $headers);
+    $response = $this->doRequest($url, headers: $headers);
 
-        $json = json_decode((string) $response->getBody(), true);
-        $included = $json['included'] ?? null;
-        $resources = $this->jsonToResources($json['data'], $included);
-
-        return (string) $response->getBody();
-    }
+    return (new File())
+        ->addFormat(FileInterface::MIME_TYPE_PDF, FileInterface::EXTENSION_PDF)
+        ->setStream($response->getBody(), FileInterface::MIME_TYPE_PDF);
+}
 
     /**
      * Set the URI of the MyParcel.com API.

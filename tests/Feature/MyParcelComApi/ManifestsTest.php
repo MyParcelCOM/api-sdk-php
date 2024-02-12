@@ -7,6 +7,7 @@ namespace MyParcelCom\ApiSdk\Tests\Feature\MyParcelComApi;
 use MyParcelCom\ApiSdk\Collection\CollectionInterface;
 use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
 use MyParcelCom\ApiSdk\Resources\Address;
+use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
 use MyParcelCom\ApiSdk\Resources\Manifest;
 use MyParcelCom\ApiSdk\Resources\Organization;
@@ -113,7 +114,7 @@ class ManifestsTest extends TestCase
         $this->api->createManifest($manifest);
     }
 
-    public function testCreateManifestMissingOwner()
+    public function testCreateInvalidManifestMissingOwner()
     {
         $this->expectException(InvalidResourceException::class);
 
@@ -134,7 +135,7 @@ class ManifestsTest extends TestCase
         $this->api->createManifest($manifest);
     }
 
-    public function testCreateManifestMissingShipments()
+    public function testCreateInvalidManifestMissingShipments()
     {
         $this->expectException(InvalidResourceException::class);
 
@@ -172,5 +173,19 @@ class ManifestsTest extends TestCase
         foreach ($manifests as $manifest) {
             $this->assertEquals($manifest, $this->api->getManifest($manifest->getId()));
         }
+    }
+
+    public function testGetManifestFile(): void
+    {
+        $stubManifestId = 'b41dff15-efcf-4901-bd9f-6ed2f9d8ecc8';
+        // path has to include "-stream" to resolve .txt stub
+        $stubFileId = 'eef00b32-177e-43d3-9b26-715365e4ce46-stream';
+        $stubFileContents = file_get_contents(__DIR__ . "/../../Stubs/get/https---api-manifests-$stubManifestId-files-$stubFileId.txt");
+
+        $file = $this->api->getManifestFile($stubManifestId, "$stubFileId");
+
+        $this->assertInstanceOf(FileInterface::class, $file);
+        $this->assertEquals($stubFileContents, (string) $file->getStream());
+        $this->assertEquals(base64_encode($stubFileContents), $file->getBase64Data());
     }
 }
