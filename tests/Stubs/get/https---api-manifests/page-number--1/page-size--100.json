@@ -1,0 +1,136 @@
+{
+  "data": [
+    {
+      "id": "b41dff15-efcf-4901-bd9f-6ed2f9d8ecc8",
+      "type": "manifests",
+      "attributes": {
+        "name": "The manifest name",
+        "address": {
+          "street_1": "Baker Street",
+          "city": "London",
+          "country_code": "GB"
+        },
+        "created_at": 1707486489
+      },
+      "links": {
+        "self": "https://api.localhost.private/manifests/b41dff15-efcf-4901-bd9f-6ed2f9d8ecc8"
+      },
+      "relationships": {
+        "contract": {
+          "data": {
+            "id": "35d525bf-a49f-40b4-8b6a-b343598fcb74",
+            "type": "contracts"
+          },
+          "links": {
+            "related": "https://api.localhost.private/contracts/35d525bf-a49f-40b4-8b6a-b343598fcb74"
+          }
+        },
+        "owner": {
+          "data": {
+            "id": "0685de92-4f11-4dbd-bccc-84373ee731b2",
+            "type": "shops"
+          },
+          "links": {
+            "related": "https://api.localhost.private/shops/0685de92-4f11-4dbd-bccc-84373ee731b2"
+          }
+        },
+        "shipments": {
+          "data": [
+            {
+              "id": "62b3d1e1-d854-4e00-9fb7-ddbf47dd9db2",
+              "type": "shipments"
+            }
+          ]
+        },
+        "files": {
+          "data": [
+            {
+              "id": "a1784758-270c-4e72-8207-de72352759c5",
+              "type": "files"
+            },
+            {
+              "id": "2fc9705f-2c00-4d15-82ce-d9617dcdc1cc",
+              "type": "files"
+            }
+          ]
+        },
+        "shop": {
+          "data": {
+            "id": "0685de92-4f11-4dbd-bccc-84373ee731b2",
+            "type": "shops"
+          },
+          "links": {
+            "related": "https://api.localhost.private/shops/0685de92-4f11-4dbd-bccc-84373ee731b2"
+          }
+        }
+      }
+    },
+    {
+      "id": "63a29b77-4f8b-4422-a206-a30cef75c2c4",
+      "type": "manifests",
+      "attributes": {
+        "name": "wfwfsdfz",
+        "address": {
+          "street_1": "Baker Street",
+          "street_2": "Marylebone",
+          "street_number": 221,
+          "street_number_suffix": "B",
+          "postal_code": "NW1 6XE",
+          "city": "London",
+          "state_code": "ENG",
+          "country_code": "GB",
+          "company": "Holmes Investigations",
+          "first_name": "Sherlock",
+          "last_name": "Holmes",
+          "email": "s.holmes@holmesinvestigations.com",
+          "phone_number": "+31 234 567 890"
+        },
+        "created_at": 1707414733
+      },
+      "links": {
+        "self": "https://api.localhost.private/manifests/63a29b77-4f8b-4422-a206-a30cef75c2c4"
+      },
+      "relationships": {
+        "owner": {
+          "data": {
+            "id": "0685de92-4f11-4dbd-bccc-84373ee731b2",
+            "type": "shops"
+          },
+          "links": {
+            "related": "https://api.localhost.private/shops/0685de92-4f11-4dbd-bccc-84373ee731b2"
+          }
+        },
+        "files": {
+          "data": [
+            {
+              "id": "78d6d318-64c7-4881-9258-63b7d358dc49",
+              "type": "files"
+            },
+            {
+              "id": "015d9acf-aa99-422f-b81d-024cff830e03",
+              "type": "files"
+            }
+          ]
+        },
+        "shop": {
+          "data": {
+            "id": "0685de92-4f11-4dbd-bccc-84373ee731b2",
+            "type": "shops"
+          },
+          "links": {
+            "related": "https://api.localhost.private/shops/0685de92-4f11-4dbd-bccc-84373ee731b2"
+          }
+        }
+      }
+    }
+  ],
+  "meta": {
+    "total_pages": 1,
+    "total_records": 2
+  },
+  "links": {
+    "self": "https://api.localhost.private/manifests?page[size]=100&page[number]=1",
+    "first": "https://api.localhost.private/manifests?page[size]=100&page[number]=1",
+    "last": "https://api.localhost.private/manifests?page[size]=100&page[number]=1"
+  }
+}

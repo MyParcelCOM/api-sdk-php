@@ -9,16 +9,23 @@ use MyParcelCom\ApiSdk\Collection\CollectionInterface;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Http\Exceptions\RequestException;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceFactoryInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceRateInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\SimpleCache\CacheInterface;
 
 interface MyParcelComApiInterface
 {
     const PATH_CARRIERS = '/carriers';
     const PATH_FILES_ID = '/files/{file_id}';
+    const PATH_MANIFESTS = '/manifests';
+    const PATH_MANIFESTS_ID_FILES_ID = '/manifests/{manifest_id}/files/{file_id}';
     const PATH_PUDO_LOCATIONS = '/carriers/{carrier_id}/pickup-dropoff-locations/{country_code}/{postal_code}';
     const PATH_REGIONS = '/regions';
     const PATH_SERVICES = '/services';
@@ -128,7 +135,7 @@ interface MyParcelComApiInterface
      */
     public function resolveDynamicServiceRates(
         ShipmentInterface|array $shipmentData,
-        ?ServiceRateInterface $dynamicServiceRate = null
+        ?ServiceRateInterface $dynamicServiceRate = null,
     ): array;
 
     /**
@@ -162,6 +169,8 @@ interface MyParcelComApiInterface
      */
     public function updateShipment(ShipmentInterface $shipment): ShipmentInterface;
 
+    public function validateShipment(ShipmentInterface $shipment): void;
+
     /**
      * Creates a given shipment and returns the created version of the shipment.
      * When certain properties on the shipment are not set, defaults should be
@@ -172,6 +181,64 @@ interface MyParcelComApiInterface
      * @throws MyParcelComException
      */
     public function createShipment(ShipmentInterface $shipment, ?string $idempotencyKey = null): ShipmentInterface;
+
+    /**
+     * This function is similar to createShipment() but will immediately communicate the shipment to the carrier.
+     * The carrier response is processed before your request is completed, so files and base64 data will be available.
+     *
+     * This removes the need to `poll` for files, but has some side effects (exceptions instead of registration-failed).
+     * @see https://docs.myparcel.com/api/create-a-shipment.html#registering-your-shipment-with-the-carrier
+     */
+    public function createAndRegisterShipment(
+        ShipmentInterface $shipment,
+        ?string $idempotencyKey = null,
+    ): ShipmentInterface;
+
+    /**
+     * Get all manifests from the API.
+     *
+     * @throws MyParcelComException
+     */
+    public function getManifests(int $ttl = self::TTL_NO_CACHE): CollectionInterface;
+
+    /**
+     * Get a specific manifest from the API.
+     *
+     * @throws MyParcelComException
+     */
+    public function getManifest(string $id, int $ttl = self::TTL_NO_CACHE): ManifestInterface;
+
+    /**
+     * @throws MyParcelComException
+     */
+    public function createManifest(ManifestInterface $manifest): ManifestInterface;
+
+    public function getManifestFile(string $manifestId, string $fileId): FileInterface;
+
+    /**
+     * Set the URI of the MyParcel.com API.
+     */
+    public function setApiUri(string $apiUri): self;
+
+    /**
+     * Set the factory to use when creating resources.
+     */
+    public function setResourceFactory(ResourceFactoryInterface $resourceFactory): self;
+
+    /**
+     * Set the cache which will be used to store resources.
+     */
+    public function setCache(CacheInterface $cache): self;
+
+    /**
+     * Clear the cached resources and the authorization cache.
+     */
+    public function clearCache(): self;
+
+    /**
+     * Set the HTTP client to use to connect to the api. Given client must implement the PSR-18 client interface.
+     */
+    public function setHttpClient(ClientInterface $client): self;
 
     /**
      * Get the resource of given type with given id.

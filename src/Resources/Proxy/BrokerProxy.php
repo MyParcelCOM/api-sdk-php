@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk\Resources\Proxy;
 
-use MyParcelCom\ApiSdk\Resources\Interfaces\OrganizationInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\BrokerInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceProxyInterface;
 use MyParcelCom\ApiSdk\Resources\Organization;
@@ -15,7 +15,7 @@ use MyParcelCom\ApiSdk\Resources\Traits\Resource;
 /**
  * @method Organization getResource()
  */
-class OrganizationProxy implements OrganizationInterface, ResourceProxyInterface
+class BrokerProxy implements BrokerInterface, ResourceProxyInterface
 {
     use JsonSerializable;
     use ProxiesResource;
@@ -23,19 +23,7 @@ class OrganizationProxy implements OrganizationInterface, ResourceProxyInterface
 
     private ?string $id = null;
 
-    private string $type = ResourceInterface::TYPE_ORGANIZATION;
-
-    public function setName(string $name): self
-    {
-        $this->getResource()->setName($name);
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->getResource()->getName();
-    }
+    private string $type = ResourceInterface::TYPE_BROKER;
 
     /**
      * This function puts all object properties in an array and returns it.

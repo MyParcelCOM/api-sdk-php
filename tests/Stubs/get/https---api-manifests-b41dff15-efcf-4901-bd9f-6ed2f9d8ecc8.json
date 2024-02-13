@@ -1,0 +1,67 @@
+{
+  "data": {
+    "id": "b41dff15-efcf-4901-bd9f-6ed2f9d8ecc8",
+    "type": "manifests",
+    "attributes": {
+      "name": "The manifest name",
+      "address": {
+        "street_1": "Baker Street",
+        "city": "London",
+        "country_code": "GB"
+      },
+      "created_at": 1707486489
+    },
+    "links": {
+      "self": "https://api.localhost.private/manifests/b41dff15-efcf-4901-bd9f-6ed2f9d8ecc8"
+    },
+    "relationships": {
+      "contract": {
+        "data": {
+          "id": "35d525bf-a49f-40b4-8b6a-b343598fcb74",
+          "type": "contracts"
+        },
+        "links": {
+          "related": "https://api.localhost.private/contracts/35d525bf-a49f-40b4-8b6a-b343598fcb74"
+        }
+      },
+      "owner": {
+        "data": {
+          "id": "0685de92-4f11-4dbd-bccc-84373ee731b2",
+          "type": "shops"
+        },
+        "links": {
+          "related": "https://api.localhost.private/shops/0685de92-4f11-4dbd-bccc-84373ee731b2"
+        }
+      },
+      "shipments": {
+        "data": [
+          {
+            "id": "62b3d1e1-d854-4e00-9fb7-ddbf47dd9db2",
+            "type": "shipments"
+          }
+        ]
+      },
+      "files": {
+        "data": [
+          {
+            "id": "a1784758-270c-4e72-8207-de72352759c5",
+            "type": "files"
+          },
+          {
+            "id": "2fc9705f-2c00-4d15-82ce-d9617dcdc1cc",
+            "type": "files"
+          }
+        ]
+      },
+      "shop": {
+        "data": {
+          "id": "0685de92-4f11-4dbd-bccc-84373ee731b2",
+          "type": "shops"
+        },
+        "links": {
+          "related": "https://api.localhost.private/shops/0685de92-4f11-4dbd-bccc-84373ee731b2"
+        }
+      }
+    }
+  }
+}
