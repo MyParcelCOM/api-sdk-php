@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "eef00b32-177e-43d3-9b26-715365e4ce46",
-    "type": "carriers",
+    "type": "organizations",
     "attributes": {
       "name": "Test Organization"
     },

@@ -9,6 +9,7 @@ use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
 use MyParcelCom\ApiSdk\Resources\Address;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Manifest;
 use MyParcelCom\ApiSdk\Resources\Organization;
 use MyParcelCom\ApiSdk\Resources\Shipment;
@@ -76,6 +77,12 @@ class ManifestsTest extends TestCase
     public function testCreateInvalidManifestMissingAddress(): void
     {
         $this->expectException(InvalidResourceException::class);
+        $this->expectExceptionMessage(
+            'This manifest contains invalid data. '
+            . 'Attribute "address.street1" is required. '
+            . 'Attribute "address.city" is required. '
+            . 'Attribute "address.countryCode" is required.',
+        );
 
         $owner = (new Organization())
             ->setId('0685de92-4f11-4dbd-bccc-84373ee731b2');
@@ -94,6 +101,7 @@ class ManifestsTest extends TestCase
     public function testCreateInvalidManifestMissingName(): void
     {
         $this->expectException(InvalidResourceException::class);
+        $this->expectExceptionMessage('This manifest contains invalid data. Attribute "name" is required.');
 
         $address = (new Address())
             ->setCity('Birmingham')
@@ -116,7 +124,17 @@ class ManifestsTest extends TestCase
 
     public function testCreateInvalidManifestMissingOwner()
     {
+        $ownerTypes = [
+            ResourceInterface::TYPE_SHOP,
+            ResourceInterface::TYPE_ORGANIZATION,
+            ResourceInterface::TYPE_BROKER,
+        ];
         $this->expectException(InvalidResourceException::class);
+        $this->expectExceptionMessage(
+            'This manifest contains invalid data. '
+            . 'Attribute "owner.type" must be one of: ' . implode(', ', $ownerTypes) . '. '
+            . 'Attribute "owner.id" is required.',
+        );
 
         $address = (new Address())
             ->setCity('London')
@@ -138,6 +156,9 @@ class ManifestsTest extends TestCase
     public function testCreateInvalidManifestMissingShipments()
     {
         $this->expectException(InvalidResourceException::class);
+        $this->expectExceptionMessage(
+            'This manifest contains invalid data. Relationship shipments is required to contain at least 1 Shipment.',
+        );
 
         $address = (new Address())
             ->setCity('London')
@@ -180,7 +201,9 @@ class ManifestsTest extends TestCase
         $stubManifestId = 'b41dff15-efcf-4901-bd9f-6ed2f9d8ecc8';
         // path has to include "-stream" to resolve .txt stub
         $stubFileId = 'eef00b32-177e-43d3-9b26-715365e4ce46-stream';
-        $stubFileContents = file_get_contents(__DIR__ . "/../../Stubs/get/https---api-manifests-$stubManifestId-files-$stubFileId.txt");
+        $stubFileContents = file_get_contents(
+            __DIR__ . "/../../Stubs/get/https---api-manifests-$stubManifestId-files-$stubFileId.txt",
+        );
 
         $file = $this->api->getManifestFile($stubManifestId, "$stubFileId");
 

@@ -56,10 +56,10 @@ class ManifestValidator implements ValidatorInterface
             ResourceInterface::TYPE_BROKER,
         ];
         if ($owner?->getType() === null || !in_array($owner?->getType(), $ownerTypes)) {
-            $this->addError('Attribute owner.type must be one of: ' . implode(', ', $ownerTypes));
+            $this->addError('Attribute "owner.type" must be one of: ' . implode(', ', $ownerTypes));
         }
         if ($owner?->getId() === null) {
-            $this->addError('Attribute owner.id is required');
+            $this->addError('Attribute "owner.id" is required');
         }
 
         $shipments = $this->manifest->getShipments();

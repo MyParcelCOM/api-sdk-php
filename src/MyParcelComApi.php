@@ -610,24 +610,24 @@ class MyParcelComApi implements MyParcelComApiInterface
     /**
      * @throws RequestException
      */
-public function getManifestFile(string $manifestId, string $fileId): FileInterface
-{
-    $url = str_replace(
-        ['{manifest_id}', '{file_id}'],
-        [$manifestId, $fileId],
-        self::PATH_MANIFESTS_ID_FILES_ID,
-    );
+    public function getManifestFile(string $manifestId, string $fileId): FileInterface
+    {
+        $url = str_replace(
+            ['{manifest_id}', '{file_id}'],
+            [$manifestId, $fileId],
+            self::PATH_MANIFESTS_ID_FILES_ID,
+        );
 
-    $headers = $this->authenticator->getAuthorizationHeader() + [
-            AuthenticatorInterface::HEADER_ACCEPT => FileInterface::MIME_TYPE_PDF,
-        ];
+        $headers = $this->authenticator->getAuthorizationHeader() + [
+                AuthenticatorInterface::HEADER_ACCEPT => FileInterface::MIME_TYPE_PDF,
+            ];
 
-    $response = $this->doRequest($url, headers: $headers);
+        $response = $this->doRequest($url, headers: $headers);
 
-    return (new File())
-        ->addFormat(FileInterface::MIME_TYPE_PDF, FileInterface::EXTENSION_PDF)
-        ->setStream($response->getBody(), FileInterface::MIME_TYPE_PDF);
-}
+        return (new File())
+            ->addFormat(FileInterface::MIME_TYPE_PDF, FileInterface::EXTENSION_PDF)
+            ->setStream($response->getBody(), FileInterface::MIME_TYPE_PDF);
+    }
 
     /**
      * Set the URI of the MyParcel.com API.
