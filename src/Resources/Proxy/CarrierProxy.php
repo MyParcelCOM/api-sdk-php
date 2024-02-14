@@ -73,6 +73,43 @@ class CarrierProxy implements CarrierInterface, ResourceProxyInterface
         return $this->getResource()->getLabelMimeTypes();
     }
 
+
+    public function setOffersCollections(bool $offersCollections): self
+    {
+        $this->getResource()->setOffersCollections($offersCollections);
+
+        return $this;
+    }
+
+    public function getOffersCollections(): bool
+    {
+        return $this->getResource()->getOffersCollections();
+    }
+
+    public function setVoidsRegisteredCollections(bool $voidsRegisteredCollections): self
+    {
+        $this->getResource()->setVoidsRegisteredCollections($voidsRegisteredCollections);
+
+        return $this;
+    }
+
+    public function getVoidsRegisteredCollections(): bool
+    {
+        return $this->getResource()->getVoidsRegisteredCollections();
+    }
+
+    public function setAllowsAddingRegisteredShipmentsToCollection(bool $allowsAddingRegisteredShipments,
+    ): self {
+        $this->getResource()->setAllowsAddingRegisteredShipmentsToCollection($allowsAddingRegisteredShipments);
+
+        return $this;
+    }
+
+    public function getAllowsAddingRegisteredShipmentsToCollection(): bool
+    {
+        return $this->getResource()->getAllowsAddingRegisteredShipmentsToCollection();
+    }
+
     /**
      * This function puts all object properties in an array and returns it.
      */
