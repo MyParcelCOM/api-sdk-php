@@ -13,6 +13,7 @@ interface ResourceInterface extends JsonSerializable
 {
     const TYPE_BROKER = 'brokers';
     const TYPE_CARRIER = 'carriers';
+    const TYPE_COLLECTION = 'collections';
     const TYPE_CONTRACT = 'contracts';
     const TYPE_FILE = 'files';
     const TYPE_MANIFEST = 'manifests';

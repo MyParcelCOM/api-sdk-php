@@ -1,0 +1,44 @@
+{
+  "data": {
+    "id": "8d8d63aa-032b-4674-990b-706551a2bf23",
+    "type": "collections",
+    "attributes": {
+      "description": "modi amet ut",
+      "collection_time": {
+        "from": 1708153200,
+        "to": 1708171200
+      },
+      "register": false,
+      "address": {
+        "street_1": "Baker Street",
+        "city": "London",
+        "country_code": "GB"
+      },
+      "tracking_code": "TRK-1234567890",
+      "created_at": 1707872440
+    },
+    "links": {
+      "self": "https:\/\/api.localhost.private\/collections\/8d8d63aa-032b-4674-990b-706551a2bf23"
+    },
+    "relationships": {
+      "shop": {
+        "data": {
+          "id": "1ebabb0e-9036-4259-b58e-2b42742bb86a",
+          "type": "shops"
+        },
+        "links": {
+          "related": "https:\/\/api.localhost.private\/shops\/1ebabb0e-9036-4259-b58e-2b42742bb86a"
+        }
+      },
+      "status": {
+        "data": {
+          "id": "822a42ad-caf7-4576-812a-bd7c2cfa589c",
+          "type": "statuses"
+        },
+        "links": {
+          "related": "https:\/\/api.localhost.private\/statuses\/822a42ad-caf7-4576-812a-bd7c2cfa589c"
+        }
+      }
+    }
+  }
+}

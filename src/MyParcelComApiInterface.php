@@ -23,6 +23,7 @@ use Psr\SimpleCache\CacheInterface;
 interface MyParcelComApiInterface
 {
     const PATH_CARRIERS = '/carriers';
+    const PATH_COLLECTIONS = '/collections';
     const PATH_FILES_ID = '/files/{file_id}';
     const PATH_MANIFESTS = '/manifests';
     const PATH_MANIFESTS_ID_FILES_ID = '/manifests/{manifest_id}/files/{file_id}';
@@ -214,6 +215,10 @@ interface MyParcelComApiInterface
     public function createManifest(ManifestInterface $manifest): ManifestInterface;
 
     public function getManifestFile(string $manifestId, string $fileId): FileInterface;
+
+    public function getCollections(): CollectionInterface;
+
+    // TODO: Add other collection methods.
 
     /**
      * Set the URI of the MyParcel.com API.

@@ -11,7 +11,7 @@ use MyParcelCom\ApiSdk\MyParcelComApiInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierStatusInterface;
-use MyParcelCom\ApiSdk\Resources\Interfaces\ContactInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionTimeInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CustomsInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ErrorInterface;
@@ -34,6 +34,7 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentStatusInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\StatusInterface;
 use MyParcelCom\ApiSdk\Resources\Proxy\CarrierProxy;
+use MyParcelCom\ApiSdk\Resources\Proxy\CollectionProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ContractProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\FileProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\FileStreamProxy;
@@ -62,6 +63,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
      */
     private array $typeFactory = [
         ResourceInterface::TYPE_CARRIER         => Carrier::class,
+        ResourceInterface::TYPE_COLLECTION      => Collection::class,
         ResourceInterface::TYPE_CONTRACT        => Contract::class,
         ResourceInterface::TYPE_MANIFEST        => Manifest::class,
         ResourceInterface::TYPE_ORGANIZATION    => Organization::class,
@@ -75,6 +77,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         AddressInterface::class               => Address::class,
         CarrierInterface::class               => Carrier::class,
         CarrierStatusInterface::class         => CarrierStatus::class,
+        CollectionTimeInterface::class        => CollectionTime::class,
         ContractInterface::class              => Contract::class,
         CustomsInterface::class               => Customs::class,
         ErrorInterface::class                 => Error::class,
@@ -96,6 +99,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
      */
     private array $proxies = [
         ResourceInterface::TYPE_CARRIER         => CarrierProxy::class,
+        ResourceInterface::TYPE_COLLECTION      => CollectionProxy::class,
         ResourceInterface::TYPE_CONTRACT        => ContractProxy::class,
         ResourceInterface::TYPE_FILE            => FileProxy::class,
         ResourceInterface::TYPE_MANIFEST        => ManifestProxy::class,
