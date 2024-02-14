@@ -59,8 +59,8 @@ class OrganizationProxyTest extends TestCase
     /** @test */
     public function testJsonSerialize()
     {
-        $serviceProxy = new OrganizationProxy();
-        $serviceProxy
+        $organizationProxy = new OrganizationProxy();
+        $organizationProxy
             ->setMyParcelComApi($this->api)
             ->setResourceUri('https://api/organizations/eef00b32-177e-43d3-9b26-715365e4ce46')
             ->setId('organization-id-1');
@@ -68,6 +68,6 @@ class OrganizationProxyTest extends TestCase
         $this->assertEquals([
             'id'   => 'organization-id-1',
             'type' => ResourceInterface::TYPE_ORGANIZATION,
-        ], $serviceProxy->jsonSerialize());
+        ], $organizationProxy->jsonSerialize());
     }
 }

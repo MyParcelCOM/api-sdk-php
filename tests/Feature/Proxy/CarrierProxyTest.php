@@ -63,17 +63,11 @@ class CarrierProxyTest extends TestCase
         $serviceProxy
             ->setMyParcelComApi($this->api)
             ->setResourceUri('https://api/carriers/eef00b32-177e-43d3-9b26-715365e4ce46')
-            ->setId('carrier-id-1')
-            ->setOffersCollections(true)
-            ->setVoidsRegisteredCollections(true)
-            ->setAllowsAddingRegisteredShipmentsToCollection(true);
+            ->setId('carrier-id-1');
 
         $this->assertEquals([
             'id'   => 'carrier-id-1',
             'type' => ResourceInterface::TYPE_CARRIER,
-            'offers_collections' => true,
-            'voids_registered_collections' => true,
-            'allows_adding_registered_shipments_to_collection' => true,
         ], $serviceProxy->jsonSerialize());
     }
 }
