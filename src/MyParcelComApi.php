@@ -629,9 +629,12 @@ class MyParcelComApi implements MyParcelComApiInterface
             ->setStream($response->getBody(), FileInterface::MIME_TYPE_PDF);
     }
 
-    public function getCollections(int $ttl = self::TTL_10MIN): CollectionInterface
+    public function getCollections(array $filters = [], int $ttl = self::TTL_10MIN): CollectionInterface
     {
-        return $this->getRequestCollection($this->apiUri . self::PATH_COLLECTIONS, $ttl);
+        $url = (new UrlBuilder($this->apiUri . self::PATH_COLLECTIONS));
+        $url->addQuery($this->arrayToFilters($filters));
+
+        return $this->getRequestCollection($url->getUrl(), $ttl);
     }
 
     // TODO: Add other collection methods.
