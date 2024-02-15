@@ -6,6 +6,8 @@ namespace Feature\MyParcelComApi;
 
 use DateTime;
 use MyParcelCom\ApiSdk\Collection\CollectionInterface as ResourceCollectionInterface;
+use MyParcelCom\ApiSdk\Resources\Collection;
+use MyParcelCom\ApiSdk\Resources\CollectionTime;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Tests\TestCase;
 
@@ -57,5 +59,19 @@ class CollectionsTest extends TestCase
         $this->assertInstanceOf(CollectionInterface::class, $collection);
         $this->assertEquals('8d8d63aa-032b-4674-990b-706551a2bf23', $collection->getId());
         $this->assertEquals('Test', $collection->getDescription());
+    }
+
+    public function testItCreatesANewCollection(): void
+    {
+        $newCollection = new Collection();
+        $newCollection->setDescription('Some description');
+        $newCollection->setCollectionTime(
+            (new CollectionTime())->setFrom(123456789)->setTo(987654321)
+        );
+
+        $collection = $this->api->createCollection($newCollection);
+
+        $this->assertInstanceOf(CollectionInterface::class, $collection);
+        $this->assertEquals('Test collection 3', $collection->getDescription());
     }
 }
