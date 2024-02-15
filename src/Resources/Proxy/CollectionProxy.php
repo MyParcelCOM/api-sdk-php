@@ -179,4 +179,17 @@ class CollectionProxy implements CollectionInterface, ResourceProxyInterface
 
         return $this;
     }
+
+    /**
+     * This function puts all object properties in an array and returns it.
+     */
+    public function jsonSerialize(): array
+    {
+        $values = get_object_vars($this);
+        unset($values['resource']);
+        unset($values['api']);
+        unset($values['uri']);
+
+        return $this->arrayValuesToArray($values);
+    }
 }
