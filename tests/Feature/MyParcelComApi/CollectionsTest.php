@@ -27,12 +27,10 @@ class CollectionsTest extends TestCase
 
     public function testItFiltersCollections(): void
     {
-        $filters = [
+        $collections = $this->api->getCollections([
             'shop'            => '1ebabb0e-9036-4259-b58e-2b42742bb86a',
             'collection_date' => '2024-02-17',
-        ];
-
-        $collections = $this->api->getCollections($filters);
+        ]);
 
         $this->assertInstanceOf(ResourceCollectionInterface::class, $collections);
         $this->assertCount(2, $collections);
@@ -50,5 +48,14 @@ class CollectionsTest extends TestCase
             'Test collection 1',
             'Test collection 2',
         ], $collectionDescriptions);
+    }
+
+    public function testItRetrievesASingleCollection(): void
+    {
+        $collection = $this->api->getCollection('8d8d63aa-032b-4674-990b-706551a2bf23');
+
+        $this->assertInstanceOf(CollectionInterface::class, $collection);
+        $this->assertEquals('8d8d63aa-032b-4674-990b-706551a2bf23', $collection->getId());
+        $this->assertEquals('Test', $collection->getDescription());
     }
 }

@@ -637,6 +637,11 @@ class MyParcelComApi implements MyParcelComApiInterface
         return $this->getRequestCollection($url->getUrl(), $ttl);
     }
 
+    public function getCollection(string $collectionId, int $ttl = self::TTL_NO_CACHE): Resources\Interfaces\CollectionInterface
+    {
+        return $this->getResourceById(ResourceInterface::TYPE_COLLECTION, $collectionId, $ttl);
+    }
+
     // TODO: Add other collection methods.
 
     /**

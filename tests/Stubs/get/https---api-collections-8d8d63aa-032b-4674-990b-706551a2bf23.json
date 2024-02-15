@@ -1,6 +1,6 @@
 {
   "data": {
-    "id": "ea3058b5-0aee-4d32-b3b2-6b4022a4de00",
+    "id": "8d8d63aa-032b-4674-990b-706551a2bf23",
     "type": "collections",
     "attributes": {
       "description": "Test",
@@ -24,7 +24,7 @@
       "created_at": 1707991769
     },
     "links": {
-      "self": "https:\/\/api.localhost.private\/collections\/ea3058b5-0aee-4d32-b3b2-6b4022a4de00"
+      "self": "https:\/\/api.localhost.private\/collections\/8d8d63aa-032b-4674-990b-706551a2bf23"
     },
     "relationships": {
       "shop": {

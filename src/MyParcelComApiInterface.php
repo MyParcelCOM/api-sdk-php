@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace MyParcelCom\ApiSdk;
 
 use MyParcelCom\ApiSdk\Authentication\AuthenticatorInterface;
-use MyParcelCom\ApiSdk\Collection\CollectionInterface;
+use MyParcelCom\ApiSdk\Collection\CollectionInterface as ResourceCollectionInterface;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Http\Exceptions\RequestException;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceFactoryInterface;
@@ -52,14 +53,14 @@ interface MyParcelComApiInterface
     /**
      * @deprecated
      */
-    public function getRegions(array $filters = [], int $ttl = self::TTL_10MIN): CollectionInterface;
+    public function getRegions(array $filters = [], int $ttl = self::TTL_10MIN): ResourceCollectionInterface;
 
     /**
      * Get all the carriers from the API.
      *
      * @throws MyParcelComException
      */
-    public function getCarriers(int $ttl = self::TTL_10MIN): CollectionInterface;
+    public function getCarriers(int $ttl = self::TTL_10MIN): ResourceCollectionInterface;
 
     /**
      * Get the pick-up/drop-off locations around a given location.
@@ -73,14 +74,14 @@ interface MyParcelComApiInterface
         CarrierInterface $specificCarrier = null,
         bool $onlyActiveContracts = true,
         int $ttl = self::TTL_10MIN,
-    ): CollectionInterface|array;
+    ): ResourceCollectionInterface|array;
 
     /**
      * Get the shops from the API.
      *
      * @throws MyParcelComException
      */
-    public function getShops(int $ttl = self::TTL_10MIN): CollectionInterface;
+    public function getShops(int $ttl = self::TTL_10MIN): ResourceCollectionInterface;
 
     /**
      * Get the default shop that will be used when interacting with the API and no specific shop has been set.
@@ -99,14 +100,14 @@ interface MyParcelComApiInterface
         ShipmentInterface $shipment = null,
         array $filters = ['has_active_contract' => 'true'],
         int $ttl = self::TTL_10MIN,
-    ): CollectionInterface;
+    ): ResourceCollectionInterface;
 
     /**
      * Get all the services that are available for the given carrier.
      *
      * @throws MyParcelComException
      */
-    public function getServicesForCarrier(CarrierInterface $carrier, int $ttl = self::TTL_10MIN): CollectionInterface;
+    public function getServicesForCarrier(CarrierInterface $carrier, int $ttl = self::TTL_10MIN): ResourceCollectionInterface;
 
     /**
      * Retrieves service rates based on the set filters. Available filters are: service, contract and weight. Note that
@@ -116,7 +117,7 @@ interface MyParcelComApiInterface
     public function getServiceRates(
         array $filters = ['has_active_contract' => 'true'],
         int $ttl = self::TTL_10MIN,
-    ): CollectionInterface;
+    ): ResourceCollectionInterface;
 
     /**
      * Retrieves service rates based on the shipment.
@@ -125,7 +126,7 @@ interface MyParcelComApiInterface
     public function getServiceRatesForShipment(
         ShipmentInterface $shipment,
         int $ttl = self::TTL_10MIN,
-    ): CollectionInterface;
+    ): ResourceCollectionInterface;
 
     /**
      * Retrieve dynamic rates (price / options / availability) from the carrier, based on the provided shipment data.
@@ -144,7 +145,7 @@ interface MyParcelComApiInterface
      *
      * @throws MyParcelComException
      */
-    public function getShipments(ShopInterface $shop = null, int $ttl = self::TTL_NO_CACHE): CollectionInterface;
+    public function getShipments(ShopInterface $shop = null, int $ttl = self::TTL_NO_CACHE): ResourceCollectionInterface;
 
     /**
      * Get a specific shipment from the API.
@@ -200,7 +201,7 @@ interface MyParcelComApiInterface
      *
      * @throws MyParcelComException
      */
-    public function getManifests(int $ttl = self::TTL_NO_CACHE): CollectionInterface;
+    public function getManifests(int $ttl = self::TTL_NO_CACHE): ResourceCollectionInterface;
 
     /**
      * Get a specific manifest from the API.
@@ -216,7 +217,17 @@ interface MyParcelComApiInterface
 
     public function getManifestFile(string $manifestId, string $fileId): FileInterface;
 
-    public function getCollections(): CollectionInterface;
+    /**
+     * @param array{
+     *     collection_date?: string,
+     *     shop?: string,
+     *     status?: string,
+     *     carrier?: string
+     * } $filters
+     */
+    public function getCollections(array $filters, int $ttl = self::TTL_10MIN): ResourceCollectionInterface;
+
+    public function getCollection(string $collectionId, int $ttl = self::TTL_NO_CACHE): CollectionInterface;
 
     // TODO: Add other collection methods.
 
