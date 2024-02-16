@@ -110,16 +110,17 @@ class Carrier implements CarrierInterface
         return $this->attributes[self::ATTRIBUTE_VOIDS_REGISTERED_COLLECTIONS];
     }
 
-    public function setAllowsAddingRegisteredShipmentsToCollection(bool $allowsAddingRegisteredShipments,
+    public function setAllowsAddingRegisteredShipmentsToCollection(
+        bool $allowsAddingRegisteredShipments
     ): self {
-        $this->attributes[self::ATTRIBUTE_VOIDS_REGISTERED_COLLECTIONS] = $allowsAddingRegisteredShipments;
+        $this->attributes[self::ATTRIBUTE_ALLOWS_ADDING_REGISTERED_SHIPMENTS_TO_COLLECTION] = $allowsAddingRegisteredShipments;
 
         return $this;
     }
 
     public function getAllowsAddingRegisteredShipmentsToCollection(): bool
     {
-        return $this->attributes[self::ATTRIBUTE_VOIDS_REGISTERED_COLLECTIONS];
+        return $this->attributes[self::ATTRIBUTE_ALLOWS_ADDING_REGISTERED_SHIPMENTS_TO_COLLECTION];
     }
 
     /**
