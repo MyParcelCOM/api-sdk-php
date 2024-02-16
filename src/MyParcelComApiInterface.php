@@ -230,6 +230,10 @@ interface MyParcelComApiInterface
 
     public function getCollection(string $collectionId, int $ttl = self::TTL_NO_CACHE): CollectionInterface;
 
+    public function createCollection(CollectionInterface $collection): CollectionInterface;
+
+    public function updateCollection(CollectionInterface $collection): CollectionInterface;
+
     // TODO: Add other collection methods.
 
     /**

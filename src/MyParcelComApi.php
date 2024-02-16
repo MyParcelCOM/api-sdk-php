@@ -668,6 +668,26 @@ class MyParcelComApi implements MyParcelComApiInterface
         return $this->postResource($collection);
     }
 
+    public function updateCollection(CollectionInterface $collection): CollectionInterface
+    {
+        if (!$collection->getId()) {
+            throw new InvalidResourceException(
+                'Could not update collection. This collection does not have an id, use createCollection() to save it.',
+            );
+        }
+
+        $validator = new CollectionValidator($collection);
+        if (!$validator->isValid()) {
+            $message = 'This collection contains invalid data. ' . implode('. ', $validator->getErrors()) . '.';
+            $exception = new InvalidResourceException($message);
+            $exception->setErrors($validator->getErrors());
+
+            throw $exception;
+        }
+
+        return $this->patchResource($collection);
+    }
+
     // TODO: Add other collection methods.
 
     /**

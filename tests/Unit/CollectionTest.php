@@ -52,7 +52,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection();
 
-        $this->assertTrue($collection->setRegistered(true)->getRegistered());
+        $this->assertTrue($collection->setRegister(true)->getRegister());
     }
 
     public function testCollectionTime(): void
