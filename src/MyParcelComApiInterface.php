@@ -85,6 +85,7 @@ interface MyParcelComApiInterface
 
     /**
      * Get the default shop that will be used when interacting with the API and no specific shop has been set.
+     * The default shop is the oldest shop you have access to.
      *
      * @throws MyParcelComException
      */

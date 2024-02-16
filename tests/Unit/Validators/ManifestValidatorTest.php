@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MyParcelCom\ApiSdk\Tests\Unit;
+namespace MyParcelCom\ApiSdk\Tests\Unit\Validators;
 
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\BrokerInterface;

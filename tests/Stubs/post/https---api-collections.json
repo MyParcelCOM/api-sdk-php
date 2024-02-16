@@ -1,30 +1,21 @@
 {
   "data": {
-    "id": "8d8d63aa-032b-4674-990b-706551a2bf23",
+    "id": "77eda208-d081-49bf-9f74-cb9a98fc71f3",
     "type": "collections",
     "attributes": {
-      "description": "Test create",
       "collection_time": {
-        "from": 1708085160,
-        "to": 1708096680
+        "from": 123456789,
+        "to": 123456800
       },
-      "register": false,
       "address": {
-        "street_1": "200 Westminster Bridge Rd",
-        "postal_code": "SE1 7UT",
-        "city": "London",
-        "country_code": "GB",
-        "company": "MyParcel.com",
-        "first_name": "MP",
-        "last_name": "Sender",
-        "email": "info@myparcel.com",
-        "phone_number": "+31 85 208 5997"
+        "street_1": "Test street 1",
+        "city": "Test city",
+        "country_code": "NL"
       },
-      "tracking_code": "TRK-1234567890",
       "created_at": 1707991769
     },
     "links": {
-      "self": "https:\/\/api.localhost.private\/collections\/8d8d63aa-032b-4674-990b-706551a2bf23"
+      "self": "https:\/\/api.localhost.private\/collections\/77eda208-d081-49bf-9f74-cb9a98fc71f3"
     },
     "relationships": {
       "shop": {
@@ -43,27 +34,6 @@
         },
         "links": {
           "related": "https:\/\/api.localhost.private\/statuses\/583e311f-8f03-4b34-84dd-5a82305ce5a8"
-        }
-      },
-      "shipments": {
-        "data": [
-          {
-            "id": "65e10ca7-5e34-40da-9da5-928f8aa57f97",
-            "type": "shipments"
-          },
-          {
-            "id": "872960ef-2a2c-4ab5-9a36-01478fd20276",
-            "type": "shipments"
-          }
-        ]
-      },
-      "contract": {
-        "data": {
-          "id": "be5c82fd-e936-440a-a5d8-9a3124d86fcf",
-          "type": "contracts"
-        },
-        "links": {
-          "related": "https:\/\/api.localhost.private\/contracts\/be5c82fd-e936-440a-a5d8-9a3124d86fcf"
         }
       }
     }
