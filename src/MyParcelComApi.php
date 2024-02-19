@@ -725,10 +725,6 @@ class MyParcelComApi implements MyParcelComApiInterface
     }
 
     /**
-     * @param CollectionInterface             $collection
-     * @param array<ShipmentInterface|string> $shipments Either an array of strings or an array of ShipmentInterface objects.
-     * @return CollectionInterface
-     *
      * @throws RequestException
      */
     public function addShipmentsToCollection(
@@ -753,7 +749,24 @@ class MyParcelComApi implements MyParcelComApiInterface
         return $this->getCollection($collection->getId());
     }
 
-    // TODO: Add other collection methods.
+    public function generateManifestForCollection(CollectionInterface $collection): ManifestInterface
+    {
+        if (!$collection->getId()) {
+            throw new InvalidResourceException(
+                'Could not generate manifest for collection. This collection does not have an id.',
+            );
+        }
+
+        $response = $this->doRequest('/create-manifest-for-collection', 'post', [
+            'data' => [
+                'collection_id' => $collection->getId(),
+            ],
+        ]);
+
+        $json = json_decode((string) $response->getBody(), true);
+
+        return $this->resourceFactory->create('manifests', $json['data']);
+    }
 
     /**
      * Set the URI of the MyParcel.com API.

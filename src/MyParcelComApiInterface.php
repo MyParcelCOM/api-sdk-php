@@ -245,8 +245,8 @@ interface MyParcelComApiInterface
      * @return CollectionInterface
      */
     public function addShipmentsToCollection(CollectionInterface $collection, array $shipments): CollectionInterface;
-    // TODO: Add other collection methods.
 
+    public function generateManifestForCollection(CollectionInterface $collection): ManifestInterface;
     /**
      * Set the URI of the MyParcel.com API.
      */

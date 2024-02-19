@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Feature\MyParcelComApi;
 
-use DateTime;
 use MyParcelCom\ApiSdk\Collection\CollectionInterface as ResourceCollectionInterface;
 use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
 use MyParcelCom\ApiSdk\Resources\Address;
 use MyParcelCom\ApiSdk\Resources\Collection;
 use MyParcelCom\ApiSdk\Resources\CollectionTime;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
+use MyParcelCom\ApiSdk\Resources\Manifest;
 use MyParcelCom\ApiSdk\Resources\Shipment;
 use MyParcelCom\ApiSdk\Resources\Shop;
 use MyParcelCom\ApiSdk\Tests\TestCase;
@@ -315,5 +315,21 @@ class CollectionsTest extends TestCase
         $this->expectException(InvalidResourceException::class);
         $this->expectExceptionMessage('Could not add shipments to collection. This collection does not have an id.');
         $this->api->addShipmentsToCollection(new Collection(), ['65e10ca7-5e34-40da-9da5-928f8aa57f97']);
+    }
+
+    public function testItGeneratesAManifestForACollection(): void
+    {
+        $collection = new Collection();
+        $collection->setId('8d8d63aa-032b-4674-990b-706551a2bf23');
+
+        $manifest = $this->api->generateManifestForCollection($collection);
+        $this->assertInstanceOf(Manifest::class, $manifest);
+    }
+
+    public function testItCanNotGenerateAManifestWithoutACollectionId(): void
+    {
+        $this->expectException(InvalidResourceException::class);
+        $this->expectExceptionMessage('Could not generate manifest for collection. This collection does not have an id.');
+        $this->api->generateManifestForCollection(new Collection());
     }
 }
