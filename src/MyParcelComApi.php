@@ -15,6 +15,7 @@ use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Http\Contracts\HttpClient\RequestExceptionInterface;
 use MyParcelCom\ApiSdk\Http\Exceptions\RequestException;
+use MyParcelCom\ApiSdk\Resources\Collection;
 use MyParcelCom\ApiSdk\Resources\File;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
@@ -688,6 +689,24 @@ class MyParcelComApi implements MyParcelComApiInterface
         return $this->patchResource($collection);
     }
 
+    public function registerCollection(CollectionInterface|string $collectionId): CollectionInterface
+    {
+        if ($collectionId instanceof CollectionInterface) {
+            $collectionId = $collectionId->getId();
+        }
+
+        if (!$collectionId) {
+            throw new InvalidResourceException(
+                'Could not register collection. This collection does not have an id, use createCollection() to save it.',
+            );
+        }
+
+        $collectionToRegister = (new Collection())
+            ->setId($collectionId)
+            ->setRegister(true);
+
+        return $this->patchResource($collectionToRegister);
+    }
     // TODO: Add other collection methods.
 
     /**

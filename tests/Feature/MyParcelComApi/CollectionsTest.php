@@ -230,4 +230,37 @@ class CollectionsTest extends TestCase
         $this->expectExceptionMessage('This collection contains invalid data. Attribute address.street_1 is required. Attribute address.city is required. Attribute address.country_code is required.');
         $this->api->updateCollection($collectionToUpdate);
     }
+
+    public function testItRegistersACollection(): void
+    {
+        $collection = new Collection();
+        $collection->setId('f64aeed2-a5ca-4dcf-9b2a-d290ab5232f4');
+
+        $updatedCollection = $this->api->registerCollection($collection);
+        $this->assertTrue($updatedCollection->getRegister());
+    }
+
+    public function testItCanRegisterACollectionThroughAnId(): void
+    {
+        $collectionId = 'f64aeed2-a5ca-4dcf-9b2a-d290ab5232f4';
+
+        $updatedCollection = $this->api->registerCollection($collectionId);
+        $this->assertTrue($updatedCollection->getRegister());
+    }
+
+    public function testItCannotRegisterACollectionWithoutAnId(): void
+    {
+        $collection = new Collection();
+
+        $this->expectException(InvalidResourceException::class);
+        $this->expectExceptionMessage('Could not register collection. This collection does not have an id, use createCollection() to save it.');
+        $this->api->registerCollection($collection);
+    }
+
+    public function testItCannotRegisterACollectionWithEmptyStringAsId(): void
+    {
+        $this->expectException(InvalidResourceException::class);
+        $this->expectExceptionMessage('Could not register collection. This collection does not have an id, use createCollection() to save it.');
+        $this->api->registerCollection('');
+    }
 }

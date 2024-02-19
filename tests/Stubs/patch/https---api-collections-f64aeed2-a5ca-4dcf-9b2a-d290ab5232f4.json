@@ -1,0 +1,83 @@
+{
+  "data": {
+    "id": "f64aeed2-a5ca-4dcf-9b2a-d290ab5232f4",
+    "type": "collections",
+    "attributes": {
+      "description": "Some description",
+      "collection_time": {
+        "from": 1708085160,
+        "to": 1708096680
+      },
+      "register": true,
+      "address": {
+        "street_1": "Some street 1",
+        "city": "Some city",
+        "country_code": "GB"
+      },
+      "tracking_code": "TRK-1234567890",
+      "created_at": 1707991769
+    },
+    "relationships": {
+      "shop": {
+        "data": {
+          "id": "1ebabb0e-9036-4259-b58e-2b42742bb86a",
+          "type": "shops"
+        },
+        "links": {
+          "related": "https:\/\/api.localhost.private\/shops\/1ebabb0e-9036-4259-b58e-2b42742bb86a"
+        }
+      },
+      "status": {
+        "data": {
+          "id": "583e311f-8f03-4b34-84dd-5a82305ce5a8",
+          "type": "statuses"
+        },
+        "links": {
+          "related": "https:\/\/api.localhost.private\/statuses\/583e311f-8f03-4b34-84dd-5a82305ce5a8"
+        }
+      },
+      "shipments": {
+        "data": [
+          {
+            "id": "65e10ca7-5e34-40da-9da5-928f8aa57f97",
+            "type": "shipments"
+          },
+          {
+            "id": "872960ef-2a2c-4ab5-9a36-01478fd20276",
+            "type": "shipments"
+          }
+        ]
+      },
+      "files": {
+        "data": [
+          {
+            "id": "cbf0973b-9bf6-49b9-a8c3-fd69a51a0457",
+            "type": "files"
+          },
+          {
+            "id": "289928ba-76a7-4601-9af0-33c46c0abea4",
+            "type": "files"
+          }
+        ]
+      },
+      "manifest": {
+        "data": {
+          "id": "59b4daab-0b08-42ca-9b13-b13fb397af89",
+          "type": "manifests"
+        },
+        "links": {
+          "related": "https:\/\/api.localhost.private\/manifests\/59b4daab-0b08-42ca-9b13-b13fb397af89"
+        }
+      },
+      "contract": {
+        "data": {
+          "id": "be5c82fd-e936-440a-a5d8-9a3124d86fcf",
+          "type": "contracts"
+        },
+        "links": {
+          "related": "https:\/\/api.localhost.private\/contracts\/be5c82fd-e936-440a-a5d8-9a3124d86fcf"
+        }
+      }
+    }
+  }
+}
