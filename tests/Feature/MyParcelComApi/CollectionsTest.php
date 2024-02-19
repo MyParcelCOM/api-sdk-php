@@ -263,4 +263,21 @@ class CollectionsTest extends TestCase
         $this->expectExceptionMessage('Could not register collection. This collection does not have an id, use createCollection() to save it.');
         $this->api->registerCollection('');
     }
+
+    public function testItDeletesACollection(): void
+    {
+        $collection = new Collection();
+        $collection->setId('0e5462c0-11f4-4fa4-9a7a-c1a4d282b8ea');
+
+        $this->assertTrue($this->api->deleteCollection($collection));
+    }
+
+    public function testItCannotDeleteACollectionWithoutAnId(): void
+    {
+        $collection = new Collection();
+
+        $this->expectException(InvalidResourceException::class);
+        $this->expectExceptionMessage('Could not delete collection. This collection does not have an id.');
+        $this->api->deleteCollection($collection);
+    }
 }

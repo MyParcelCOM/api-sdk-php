@@ -234,6 +234,9 @@ interface MyParcelComApiInterface
 
     public function updateCollection(CollectionInterface $collection): CollectionInterface;
 
+    public function registerCollection(CollectionInterface|string $collectionId): CollectionInterface;
+
+    public function deleteCollection(CollectionInterface $collection): bool;
     // TODO: Add other collection methods.
 
     /**

@@ -707,6 +707,22 @@ class MyParcelComApi implements MyParcelComApiInterface
 
         return $this->patchResource($collectionToRegister);
     }
+
+    /**
+     * @throws RequestException
+     */
+    public function deleteCollection(CollectionInterface $collection): bool
+    {
+        if (!$collection->getId()) {
+            throw new InvalidResourceException(
+                'Could not delete collection. This collection does not have an id.',
+            );
+        }
+
+        $this->deleteResource($collection);
+
+        return true;
+    }
     // TODO: Add other collection methods.
 
     /**
@@ -949,6 +965,21 @@ class MyParcelComApi implements MyParcelComApiInterface
         array $headers = [],
     ): ResourceInterface {
         return $this->sendResource($resource, 'post', $meta, $headers);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    protected function deleteResource(
+        ResourceInterface $resource,
+        array $headers = [],
+    ): ResponseInterface {
+        return $this->doRequest(
+            $this->getResourceUri($resource->getType(), $resource->getId()),
+            'delete',
+            [],
+            $this->authenticator->getAuthorizationHeader() + $headers
+        );
     }
 
     /**
