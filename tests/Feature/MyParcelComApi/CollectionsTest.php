@@ -11,6 +11,7 @@ use MyParcelCom\ApiSdk\Resources\Address;
 use MyParcelCom\ApiSdk\Resources\Collection;
 use MyParcelCom\ApiSdk\Resources\CollectionTime;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
+use MyParcelCom\ApiSdk\Resources\Shipment;
 use MyParcelCom\ApiSdk\Resources\Shop;
 use MyParcelCom\ApiSdk\Tests\TestCase;
 
@@ -279,5 +280,40 @@ class CollectionsTest extends TestCase
         $this->expectException(InvalidResourceException::class);
         $this->expectExceptionMessage('Could not delete collection. This collection does not have an id.');
         $this->api->deleteCollection($collection);
+    }
+
+    public function testItAddsShipmentsToACollection(): void
+    {
+        $collection = new Collection();
+        $collection->setId('8d8d63aa-032b-4674-990b-706551a2bf23');
+
+        $shipmentIds = [
+            '65e10ca7-5e34-40da-9da5-928f8aa57f97',
+            '872960ef-2a2c-4ab5-9a36-01478fd20276',
+        ];
+
+        $updatedCollection = $this->api->addShipmentsToCollection($collection, $shipmentIds);
+        $this->assertCount(2, $updatedCollection->getShipments());
+    }
+
+    public function testItAcceptsShipmentInterfacesWhenAddingToACollection(): void
+    {
+        $collection = new Collection();
+        $collection->setId('8d8d63aa-032b-4674-990b-706551a2bf23');
+
+        $shipmentIds = [
+            '65e10ca7-5e34-40da-9da5-928f8aa57f97',
+            (new Shipment())->setId('872960ef-2a2c-4ab5-9a36-01478fd20276'),
+        ];
+
+        $updatedCollection = $this->api->addShipmentsToCollection($collection, $shipmentIds);
+        $this->assertCount(2, $updatedCollection->getShipments());
+    }
+
+    public function testAddingShipmentsToACollectionRequiresACollectionId(): void
+    {
+        $this->expectException(InvalidResourceException::class);
+        $this->expectExceptionMessage('Could not add shipments to collection. This collection does not have an id.');
+        $this->api->addShipmentsToCollection(new Collection(), ['65e10ca7-5e34-40da-9da5-928f8aa57f97']);
     }
 }

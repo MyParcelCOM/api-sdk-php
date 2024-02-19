@@ -17,6 +17,7 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceRateInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
+use MyParcelCom\ApiSdk\Resources\Shipment;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -237,6 +238,13 @@ interface MyParcelComApiInterface
     public function registerCollection(CollectionInterface|string $collectionId): CollectionInterface;
 
     public function deleteCollection(CollectionInterface $collection): bool;
+
+    /**
+     * @param CollectionInterface             $collection
+     * @param array<ShipmentInterface|string> $shipments Either an array of strings or an array of ShipmentInterface objects.
+     * @return CollectionInterface
+     */
+    public function addShipmentsToCollection(CollectionInterface $collection, array $shipments): CollectionInterface;
     // TODO: Add other collection methods.
 
     /**

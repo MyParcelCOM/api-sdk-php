@@ -723,6 +723,36 @@ class MyParcelComApi implements MyParcelComApiInterface
 
         return true;
     }
+
+    /**
+     * @param CollectionInterface             $collection
+     * @param array<ShipmentInterface|string> $shipments Either an array of strings or an array of ShipmentInterface objects.
+     * @return CollectionInterface
+     *
+     * @throws RequestException
+     */
+    public function addShipmentsToCollection(
+        CollectionInterface $collection,
+        array $shipments
+    ): CollectionInterface {
+        if (!$collection->getId()) {
+            throw new InvalidResourceException(
+                'Could not add shipments to collection. This collection does not have an id.',
+            );
+        }
+
+        $this->doRequest('/add-shipments-to-collection', 'post', [
+            'data' => [
+                'collection_id' => $collection->getId(),
+                'shipment_ids'  => array_map(function (ShipmentInterface|string $shipment) {
+                    return $shipment instanceof ShipmentInterface ? $shipment->getId() : $shipment;
+                }, $shipments),
+            ],
+        ]);
+
+        return $this->getCollection($collection->getId());
+    }
+
     // TODO: Add other collection methods.
 
     /**
