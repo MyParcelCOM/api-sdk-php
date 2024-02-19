@@ -21,4 +21,16 @@ interface CarrierInterface extends ResourceInterface
     public function setLabelMimeTypes(array $labelMimeTypes): self;
 
     public function getLabelMimeTypes(): array;
+
+    public function setOffersCollections(bool $offersCollections): self;
+
+    public function getOffersCollections(): bool;
+
+    public function setVoidsRegisteredCollections(bool $voidsRegisteredCollections): self;
+
+    public function getVoidsRegisteredCollections(): bool;
+
+    public function setAllowsAddingRegisteredShipmentsToCollection(bool $allowsAddingRegisteredShipments): self;
+
+    public function getAllowsAddingRegisteredShipmentsToCollection(): bool;
 }

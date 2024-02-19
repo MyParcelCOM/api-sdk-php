@@ -9,6 +9,7 @@ use MyParcelCom\ApiSdk\Enums\TaxTypeEnum;
 use MyParcelCom\ApiSdk\MyParcelComApi;
 use MyParcelCom\ApiSdk\MyParcelComApiInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CustomsInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
@@ -365,6 +366,15 @@ class ShipmentProxyTest extends TestCase
         $this->assertInstanceOf(ShipmentStatusInterface::class, $status);
         $this->assertEquals(ResourceInterface::TYPE_SHIPMENT_STATUS, $status->getType());
         $this->assertEquals('shipment-status-id-1', $status->getId());
+    }
+
+    /** @test */
+    public function testCollectionRelationship()
+    {
+        $collection = $this->shipmentProxy->getCollection();
+        $this->assertInstanceOf(CollectionInterface::class, $collection);
+        $this->assertEquals(ResourceInterface::TYPE_COLLECTION, $collection->getType());
+        $this->assertEquals('collection-id-1', $collection->getId());
     }
 
     /** @test */

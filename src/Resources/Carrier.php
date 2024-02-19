@@ -20,16 +20,22 @@ class Carrier implements CarrierInterface
     const ATTRIBUTE_CODE = 'code';
     const ATTRIBUTE_CREDENTIALS_FORMAT = 'credentials_format';
     const ATTRIBUTE_LABEL_MIME_TYPES = 'label_mime_types';
+    const ATTRIBUTE_OFFERS_COLLECTIONS = 'offers_collections';
+    const ATTRIBUTE_VOIDS_REGISTERED_COLLECTIONS = 'voids_registered_collections';
+    const ATTRIBUTE_ALLOWS_ADDING_REGISTERED_SHIPMENTS_TO_COLLECTION = 'allows_adding_registered_shipments_to_collection';
 
     private ?string $id = null;
 
     private string $type = ResourceInterface::TYPE_CARRIER;
 
     private array $attributes = [
-        self::ATTRIBUTE_NAME               => null,
-        self::ATTRIBUTE_CODE               => null,
-        self::ATTRIBUTE_CREDENTIALS_FORMAT => [],
-        self::ATTRIBUTE_LABEL_MIME_TYPES   => [],
+        self::ATTRIBUTE_NAME                                             => null,
+        self::ATTRIBUTE_CODE                                             => null,
+        self::ATTRIBUTE_CREDENTIALS_FORMAT                               => [],
+        self::ATTRIBUTE_LABEL_MIME_TYPES                                 => [],
+        self::ATTRIBUTE_OFFERS_COLLECTIONS                               => null,
+        self::ATTRIBUTE_VOIDS_REGISTERED_COLLECTIONS                     => null,
+        self::ATTRIBUTE_ALLOWS_ADDING_REGISTERED_SHIPMENTS_TO_COLLECTION => null,
     ];
 
     public function setName(string $name): self
@@ -78,6 +84,43 @@ class Carrier implements CarrierInterface
     public function getLabelMimeTypes(): array
     {
         return $this->attributes[self::ATTRIBUTE_LABEL_MIME_TYPES];
+    }
+
+    public function setOffersCollections(bool $offersCollections): self
+    {
+        $this->attributes[self::ATTRIBUTE_OFFERS_COLLECTIONS] = $offersCollections;
+
+        return $this;
+    }
+
+    public function getOffersCollections(): bool
+    {
+        return $this->attributes[self::ATTRIBUTE_OFFERS_COLLECTIONS];
+    }
+
+    public function setVoidsRegisteredCollections(bool $voidsRegisteredCollections): self
+    {
+        $this->attributes[self::ATTRIBUTE_VOIDS_REGISTERED_COLLECTIONS] = $voidsRegisteredCollections;
+
+        return $this;
+    }
+
+    public function getVoidsRegisteredCollections(): bool
+    {
+        return $this->attributes[self::ATTRIBUTE_VOIDS_REGISTERED_COLLECTIONS];
+    }
+
+    public function setAllowsAddingRegisteredShipmentsToCollection(
+        bool $allowsAddingRegisteredShipments
+    ): self {
+        $this->attributes[self::ATTRIBUTE_ALLOWS_ADDING_REGISTERED_SHIPMENTS_TO_COLLECTION] = $allowsAddingRegisteredShipments;
+
+        return $this;
+    }
+
+    public function getAllowsAddingRegisteredShipmentsToCollection(): bool
+    {
+        return $this->attributes[self::ATTRIBUTE_ALLOWS_ADDING_REGISTERED_SHIPMENTS_TO_COLLECTION];
     }
 
     /**

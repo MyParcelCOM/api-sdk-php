@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class CarrierTest extends TestCase
 {
-    /** @test */
     public function testId()
     {
         $carrier = new Carrier();
@@ -19,7 +18,6 @@ class CarrierTest extends TestCase
         $this->assertEquals('carrier-id', $carrier->setId('carrier-id')->getId());
     }
 
-    /** @test */
     public function testName()
     {
         $carrier = new Carrier();
@@ -27,7 +25,6 @@ class CarrierTest extends TestCase
         $this->assertEquals('MyParcel.com Carrier', $carrier->setName('MyParcel.com Carrier')->getName());
     }
 
-    /** @test */
     public function testGetType()
     {
         $carrier = new Carrier();
@@ -35,7 +32,6 @@ class CarrierTest extends TestCase
         $this->assertEquals('carriers', $carrier->getType());
     }
 
-    /** @test */
     public function testCode()
     {
         $carrier = new Carrier();
@@ -43,7 +39,6 @@ class CarrierTest extends TestCase
         $this->assertEquals('some-code', $carrier->setCode('some-code')->getCode());
     }
 
-    /** @test */
     public function testCredentialsFormat()
     {
         $carrier = new Carrier();
@@ -75,7 +70,36 @@ class CarrierTest extends TestCase
         ], $carrier->getCredentialsFormat());
     }
 
-    /** @test */
+    public function testOffersCollections()
+    {
+        $carrier = new Carrier();
+
+        $this->assertTrue($carrier->setOffersCollections(true)->getOffersCollections());
+        $this->assertFalse($carrier->setOffersCollections(false)->getOffersCollections());
+    }
+
+    public function testVoidsRegisteredCollections()
+    {
+        $carrier = new Carrier();
+
+        $this->assertTrue($carrier->setVoidsRegisteredCollections(true)->getVoidsRegisteredCollections());
+        $this->assertFalse($carrier->setVoidsRegisteredCollections(false)->getVoidsRegisteredCollections());
+    }
+
+    public function testAllowsAddingRegisteredShipmentsToCollection()
+    {
+        $carrier = new Carrier();
+
+        $this->assertTrue(
+            $carrier->setAllowsAddingRegisteredShipmentsToCollection(true)
+                ->getAllowsAddingRegisteredShipmentsToCollection(),
+        );
+        $this->assertFalse(
+            $carrier->setAllowsAddingRegisteredShipmentsToCollection(false)
+                ->getAllowsAddingRegisteredShipmentsToCollection(),
+        );
+    }
+
     public function testJsonSerialize()
     {
         $carrier = (new Carrier())

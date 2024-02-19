@@ -20,6 +20,11 @@
           }
         }
       },
+      "collections":  {
+        "offers_collections": true,
+        "voids_registered_collections": true,
+        "allows_adding_registered_shipments_to_collection": false
+      },
       "label_mime_types": [
         "application/pdf"
       ]

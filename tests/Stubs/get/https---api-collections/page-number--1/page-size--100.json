@@ -1,0 +1,132 @@
+{
+  "data": [
+    {
+      "id": "8d8d63aa-032b-4674-990b-706551a2bf23",
+      "type": "collections",
+      "attributes": {
+        "description": "Test collection 1",
+        "collection_time": {
+          "from": 1708153200,
+          "to": 1708171200
+        },
+        "address": {
+          "street_1": "Baker Street",
+          "city": "London",
+          "country_code": "GB"
+        },
+        "created_at": 1707872440
+      },
+      "links": {
+        "self": "https:\/\/api.localhost.private\/collections\/8d8d63aa-032b-4674-990b-706551a2bf23"
+      },
+      "relationships": {
+        "shop": {
+          "data": {
+            "id": "1ebabb0e-9036-4259-b58e-2b42742bb86a",
+            "type": "shops"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/shops\/1ebabb0e-9036-4259-b58e-2b42742bb86a"
+          }
+        },
+        "status": {
+          "data": {
+            "id": "822a42ad-caf7-4576-812a-bd7c2cfa589c",
+            "type": "statuses"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/statuses\/822a42ad-caf7-4576-812a-bd7c2cfa589c"
+          }
+        }
+      }
+    },
+    {
+      "id": "b0942aa0-26e6-44f3-bd6e-e49ef155b049",
+      "type": "collections",
+      "attributes": {
+        "description": "Test collection 2",
+        "collection_time": {
+          "from": "2024-02-17T17:00:00.000",
+          "to": "2024-02-17T23:00:00.000"
+        },
+        "address": {
+          "street_1": "Baker Street",
+          "city": "London",
+          "country_code": "GB"
+        },
+        "created_at": 1707786037
+      },
+      "links": {
+        "self": "https:\/\/api.localhost.private\/collections\/b0942aa0-26e6-44f3-bd6e-e49ef155b049"
+      },
+      "relationships": {
+        "shop": {
+          "data": {
+            "id": "1ebabb0e-9036-4259-b58e-2b42742bb86a",
+            "type": "shops"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/shops\/1ebabb0e-9036-4259-b58e-2b42742bb86a"
+          }
+        },
+        "status": {
+          "data": {
+            "id": "822a42ad-caf7-4576-812a-bd7c2cfa589c",
+            "type": "statuses"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/statuses\/822a42ad-caf7-4576-812a-bd7c2cfa589c"
+          }
+        }
+      }
+    },
+    {
+      "id": "caeefed1-987b-4df7-acc5-fbd982247ded",
+      "type": "collections",
+      "attributes": {
+        "description": "Test collection 3",
+        "collection_time": {
+          "from": 1707980400,
+          "to": 1707998400
+        },
+        "address": {
+          "street_1": "Baker Street",
+          "city": "London",
+          "country_code": "GB"
+        },
+        "created_at": 1707699635
+      },
+      "links": {
+        "self": "https:\/\/api.localhost.private\/collections\/caeefed1-987b-4df7-acc5-fbd982247ded"
+      },
+      "relationships": {
+        "shop": {
+          "data": {
+            "id": "1ebabb0e-9036-4259-b58e-2b42742bb86a",
+            "type": "shops"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/shops\/1ebabb0e-9036-4259-b58e-2b42742bb86a"
+          }
+        },
+        "status": {
+          "data": {
+            "id": "822a42ad-caf7-4576-812a-bd7c2cfa589c",
+            "type": "statuses"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/statuses\/822a42ad-caf7-4576-812a-bd7c2cfa589c"
+          }
+        }
+      }
+    }
+  ],
+  "meta": {
+    "total_pages": 1,
+    "total_records": 3
+  },
+  "links": {
+    "self": "https:\/\/api.localhost.private\/collections?page[size]=100&page[number]=1",
+    "first": "https:\/\/api.localhost.private\/collections?page[size]=100&page[number]=1"
+  }
+}

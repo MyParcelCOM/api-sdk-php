@@ -9,14 +9,16 @@ use GuzzleHttp\Psr7\Request;
 use Http\Discovery\HttpClientDiscovery;
 use MyParcelCom\ApiSdk\Authentication\AuthenticatorInterface;
 use MyParcelCom\ApiSdk\Collection\ArrayCollection;
-use MyParcelCom\ApiSdk\Collection\CollectionInterface;
+use MyParcelCom\ApiSdk\Collection\CollectionInterface as ResourceCollectionInterface;
 use MyParcelCom\ApiSdk\Collection\RequestCollection;
 use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Http\Contracts\HttpClient\RequestExceptionInterface;
 use MyParcelCom\ApiSdk\Http\Exceptions\RequestException;
+use MyParcelCom\ApiSdk\Resources\Collection;
 use MyParcelCom\ApiSdk\Resources\File;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceFactoryInterface;
@@ -33,6 +35,7 @@ use MyParcelCom\ApiSdk\Resources\ServiceRate;
 use MyParcelCom\ApiSdk\Resources\Shipment;
 use MyParcelCom\ApiSdk\Shipments\ServiceMatcher;
 use MyParcelCom\ApiSdk\Utils\UrlBuilder;
+use MyParcelCom\ApiSdk\Validators\CollectionValidator;
 use MyParcelCom\ApiSdk\Validators\ManifestValidator;
 use MyParcelCom\ApiSdk\Validators\ShipmentValidator;
 use Psr\Http\Client\ClientInterface;
@@ -113,7 +116,7 @@ class MyParcelComApi implements MyParcelComApiInterface
     /**
      * @deprecated
      */
-    public function getRegions(array $filters = [], int $ttl = self::TTL_10MIN): CollectionInterface
+    public function getRegions(array $filters = [], int $ttl = self::TTL_10MIN): ResourceCollectionInterface
     {
         $url = (new UrlBuilder($this->apiUri . self::PATH_REGIONS));
 
@@ -133,7 +136,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         return $this->getRequestCollection($url->getUrl(), $ttl);
     }
 
-    public function getCarriers(int $ttl = self::TTL_10MIN): CollectionInterface
+    public function getCarriers(int $ttl = self::TTL_10MIN): ResourceCollectionInterface
     {
         return $this->getRequestCollection($this->apiUri . self::PATH_CARRIERS, $ttl);
     }
@@ -146,7 +149,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         CarrierInterface $specificCarrier = null,
         bool $onlyActiveContracts = true,
         int $ttl = self::TTL_10MIN,
-    ): CollectionInterface|array {
+    ): ResourceCollectionInterface|array {
         $carriers = $this->determineCarriersForPudoLocations($onlyActiveContracts, $specificCarrier);
 
         $uri = new UrlBuilder(
@@ -204,7 +207,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         return $pudoLocations;
     }
 
-    public function getShops(int $ttl = self::TTL_10MIN): CollectionInterface
+    public function getShops(int $ttl = self::TTL_10MIN): ResourceCollectionInterface
     {
         return $this->getRequestCollection($this->apiUri . self::PATH_SHOPS, $ttl);
     }
@@ -226,7 +229,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         ShipmentInterface $shipment = null,
         array $filters = ['has_active_contract' => 'true'],
         int $ttl = self::TTL_10MIN,
-    ): CollectionInterface {
+    ): ResourceCollectionInterface {
         $url = new UrlBuilder($this->apiUri . self::PATH_SERVICES);
         $url->addQuery($this->arrayToFilters($filters));
 
@@ -270,7 +273,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         return new ArrayCollection($services);
     }
 
-    public function getServicesForCarrier(CarrierInterface $carrier, int $ttl = self::TTL_10MIN): CollectionInterface
+    public function getServicesForCarrier(CarrierInterface $carrier, int $ttl = self::TTL_10MIN): ResourceCollectionInterface
     {
         $url = new UrlBuilder($this->apiUri . self::PATH_SERVICES);
         $url->addQuery($this->arrayToFilters([
@@ -284,7 +287,7 @@ class MyParcelComApi implements MyParcelComApiInterface
     public function getServiceRates(
         array $filters = ['has_active_contract' => 'true'],
         int $ttl = self::TTL_10MIN,
-    ): CollectionInterface {
+    ): ResourceCollectionInterface {
         $url = new UrlBuilder($this->apiUri . self::PATH_SERVICE_RATES);
         $url->addQuery($this->arrayToFilters($filters));
 
@@ -294,7 +297,7 @@ class MyParcelComApi implements MyParcelComApiInterface
     public function getServiceRatesForShipment(
         ShipmentInterface $shipment,
         int $ttl = self::TTL_10MIN,
-    ): CollectionInterface {
+    ): ResourceCollectionInterface {
         $services = $this->getServices($shipment, ['has_active_contract' => 'true'], $ttl);
         $serviceIds = [];
         foreach ($services as $service) {
@@ -409,7 +412,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         return $this->jsonToResources($json['data'], $included);
     }
 
-    public function getShipments(ShopInterface $shop = null, int $ttl = self::TTL_NO_CACHE): CollectionInterface
+    public function getShipments(ShopInterface $shop = null, int $ttl = self::TTL_NO_CACHE): ResourceCollectionInterface
     {
         $url = new UrlBuilder($this->apiUri . self::PATH_SHIPMENTS);
 
@@ -565,7 +568,7 @@ class MyParcelComApi implements MyParcelComApiInterface
      *
      * @throws MyParcelComException
      */
-    public function getManifests(int $ttl = self::TTL_10MIN): CollectionInterface
+    public function getManifests(int $ttl = self::TTL_10MIN): ResourceCollectionInterface
     {
         return $this->getRequestCollection($this->apiUri . self::PATH_MANIFESTS, $ttl);
     }
@@ -627,6 +630,142 @@ class MyParcelComApi implements MyParcelComApiInterface
         return (new File())
             ->addFormat(FileInterface::MIME_TYPE_PDF, FileInterface::EXTENSION_PDF)
             ->setStream($response->getBody(), FileInterface::MIME_TYPE_PDF);
+    }
+
+    public function getCollections(array $filters = [], int $ttl = self::TTL_10MIN): ResourceCollectionInterface
+    {
+        $url = (new UrlBuilder($this->apiUri . self::PATH_COLLECTIONS));
+        $url->addQuery($this->arrayToFilters($filters));
+
+        return $this->getRequestCollection($url->getUrl(), $ttl);
+    }
+
+    public function getCollection(string $collectionId, int $ttl = self::TTL_NO_CACHE): CollectionInterface
+    {
+        return $this->getResourceById(ResourceInterface::TYPE_COLLECTION, $collectionId, $ttl);
+    }
+
+    public function createCollection(CollectionInterface $collection): CollectionInterface
+    {
+        if (!$collection->getShop()) {
+            $collection->setShop($this->getDefaultShop());
+        }
+
+        if ($collection->getAddress() === null) {
+            $collection->setAddress(
+                $collection->getShop()->getSenderAddress() ?? $collection->getShop()->getReturnAddress()
+            );
+        }
+
+        $validator = new CollectionValidator($collection);
+        if (!$validator->isValid()) {
+            $message = 'This collection contains invalid data. ' . implode('. ', $validator->getErrors()) . '.';
+            $exception = new InvalidResourceException($message);
+            $exception->setErrors($validator->getErrors());
+
+            throw $exception;
+        }
+
+        return $this->postResource($collection);
+    }
+
+    public function updateCollection(CollectionInterface $collection): CollectionInterface
+    {
+        if (!$collection->getId()) {
+            throw new InvalidResourceException(
+                'Could not update collection. This collection does not have an id, use createCollection() to save it.',
+            );
+        }
+
+        $validator = new CollectionValidator($collection);
+        if (!$validator->isValid()) {
+            $message = 'This collection contains invalid data. ' . implode('. ', $validator->getErrors()) . '.';
+            $exception = new InvalidResourceException($message);
+            $exception->setErrors($validator->getErrors());
+
+            throw $exception;
+        }
+
+        return $this->patchResource($collection);
+    }
+
+    public function registerCollection(CollectionInterface|string $collectionId): CollectionInterface
+    {
+        if ($collectionId instanceof CollectionInterface) {
+            $collectionId = $collectionId->getId();
+        }
+
+        if (!$collectionId) {
+            throw new InvalidResourceException(
+                'Could not register collection. This collection does not have an id, use createCollection() to save it.',
+            );
+        }
+
+        $collectionToRegister = (new Collection())
+            ->setId($collectionId)
+            ->setRegister(true);
+
+        return $this->patchResource($collectionToRegister);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function deleteCollection(CollectionInterface $collection): bool
+    {
+        if (!$collection->getId()) {
+            throw new InvalidResourceException(
+                'Could not delete collection. This collection does not have an id.',
+            );
+        }
+
+        $this->deleteResource($collection);
+
+        return true;
+    }
+
+    /**
+     * @throws RequestException
+     */
+    public function addShipmentsToCollection(
+        CollectionInterface $collection,
+        array $shipments
+    ): CollectionInterface {
+        if (!$collection->getId()) {
+            throw new InvalidResourceException(
+                'Could not add shipments to collection. This collection does not have an id.',
+            );
+        }
+
+        $this->doRequest('/add-shipments-to-collection', 'post', [
+            'data' => [
+                'collection_id' => $collection->getId(),
+                'shipment_ids'  => array_map(function (ShipmentInterface|string $shipment) {
+                    return $shipment instanceof ShipmentInterface ? $shipment->getId() : $shipment;
+                }, $shipments),
+            ],
+        ]);
+
+        return $this->getCollection($collection->getId());
+    }
+
+    public function generateManifestForCollection(CollectionInterface $collection): ManifestInterface
+    {
+        if (!$collection->getId()) {
+            throw new InvalidResourceException(
+                'Could not generate manifest for collection. This collection does not have an id.',
+            );
+        }
+
+        $response = $this->doRequest('/create-manifest-for-collection', 'post', [
+            'data' => [
+                'collection_id' => $collection->getId(),
+            ],
+        ]);
+
+        $json = json_decode((string) $response->getBody(), true);
+
+        return $this->resourceFactory->create('manifests', $json['data']);
     }
 
     /**
@@ -716,7 +855,7 @@ class MyParcelComApi implements MyParcelComApiInterface
      * Get a collection of resources requested from the given uri.
      * A time-to-live can be specified for how long this request should be cached (defaults to 10 minutes).
      */
-    protected function getRequestCollection(string $uri, int $ttl = self::TTL_10MIN): CollectionInterface
+    protected function getRequestCollection(string $uri, int $ttl = self::TTL_10MIN): ResourceCollectionInterface
     {
         return new RequestCollection(function ($pageNumber, $pageSize) use ($uri, $ttl) {
             $url = (new UrlBuilder($uri))->addQuery([
@@ -869,6 +1008,21 @@ class MyParcelComApi implements MyParcelComApiInterface
         array $headers = [],
     ): ResourceInterface {
         return $this->sendResource($resource, 'post', $meta, $headers);
+    }
+
+    /**
+     * @throws RequestException
+     */
+    protected function deleteResource(
+        ResourceInterface $resource,
+        array $headers = [],
+    ): ResponseInterface {
+        return $this->doRequest(
+            $this->getResourceUri($resource->getType(), $resource->getId()),
+            'delete',
+            [],
+            $this->authenticator->getAuthorizationHeader() + $headers
+        );
     }
 
     /**
