@@ -7,6 +7,7 @@ namespace MyParcelCom\ApiSdk\Tests\Unit;
 use MyParcelCom\ApiSdk\Enums\TaxTypeEnum;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CustomsInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
@@ -292,6 +293,17 @@ class ShipmentTest extends TestCase
 
         $this->assertEquals($mock, $shipment->setManifest($mock)->getManifest());
     }
+
+    /** @test */
+    public function testItSetsAndGetsACollection()
+    {
+        $shipment = new Shipment();
+
+        $mock = $this->createMock(CollectionInterface::class);
+
+        $this->assertEquals($mock, $shipment->setCollection($mock)->getCollection());
+    }
+
 
     /** @test */
     public function testStatus()
@@ -647,6 +659,18 @@ class ShipmentTest extends TestCase
                 'type' => 'manifests',
             ]);
 
+        $collection = $this->getMockBuilder(CollectionInterface::class)
+            ->disableOriginalConstructor()
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
+            ->disallowMockingUnknownTypes()
+            ->getMock();
+        $collection->method('jsonSerialize')
+            ->willReturn([
+                'id'   => 'collection-id-1',
+                'type' => 'collections',
+            ]);
+
         $shop = $this->getMockBuilder(ShopInterface::class)
             ->disableOriginalConstructor()
             ->disableOriginalClone()
@@ -745,6 +769,7 @@ class ShipmentTest extends TestCase
             ->setService($service)
             ->setContract($contract)
             ->setManifest($manifest)
+            ->setCollection($collection)
             ->setShipmentStatus($status)
             ->setRecipientAddress($recipientAddress)
             ->setRecipientTaxNumber('H111111-11')
@@ -883,6 +908,7 @@ class ShipmentTest extends TestCase
                 'shipment_status' => ['data' => ['id' => 'shipment-status-id-1', 'type' => 'shipment-statuses']],
                 'service_options' => ['data' => [['id' => 'option-id-1', 'type' => 'service-options']]],
                 'files'           => ['data' => [['id' => 'file-id-1', 'type' => 'files']]],
+                'collection'      => ['data' => ['id' => 'collection-id-1', 'type' => 'collections']],
             ],
             'meta'          => [
                 'label_mime_type' => 'application/pdf',

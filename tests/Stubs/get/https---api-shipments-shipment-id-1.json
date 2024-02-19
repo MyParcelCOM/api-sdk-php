@@ -200,6 +200,12 @@
           "id": "contract-id-1"
         }
       },
+      "collection": {
+        "data": {
+          "type": "collections",
+          "id": "collection-id-1"
+        }
+      },
       "files": {
         "data": [
           {
