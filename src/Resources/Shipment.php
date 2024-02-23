@@ -6,9 +6,11 @@ namespace MyParcelCom\ApiSdk\Resources;
 
 use DateTime;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CustomsInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\PhysicalPropertiesInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceInterface;
@@ -57,10 +59,12 @@ class Shipment implements ShipmentInterface
 
     const RELATIONSHIP_CONTRACT = 'contract';
     const RELATIONSHIP_FILES = 'files';
+    const RELATIONSHIP_MANIFEST = 'manifest';
     const RELATIONSHIP_SERVICE = 'service';
     const RELATIONSHIP_SERVICE_OPTIONS = 'service_options';
     const RELATIONSHIP_STATUS = 'shipment_status';
     const RELATIONSHIP_SHOP = 'shop';
+    const RELATIONSHIP_COLLECTION = 'collection';
 
     const META_LABEL_MIME_TYPE = 'label_mime_type';
     const META_SERVICE_CODE = 'service_code';
@@ -72,6 +76,7 @@ class Shipment implements ShipmentInterface
         ResourceInterface::TYPE_SERVICE_OPTION  => self::RELATIONSHIP_SERVICE_OPTIONS,
         ResourceInterface::TYPE_SHIPMENT_STATUS => self::RELATIONSHIP_STATUS,
         ResourceInterface::TYPE_SHOP            => self::RELATIONSHIP_SHOP,
+        ResourceInterface::TYPE_COLLECTION      => self::RELATIONSHIP_COLLECTION,
     ];
 
     private ?string $id = null;
@@ -123,6 +128,12 @@ class Shipment implements ShipmentInterface
             'data' => null,
         ],
         self::RELATIONSHIP_CONTRACT        => [
+            'data' => null,
+        ],
+        self::RELATIONSHIP_MANIFEST        => [
+            'data' => null,
+        ],
+        self::RELATIONSHIP_COLLECTION      => [
             'data' => null,
         ],
     ];
@@ -700,5 +711,29 @@ class Shipment implements ShipmentInterface
         $this->meta[self::META_LABEL_MIME_TYPE] = $labelMimeType;
 
         return $this;
+    }
+
+    public function setManifest(?ManifestInterface $manifest): self
+    {
+        $this->relationships[self::RELATIONSHIP_MANIFEST]['data'] = $manifest;
+
+        return $this;
+    }
+
+    public function getManifest(): ?ManifestInterface
+    {
+        return $this->relationships[self::RELATIONSHIP_MANIFEST]['data'];
+    }
+
+    public function setCollection(?CollectionInterface $collection): ShipmentInterface
+    {
+        $this->relationships[self::RELATIONSHIP_COLLECTION]['data'] = $collection;
+
+        return $this;
+    }
+
+    public function getCollection(): ?CollectionInterface
+    {
+        return $this->relationships[self::RELATIONSHIP_COLLECTION]['data'];
     }
 }

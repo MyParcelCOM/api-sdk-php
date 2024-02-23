@@ -8,5 +8,5 @@ interface OrganizationInterface extends ResourceInterface
 {
     public function setName(string $name): self;
 
-    public function getName(): string;
+    public function getName(): ?string;
 }

@@ -217,4 +217,8 @@ interface ShipmentInterface extends ResourceInterface
     public function getTags(): ?array;
 
     public function clearTags(): self;
+
+    public function setCollection(?CollectionInterface $collection): self;
+
+    public function getCollection(): ?CollectionInterface;
 }

@@ -12,6 +12,7 @@ interface FileInterface extends ResourceInterface
     const DOCUMENT_TYPE_PRINTCODE = 'printcode';
     const DOCUMENT_TYPE_CUSTOMS_DECLARATION_FORM = 'customs-declaration-form';
     const DOCUMENT_TYPE_COMMERCIAL_INVOICE = 'commercial-invoice';
+    const EXTENSION_PDF = 'pdf';
 
     const MIME_TYPE_JSON = 'application/vnd.api+json';
     const MIME_TYPE_PNG = 'image/png';

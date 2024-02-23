@@ -1,0 +1,41 @@
+{
+  "data": {
+    "id": "77eda208-d081-49bf-9f74-cb9a98fc71f3",
+    "type": "collections",
+    "attributes": {
+      "collection_time": {
+        "from": 123456789,
+        "to": 123456800
+      },
+      "address": {
+        "street_1": "Test street 1",
+        "city": "Test city",
+        "country_code": "NL"
+      },
+      "created_at": 1707991769
+    },
+    "links": {
+      "self": "https:\/\/api.localhost.private\/collections\/77eda208-d081-49bf-9f74-cb9a98fc71f3"
+    },
+    "relationships": {
+      "shop": {
+        "data": {
+          "id": "1ebabb0e-9036-4259-b58e-2b42742bb86a",
+          "type": "shops"
+        },
+        "links": {
+          "related": "https:\/\/api.localhost.private\/shops\/1ebabb0e-9036-4259-b58e-2b42742bb86a"
+        }
+      },
+      "status": {
+        "data": {
+          "id": "583e311f-8f03-4b34-84dd-5a82305ce5a8",
+          "type": "statuses"
+        },
+        "links": {
+          "related": "https:\/\/api.localhost.private\/statuses\/583e311f-8f03-4b34-84dd-5a82305ce5a8"
+        }
+      }
+    }
+  }
+}

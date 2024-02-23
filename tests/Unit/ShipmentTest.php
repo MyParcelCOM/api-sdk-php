@@ -7,9 +7,11 @@ namespace MyParcelCom\ApiSdk\Tests\Unit;
 use MyParcelCom\ApiSdk\Enums\TaxTypeEnum;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CustomsInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\PhysicalPropertiesInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
@@ -184,7 +186,10 @@ class ShipmentTest extends TestCase
     public function testTrackingUrl()
     {
         $shipment = new Shipment();
-        $this->assertEquals('https://track/ATRACKINGCODE', $shipment->setTrackingUrl('https://track/ATRACKINGCODE')->getTrackingUrl());
+        $this->assertEquals(
+            'https://track/ATRACKINGCODE',
+            $shipment->setTrackingUrl('https://track/ATRACKINGCODE')->getTrackingUrl(),
+        );
     }
 
     /** @test */
@@ -229,7 +234,10 @@ class ShipmentTest extends TestCase
         $shipment = new Shipment();
         $physicalProperties = $this->getMockBuilder(PhysicalPropertiesInterface::class)->getMock();
 
-        $this->assertEquals($physicalProperties, $shipment->setPhysicalProperties($physicalProperties)->getPhysicalProperties());
+        $this->assertEquals(
+            $physicalProperties,
+            $shipment->setPhysicalProperties($physicalProperties)->getPhysicalProperties(),
+        );
     }
 
     /** @test */
@@ -275,6 +283,27 @@ class ShipmentTest extends TestCase
 
         $this->assertEquals($mock, $shipment->setContract($mock)->getContract());
     }
+
+    /** @test */
+    public function testItSetsAndGetsAManifest()
+    {
+        $shipment = new Shipment();
+
+        $mock = $this->createMock(ManifestInterface::class);
+
+        $this->assertEquals($mock, $shipment->setManifest($mock)->getManifest());
+    }
+
+    /** @test */
+    public function testItSetsAndGetsACollection()
+    {
+        $shipment = new Shipment();
+
+        $mock = $this->createMock(CollectionInterface::class);
+
+        $this->assertEquals($mock, $shipment->setCollection($mock)->getCollection());
+    }
+
 
     /** @test */
     public function testStatus()
@@ -418,16 +447,16 @@ class ShipmentTest extends TestCase
 
         $this->assertEquals(
             1337,
-            $shipment->setRegisterAt(1337)->getRegisterAt()->getTimestamp()
+            $shipment->setRegisterAt(1337)->getRegisterAt()->getTimestamp(),
         );
         $this->assertEquals(
             (new \DateTime('2019-11-04'))->getTimestamp(),
-            $shipment->setRegisterAt('2019-11-04')->getRegisterAt()->getTimestamp()
+            $shipment->setRegisterAt('2019-11-04')->getRegisterAt()->getTimestamp(),
         );
         $now = time();
         $this->assertEquals(
             $now,
-            $shipment->setRegisterAt((new \DateTime())->setTimestamp($now))->getRegisterAt()->getTimestamp()
+            $shipment->setRegisterAt((new \DateTime())->setTimestamp($now))->getRegisterAt()->getTimestamp(),
         );
     }
 
@@ -618,6 +647,30 @@ class ShipmentTest extends TestCase
                 'type' => 'contracts',
             ]);
 
+        $manifest = $this->getMockBuilder(ManifestInterface::class)
+            ->disableOriginalConstructor()
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
+            ->disallowMockingUnknownTypes()
+            ->getMock();
+        $manifest->method('jsonSerialize')
+            ->willReturn([
+                'id'   => 'manifest-id-1',
+                'type' => 'manifests',
+            ]);
+
+        $collection = $this->getMockBuilder(CollectionInterface::class)
+            ->disableOriginalConstructor()
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
+            ->disallowMockingUnknownTypes()
+            ->getMock();
+        $collection->method('jsonSerialize')
+            ->willReturn([
+                'id'   => 'collection-id-1',
+                'type' => 'collections',
+            ]);
+
         $shop = $this->getMockBuilder(ShopInterface::class)
             ->disableOriginalConstructor()
             ->disableOriginalClone()
@@ -715,6 +768,8 @@ class ShipmentTest extends TestCase
             ->setFiles([$file])
             ->setService($service)
             ->setContract($contract)
+            ->setManifest($manifest)
+            ->setCollection($collection)
             ->setShipmentStatus($status)
             ->setRecipientAddress($recipientAddress)
             ->setRecipientTaxNumber('H111111-11')
@@ -849,9 +904,11 @@ class ShipmentTest extends TestCase
                 'shop'            => ['data' => ['id' => 'shop-id-1', 'type' => 'shops']],
                 'service'         => ['data' => ['id' => 'service-id-1', 'type' => 'services']],
                 'contract'        => ['data' => ['id' => 'contract-id-1', 'type' => 'contracts']],
+                'manifest'        => ['data' => ['id' => 'manifest-id-1', 'type' => 'manifests']],
                 'shipment_status' => ['data' => ['id' => 'shipment-status-id-1', 'type' => 'shipment-statuses']],
                 'service_options' => ['data' => [['id' => 'option-id-1', 'type' => 'service-options']]],
                 'files'           => ['data' => [['id' => 'file-id-1', 'type' => 'files']]],
+                'collection'      => ['data' => ['id' => 'collection-id-1', 'type' => 'collections']],
             ],
             'meta'          => [
                 'label_mime_type' => 'application/pdf',

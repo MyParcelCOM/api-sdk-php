@@ -6,6 +6,7 @@ namespace MyParcelCom\ApiSdk\Resources\Proxy;
 
 use DateTime;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CustomsInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
@@ -532,6 +533,16 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
     public function setLabelMimeType(string $labelMimeType)
     {
         return $this->getResource()->setLabelMimeType($labelMimeType);
+    }
+
+    public function setCollection(?CollectionInterface $collection): self
+    {
+        return $this->getResource()->setCollection($collection);
+    }
+
+    public function getCollection(): ?CollectionInterface
+    {
+        return $this->getResource()->getCollection();
     }
 
     /**

@@ -46,6 +46,21 @@ class CarrierProxyTest extends TestCase
     {
         $this->assertEquals('Carrier Name', $this->carrierProxy->setName('Carrier Name')->getName());
         $this->assertEquals('an-id-for-a-carrier', $this->carrierProxy->setId('an-id-for-a-carrier')->getId());
+        $this->assertFalse(
+            $this->carrierProxy
+                ->setOffersCollections(false)
+                ->getOffersCollections()
+        );
+        $this->assertFalse(
+            $this->carrierProxy
+                ->setAllowsAddingRegisteredShipmentsToCollection(false)
+                ->getAllowsAddingRegisteredShipmentsToCollection()
+        );
+        $this->assertTrue(
+            $this->carrierProxy
+                ->setVoidsRegisteredCollections(true)
+                ->getVoidsRegisteredCollections()
+        );
     }
 
     /** @test */
@@ -54,6 +69,9 @@ class CarrierProxyTest extends TestCase
         $this->assertEquals('eef00b32-177e-43d3-9b26-715365e4ce46', $this->carrierProxy->getId());
         $this->assertEquals(ResourceInterface::TYPE_CARRIER, $this->carrierProxy->getType());
         $this->assertEquals('Test Carrier', $this->carrierProxy->getName());
+        $this->assertTrue($this->carrierProxy->getOffersCollections());
+        $this->assertTrue($this->carrierProxy->getVoidsRegisteredCollections());
+        $this->assertFalse($this->carrierProxy->getAllowsAddingRegisteredShipmentsToCollection());
     }
 
     /** @test */

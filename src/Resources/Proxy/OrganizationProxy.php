@@ -23,7 +23,7 @@ class OrganizationProxy implements OrganizationInterface, ResourceProxyInterface
 
     private ?string $id = null;
 
-    private string $type = ResourceInterface::TYPE_ORGANIZATIONS;
+    private string $type = ResourceInterface::TYPE_ORGANIZATION;
 
     public function setName(string $name): self
     {

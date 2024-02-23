@@ -18,7 +18,7 @@ class Organization implements OrganizationInterface
 
     private ?string $id = null;
 
-    private string $type = ResourceInterface::TYPE_ORGANIZATIONS;
+    private string $type = ResourceInterface::TYPE_ORGANIZATION;
 
     private array $attributes = [
         self::ATTRIBUTE_NAME => null,
@@ -31,7 +31,7 @@ class Organization implements OrganizationInterface
         return $this;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->attributes[self::ATTRIBUTE_NAME];
     }
