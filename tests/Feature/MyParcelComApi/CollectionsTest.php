@@ -134,18 +134,6 @@ class CollectionsTest extends TestCase
     {
         $collection = new Collection();
         $collection->setId('65ddc1c8-8e16-41e3-a383-c8a5eac68caa');
-        $collection->setShop(
-            (new Shop())->setId('1ebabb0e-9036-4259-b58e-2b42742bb86a')
-        );
-        $collection->setCollectionTime(
-            (new CollectionTime())->setFrom(1708085160)->setTo(1708096680)
-        );
-        $collection->setAddress(
-            (new Address())
-                ->setStreet1('Updated street 1')
-                ->setCity('Updated city')
-                ->setCountryCode('NL')
-        );
         $collection->setDescription('Updated description');
 
         $updatedCollection = $this->api->updateCollection($collection);
@@ -173,63 +161,6 @@ class CollectionsTest extends TestCase
         $this->expectException(InvalidResourceException::class);
         $this->expectExceptionMessage('Could not update collection. This collection does not have an id, use createCollection() to save it.');
         $this->api->updateCollection($collection);
-    }
-
-    public function testItFailsToUpdateWhenNoCollectionTimeIsSet(): void
-    {
-        $collectionToUpdate = new Collection();
-        $collectionToUpdate->setId('65ddc1c8-8e16-41e3-a383-c8a5eac68caa');
-
-        $collectionToUpdate->setAddress(
-            (new Address())
-                ->setStreet1('Test street 1')
-                ->setCity('Test city')
-                ->setCountryCode('NL')
-        );
-
-        $collectionToUpdate->setShop(
-            (new Shop())->setId('1ebabb0e-9036-4259-b58e-2b42742bb86a')
-        );
-
-        $this->expectException(InvalidResourceException::class);
-        $this->expectExceptionMessage('This collection contains invalid data. Attribute collection_time.from is required. Attribute collection_time.to is required.');
-        $this->api->updateCollection($collectionToUpdate);
-    }
-
-    public function testItFailsToUpdateWhenNoShopIsSet(): void
-    {
-        $collectionToUpdate = new Collection();
-        $collectionToUpdate->setId('65ddc1c8-8e16-41e3-a383-c8a5eac68caa');
-        $collectionToUpdate->setAddress(
-            (new Address())
-                ->setStreet1('Test street 1')
-                ->setCity('Test city')
-                ->setCountryCode('NL')
-        );
-
-        $collectionToUpdate->setCollectionTime(
-            (new CollectionTime())->setFrom(1708085160)->setTo(1708096680)
-        );
-
-        $this->expectException(InvalidResourceException::class);
-        $this->expectExceptionMessage('This collection contains invalid data. Attribute shop.id is required.');
-        $this->api->updateCollection($collectionToUpdate);
-    }
-
-    public function testItFailsToUpdateWhenNoAddressIsSet(): void
-    {
-        $collectionToUpdate = new Collection();
-        $collectionToUpdate->setId('65ddc1c8-8e16-41e3-a383-c8a5eac68caa');
-        $collectionToUpdate->setShop(
-            (new Shop())->setId('1ebabb0e-9036-4259-b58e-2b42742bb86a')
-        );
-        $collectionToUpdate->setCollectionTime(
-            (new CollectionTime())->setFrom(123456789)->setTo(123456800)
-        );
-
-        $this->expectException(InvalidResourceException::class);
-        $this->expectExceptionMessage('This collection contains invalid data. Attribute address.street_1 is required. Attribute address.city is required. Attribute address.country_code is required.');
-        $this->api->updateCollection($collectionToUpdate);
     }
 
     public function testItRegistersACollection(): void

@@ -669,6 +669,10 @@ class MyParcelComApi implements MyParcelComApiInterface
         return $this->postResource($collection);
     }
 
+    /**
+     * Updates the collection with allowed attributes and relationships.
+     * @see https://api-specification.myparcel.com/#tag/Collections/paths/~1collections~1%7Bcollection_id%7D/patch
+     */
     public function updateCollection(CollectionInterface $collection): CollectionInterface
     {
         if (!$collection->getId()) {
@@ -677,16 +681,17 @@ class MyParcelComApi implements MyParcelComApiInterface
             );
         }
 
-        $validator = new CollectionValidator($collection);
-        if (!$validator->isValid()) {
-            $message = 'This collection contains invalid data. ' . implode('. ', $validator->getErrors()) . '.';
-            $exception = new InvalidResourceException($message);
-            $exception->setErrors($validator->getErrors());
+        $collectionToUpdate = (new Collection())
+            ->setId($collection->getId())
+            ->setDescription($collection->getDescription())
+            ->setRegister($collection->getRegister());
 
-            throw $exception;
+        // Only the `collection-collected` status can be manually assigned by users.
+        if ($collection->getStatus()?->getCode() === 'collection-collected') {
+            $collectionToUpdate->setStatus($collection->getStatus());
         }
 
-        return $this->patchResource($collection);
+        return $this->patchResource($collectionToUpdate);
     }
 
     public function registerCollection(CollectionInterface|string $collectionId): CollectionInterface
