@@ -60,7 +60,7 @@ class MyParcelComApi implements MyParcelComApiInterface
      */
     public static function createSingleton(
         AuthenticatorInterface $authenticator,
-        string $apiUri = 'https://sandbox-api.myparcel.com',
+        string $apiUri = 'https://api.sandbox.myparcel.com',
         ClientInterface $httpClient = null,
         CacheInterface $cache = null,
         ResourceFactoryInterface $resourceFactory = null,
@@ -82,7 +82,7 @@ class MyParcelComApi implements MyParcelComApiInterface
      * If no resource factory is given, the default factory is used.
      */
     public function __construct(
-        string $apiUri = 'https://sandbox-api.myparcel.com',
+        string $apiUri = 'https://api.sandbox.myparcel.com',
         ClientInterface $httpClient = null,
         CacheInterface $cache = null,
         ResourceFactoryInterface $resourceFactory = null,
