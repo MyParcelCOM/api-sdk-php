@@ -710,7 +710,7 @@ class MyParcelComApi implements MyParcelComApiInterface
             ->setId($collectionId)
             ->setRegister(true);
 
-        return $this->patchResource($collectionToRegister);
+        return $this->updateCollection($collectionToRegister);
     }
 
     /**
