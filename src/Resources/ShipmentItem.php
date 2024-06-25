@@ -196,7 +196,7 @@ class ShipmentItem implements ShipmentItemInterface
                 throw new MyParcelComException('invalid unit: ' . $unit);
         }
 
-        $this->itemWeight = (int) ceil($weight);
+        $this->itemWeight = $weight === null ? $weight : (int) ceil($weight);
 
         return $this;
     }

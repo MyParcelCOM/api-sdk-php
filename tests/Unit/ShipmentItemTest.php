@@ -81,6 +81,7 @@ class ShipmentItemTest extends TestCase
     {
         $item = new ShipmentItem();
         $this->assertEquals(3000, $item->setItemWeight(3000)->getItemWeight());
+        $this->assertNull($item->setItemWeight(null)->getItemWeight());
     }
 
     /** @test */
