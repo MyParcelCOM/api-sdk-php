@@ -170,8 +170,6 @@ class ServiceRatesTest extends TestCase
             ->setPhysicalProperties($physicalProperties)
             ->setRecipientAddress($recipient);
 
-        $volumetricWeight = $shipment->getVolumetricWeight();
-
         $serviceRates = $this->api->getServiceRatesForShipment($shipment);
         $this->assertInstanceOf(CollectionInterface::class, $serviceRates);
         foreach ($serviceRates as $serviceRate) {
