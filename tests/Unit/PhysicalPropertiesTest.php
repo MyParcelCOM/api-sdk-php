@@ -10,22 +10,51 @@ use PHPUnit\Framework\TestCase;
 
 class PhysicalPropertiesTest extends TestCase
 {
-
     /** @test */
     public function testWeight()
     {
         $physicalProperties = new PhysicalProperties();
         $this->assertEquals(8000, $physicalProperties->setWeight(8000)->getWeight());
-        $this->assertEquals(500, $physicalProperties->setWeight(500, PhysicalPropertiesInterface::WEIGHT_GRAM)->getWeight());
-        $this->assertEquals(3000, $physicalProperties->setWeight(3, PhysicalPropertiesInterface::WEIGHT_KILOGRAM)->getWeight());
-        $this->assertEquals(1701, $physicalProperties->setWeight(60, PhysicalPropertiesInterface::WEIGHT_OUNCE)->getWeight());
-        $this->assertEquals(2268, $physicalProperties->setWeight(5, PhysicalPropertiesInterface::WEIGHT_POUND)->getWeight());
-        $this->assertEquals(12701, $physicalProperties->setWeight(2, PhysicalPropertiesInterface::WEIGHT_STONE)->getWeight());
-        $this->assertEquals(500, $physicalProperties->setWeight(500)->getWeight(PhysicalPropertiesInterface::WEIGHT_GRAM));
-        $this->assertEquals(3, $physicalProperties->setWeight(3000)->getWeight(PhysicalPropertiesInterface::WEIGHT_KILOGRAM));
-        $this->assertEquals(60, $physicalProperties->setWeight(1701)->getWeight(PhysicalPropertiesInterface::WEIGHT_OUNCE));
-        $this->assertEquals(5, $physicalProperties->setWeight(2268)->getWeight(PhysicalPropertiesInterface::WEIGHT_POUND));
-        $this->assertEquals(2, $physicalProperties->setWeight(12701)->getWeight(PhysicalPropertiesInterface::WEIGHT_STONE));
+        $this->assertEquals(
+            500,
+            $physicalProperties->setWeight(500, PhysicalPropertiesInterface::WEIGHT_GRAM)->getWeight(),
+        );
+        $this->assertEquals(
+            3000,
+            $physicalProperties->setWeight(3, PhysicalPropertiesInterface::WEIGHT_KILOGRAM)->getWeight(),
+        );
+        $this->assertEquals(
+            1701,
+            $physicalProperties->setWeight(60, PhysicalPropertiesInterface::WEIGHT_OUNCE)->getWeight(),
+        );
+        $this->assertEquals(
+            2268,
+            $physicalProperties->setWeight(5, PhysicalPropertiesInterface::WEIGHT_POUND)->getWeight(),
+        );
+        $this->assertEquals(
+            12701,
+            $physicalProperties->setWeight(2, PhysicalPropertiesInterface::WEIGHT_STONE)->getWeight(),
+        );
+        $this->assertEquals(
+            500,
+            $physicalProperties->setWeight(500)->getWeight(PhysicalPropertiesInterface::WEIGHT_GRAM),
+        );
+        $this->assertEquals(
+            3,
+            $physicalProperties->setWeight(3000)->getWeight(PhysicalPropertiesInterface::WEIGHT_KILOGRAM),
+        );
+        $this->assertEquals(
+            60,
+            $physicalProperties->setWeight(1701)->getWeight(PhysicalPropertiesInterface::WEIGHT_OUNCE),
+        );
+        $this->assertEquals(
+            5,
+            $physicalProperties->setWeight(2268)->getWeight(PhysicalPropertiesInterface::WEIGHT_POUND),
+        );
+        $this->assertEquals(
+            2,
+            $physicalProperties->setWeight(12701)->getWeight(PhysicalPropertiesInterface::WEIGHT_STONE),
+        );
     }
 
     /** @test */
@@ -60,27 +89,14 @@ class PhysicalPropertiesTest extends TestCase
     public function testVolumetricWeight()
     {
         $physicalProperties = new PhysicalProperties();
-
-        $physicalProperties->setHeight(60);
-        $physicalProperties->setWidth(70);
-
-        // If not all dimensions are set, and volumetric weight isn't set either,
-        // getVolumetricWeight should return null.
         $this->assertNull($physicalProperties->getVolumetricWeight());
 
-        $physicalProperties->setLength(80);
-
-        // It calculates the volumetric weight otherwise.
-        $this->assertEquals(84, $physicalProperties->getVolumetricWeight());
-
-        // If volumetric weight is set, it should return the already set value,
-        // regardless of the dimensions.
         $physicalProperties->setVolumetricWeight(1500);
         $this->assertEquals(1500, $physicalProperties->getVolumetricWeight());
     }
 
     /** @test */
-    public function testJsonSerialize()
+    public function testJsonSerializeDoesNotIncludeVolumetricWeight()
     {
         $physicalProperties = (new PhysicalProperties())
             ->setWeight(1000)
@@ -91,12 +107,11 @@ class PhysicalPropertiesTest extends TestCase
             ->setVolumetricWeight(1500);
 
         $this->assertEquals([
-            'weight'            => 1000,
-            'length'            => 1100,
-            'volume'            => 1200,
-            'height'            => 1300,
-            'width'             => 1400,
-            'volumetric_weight' => 1500,
+            'weight' => 1000,
+            'length' => 1100,
+            'volume' => 1200,
+            'height' => 1300,
+            'width'  => 1400,
         ], $physicalProperties->jsonSerialize());
     }
 }

@@ -442,7 +442,7 @@ class Shipment implements ShipmentInterface
     }
 
     /**
-     * @deprecated Use Shipment::getPhysicalProperties()->setVolumetricWeight() instead.
+     * @deprecated Your code should not rely on this function. Do not calculate your own volumetric weight.
      */
     public function setVolumetricWeight(?int $volumetricWeight): self
     {

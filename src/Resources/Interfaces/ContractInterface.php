@@ -21,4 +21,8 @@ interface ContractInterface extends ResourceInterface
     public function setStatus(string $status): self;
 
     public function getStatus(): string;
+
+    public function setVolumetricWeightDivisorFactor(float $factor): self;
+
+    public function getVolumetricWeightDivisorFactor(): float;
 }

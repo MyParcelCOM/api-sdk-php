@@ -129,7 +129,7 @@ class Carrier implements CarrierInterface
     public function jsonSerialize(): array
     {
         // The 'credentials_format' can have camelCased properties, which get
-        // changed to snake_case by the jsonSerialize() method. So ro prevent
+        // changed to snake_case by the jsonSerialize() method. So to prevent
         // that, we unset it and then reset it after serialization is done.
         $credentialsFormat = $this->attributes[self::ATTRIBUTE_CREDENTIALS_FORMAT];
         unset($this->attributes[self::ATTRIBUTE_CREDENTIALS_FORMAT]);

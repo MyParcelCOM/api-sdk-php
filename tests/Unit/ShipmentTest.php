@@ -304,7 +304,6 @@ class ShipmentTest extends TestCase
         $this->assertEquals($mock, $shipment->setCollection($mock)->getCollection());
     }
 
-
     /** @test */
     public function testStatus()
     {

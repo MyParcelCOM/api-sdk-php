@@ -73,7 +73,6 @@ class CarrierProxy implements CarrierInterface, ResourceProxyInterface
         return $this->getResource()->getLabelMimeTypes();
     }
 
-
     public function setOffersCollections(bool $offersCollections): self
     {
         $this->getResource()->setOffersCollections($offersCollections);

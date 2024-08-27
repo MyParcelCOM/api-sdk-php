@@ -74,6 +74,18 @@ class ContractProxy implements ContractInterface, ResourceProxyInterface
         return $this->getResource()->getStatus();
     }
 
+    public function setVolumetricWeightDivisorFactor(float $factor): self
+    {
+        $this->getResource()->setVolumetricWeightDivisorFactor($factor);
+
+        return $this;
+    }
+
+    public function getVolumetricWeightDivisorFactor(): float
+    {
+        return $this->getResource()->getVolumetricWeightDivisorFactor();
+    }
+
     /**
      * This function puts all object properties in an array and returns it.
      */

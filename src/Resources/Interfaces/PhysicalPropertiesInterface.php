@@ -34,12 +34,14 @@ interface PhysicalPropertiesInterface extends JsonSerializable
 
     public function getVolume(): float|int|null;
 
+    /**
+     * @deprecated Your code should not rely on this function.
+     * Do not calculate your own volumetric weight. This function is needed to populate the value received from our API.
+     */
     public function setVolumetricWeight(?int $volumetricWeight): self;
 
     /**
-     * Returns the volumetric weight if already set.
-     * Calculates the shipment's volumetric weight in grams based on set dimensions otherwise.
-     * Returns null if not all dimensions are set.
+     * Returns the volumetric weight if calculated by our API (after saving the shipment).
      */
     public function getVolumetricWeight(): ?int;
 }
