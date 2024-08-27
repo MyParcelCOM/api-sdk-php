@@ -31,7 +31,7 @@ class ServiceMatcher
             && ($serviceRates = $service->getServiceRates([
                 'has_active_contract' => 'true',
                 'weight'              => $shipment->getPhysicalProperties()->getWeight(),
-                'volumetric_weight'   => $shipment->getPhysicalProperties()->getVolumetricWeight(),
+                'volume'              => $shipment->calculateVolumeInDm3(),
             ]))
             && $this->getMatchedOptions($shipment, $serviceRates);
     }

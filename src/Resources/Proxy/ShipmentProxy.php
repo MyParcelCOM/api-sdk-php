@@ -364,6 +364,16 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
         return $this->getResource()->getVolumetricWeight();
     }
 
+    public function calculateVolumeInMm3(): ?int
+    {
+        return $this->getResource()->calculateVolumeInMm3();
+    }
+
+    public function calculateVolumeInDm3(): ?float
+    {
+        return $this->getResource()->calculateVolumeInDm3();
+    }
+
     public function setFiles(array $files): self
     {
         $this->getResource()->setFiles($files);

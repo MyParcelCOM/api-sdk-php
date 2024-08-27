@@ -466,6 +466,24 @@ class Shipment implements ShipmentInterface
         return $this->getPhysicalProperties()->getVolumetricWeight();
     }
 
+    public function calculateVolumeInMm3(): ?int
+    {
+        $properties = $this->getPhysicalProperties() ?? new PhysicalProperties();
+
+        if (!$properties->getLength() || !$properties->getWidth() || !$properties->getHeight()) {
+            return null;
+        }
+
+        return $properties->getLength() * $properties->getWidth() * $properties->getHeight();
+    }
+
+    public function calculateVolumeInDm3(): ?float
+    {
+        $volumeInMm3 = $this->calculateVolumeInMm3();
+
+        return $volumeInMm3 === null ? null : $volumeInMm3 / 1000000;
+    }
+
     public function setShop(?ShopInterface $shop): self
     {
         $this->relationships[self::RELATIONSHIP_SHOP]['data'] = $shop;
@@ -525,9 +543,10 @@ class Shipment implements ShipmentInterface
             return $this->relationships[self::RELATIONSHIP_FILES]['data'];
         }
 
-        return array_filter($this->relationships[self::RELATIONSHIP_FILES]['data'], function (FileInterface $file) use ($type) {
-            return $file->getDocumentType() === $type;
-        });
+        return array_filter(
+            $this->relationships[self::RELATIONSHIP_FILES]['data'],
+            fn (FileInterface $file) => $file->getDocumentType() === $type,
+        );
     }
 
     public function setShipmentStatus(ShipmentStatusInterface $status): self

@@ -145,6 +145,10 @@ interface ShipmentInterface extends ResourceInterface
      */
     public function setVolumetricWeight(?int $volumetricWeight): self;
 
+    public function calculateVolumeInMm3(): ?int;
+
+    public function calculateVolumeInDm3(): ?float;
+
     /**
      * @param FileInterface[] $files
      */

@@ -125,7 +125,7 @@ class PriceCalculator
             'has_active_contract' => 'true',
             'contract'            => $shipment->getContract(),
             'weight'              => $shipment->getPhysicalProperties()->getWeight(),
-            'volumetric_weight'   => $shipment->getPhysicalProperties()->getVolumetricWeight(),
+            'volume'              => $shipment->calculateVolumeInDm3(),
         ]);
 
         $shipmentOptionIds = array_map(function (ServiceOptionInterface $serviceOption) {
