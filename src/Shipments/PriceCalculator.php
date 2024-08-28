@@ -102,7 +102,7 @@ class PriceCalculator
             return null;
         }
 
-        if ($shipment->getService()->usesVolumetricWeight() && $shipment->calculateVolumeInMm3()) {
+        if ($shipment->getService()?->usesVolumetricWeight() && $shipment->calculateVolumeInMm3()) {
             $divisor = $shipment->getService()->getVolumetricWeightDivisor() * $shipment->getContract()->getVolumetricWeightDivisorFactor();
             $volumetricWeight = (int) ceil($shipment->calculateVolumeInMm3() / $divisor);
 
