@@ -25,10 +25,12 @@ class PriceCalculator
             $serviceRate = $serviceRate->resolveDynamicRateForShipment($shipment);
         }
 
-        if ($shipment->getPhysicalProperties() === null
-            || $shipment->getPhysicalProperties()->getWeight() === null
-            || $shipment->getPhysicalProperties()->getWeight() < $serviceRate->getWeightMin()
-            || $shipment->getPhysicalProperties()->getWeight() > $serviceRate->getWeightMax()) {
+        $billableWeight = $this->getBillableWeight($shipment);
+
+        if ($billableWeight === null
+            || $billableWeight < $serviceRate->getWeightMin()
+            || $billableWeight > $serviceRate->getWeightMax()
+        ) {
             throw new CalculationException(
                 'Could not calculate price for the given service rate since it does not support the shipment weight.'
             );
@@ -37,7 +39,7 @@ class PriceCalculator
         if ($serviceRate->getPrice() === null && !empty($serviceRate->getWeightBracket())) {
             $bracketPrice = $serviceRate->getBracketPrice()
                 ? $serviceRate->getBracketPrice()
-                : $serviceRate->calculateBracketPrice($shipment->getPhysicalProperties()->getWeight());
+                : $serviceRate->calculateBracketPrice($billableWeight);
             $bracketCurrency = $serviceRate->getBracketCurrency()
                 ? $serviceRate->getBracketCurrency()
                 : $serviceRate->getContract()->getCurrency();
@@ -92,14 +94,30 @@ class PriceCalculator
         return (int) $price;
     }
 
+    private function getBillableWeight(ShipmentInterface $shipment): ?int
+    {
+        $weight = $shipment->getPhysicalProperties()?->getWeight();
+
+        if ($weight === null) {
+            return null;
+        }
+
+        if ($shipment->getService()->usesVolumetricWeight() && $shipment->calculateVolumeInMm3()) {
+            $divisor = $shipment->getService()->getVolumetricWeightDivisor() * $shipment->getContract()->getVolumetricWeightDivisorFactor();
+            $volumetricWeight = (int) ceil($shipment->calculateVolumeInMm3() / $divisor);
+
+            return max($volumetricWeight, $weight);
+        }
+
+        return $weight;
+    }
+
     /**
      * @throws InvalidResourceException
      */
     private function validateShipment(ShipmentInterface $shipment): void
     {
-        if ($shipment->getPhysicalProperties() === null
-            || $shipment->getPhysicalProperties()->getWeight() === null
-            || $shipment->getPhysicalProperties()->getWeight() < 0) {
+        if ($this->getBillableWeight($shipment) === null) {
             throw new InvalidResourceException(
                 'Cannot calculate shipment price without a valid shipment weight.'
             );
@@ -124,28 +142,29 @@ class PriceCalculator
         $serviceRates = $shipment->getService()->getServiceRates([
             'has_active_contract' => 'true',
             'contract'            => $shipment->getContract(),
-            'weight'              => $shipment->getPhysicalProperties()->getWeight(),
+            'weight'              => $this->getBillableWeight($shipment),
             'volume'              => $shipment->calculateVolumeInDm3(),
         ]);
 
-        $shipmentOptionIds = array_map(function (ServiceOptionInterface $serviceOption) {
-            return $serviceOption->getId();
-        }, $shipment->getServiceOptions());
+        $shipmentOptionIds = array_map(
+            fn (ServiceOptionInterface $serviceOption) => $serviceOption->getId(),
+            $shipment->getServiceOptions(),
+        );
 
         array_filter($serviceRates, function (ServiceRateInterface $serviceRate) use ($shipmentOptionIds) {
-            $serviceRateOptionIds = array_map(function (ServiceOptionInterface $serviceOption) {
-                return $serviceOption->getId();
-            }, $serviceRate->getServiceOptions());
+            $serviceRateOptionIds = array_map(
+                fn (ServiceOptionInterface $serviceOption) => $serviceOption->getId(),
+                $serviceRate->getServiceOptions(),
+            );
 
             return empty(array_diff($shipmentOptionIds, $serviceRateOptionIds));
         });
 
+        // Because this shipment has a contract + service + weight, we do not need to sort this array with max 1 result.
         $serviceRate = reset($serviceRates);
 
         if (!$serviceRate) {
-            throw new CalculationException(
-                'Cannot find a matching service rate for given shipment'
-            );
+            throw new CalculationException('Cannot find a matching service rate for given shipment');
         }
 
         return $serviceRate;
