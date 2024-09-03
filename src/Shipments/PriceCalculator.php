@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk\Shipments;
 
+use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Exceptions\CalculationException;
 use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
@@ -102,9 +103,9 @@ class PriceCalculator
             return null;
         }
 
-        if ($shipment->getService()?->usesVolumetricWeight() && $shipment->calculateVolumeInMm3()) {
+        if ($shipment->getService()?->usesVolumetricWeight() && $shipment->calculateVolume()) {
             $divisor = $shipment->getService()->getVolumetricWeightDivisor() * $shipment->getContract()->getVolumetricWeightDivisorFactor();
-            $volumetricWeight = (int) ceil($shipment->calculateVolumeInMm3() / $divisor);
+            $volumetricWeight = (int) ceil($shipment->calculateVolume() / $divisor);
 
             return max($volumetricWeight, $weight);
         }
@@ -143,7 +144,7 @@ class PriceCalculator
             'has_active_contract' => 'true',
             'contract'            => $shipment->getContract(),
             'weight'              => $this->getBillableWeight($shipment),
-            'volume'              => $shipment->calculateVolumeInDm3(),
+            'volume'              => $shipment->calculateVolume(DimensionUnitEnum::DM3),
         ]);
 
         $shipmentOptionIds = array_map(
@@ -151,7 +152,7 @@ class PriceCalculator
             $shipment->getServiceOptions(),
         );
 
-        array_filter($serviceRates, function (ServiceRateInterface $serviceRate) use ($shipmentOptionIds) {
+        $serviceRates = array_filter($serviceRates, function (ServiceRateInterface $serviceRate) use ($shipmentOptionIds) {
             $serviceRateOptionIds = array_map(
                 fn (ServiceOptionInterface $serviceOption) => $serviceOption->getId(),
                 $serviceRate->getServiceOptions(),

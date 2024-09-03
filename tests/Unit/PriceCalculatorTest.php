@@ -36,7 +36,7 @@ class PriceCalculatorTest extends TestCase
     {
         $serviceRateMock = $this->getMockedServiceRate([], 333, 2001, 3000);
         $serviceMock = $this->getMockedService([$serviceRateMock], 'delivery', true);
-        $shipment = $this->getMockedShipment(1500, $serviceMock, [], 8004000); // 8004000 / 4000 divisor = 2001 gram
+        $shipment = $this->getMockedShipment(1500, $serviceMock, [], 8004000.0); // 8004000 / 4000 divisor = 2001 gram
 
         $this->assertEquals(333, (new PriceCalculator())->calculate($shipment));
     }
@@ -126,7 +126,21 @@ class PriceCalculatorTest extends TestCase
     }
 
     /** @test */
-    public function testItThrowsAnExceptionWhenShipmentHasInvalidOptions()
+    public function testItThrowsAnExceptionWhenNoServiceRateCanBeMatchedForShipmentWithOptions()
+    {
+        $serviceRateMock = $this->getMockedServiceRate([], 5000, 0, 5000);
+        $serviceMock = $this->getMockedService([$serviceRateMock]);
+        $shipment = $this->getMockedShipment(1337, $serviceMock, [
+            $this->getMockedServiceOption('service-option-id'),
+        ]);
+
+        $this->expectException(CalculationException::class);
+        $this->expectExceptionMessage('Cannot find a matching service rate for given shipment');
+        (new PriceCalculator())->calculate($shipment);
+    }
+
+    /** @test */
+    public function testItThrowsAnExceptionWhenPassedServiceRateHasInvalidOptions()
     {
         $serviceOptionMocks = [
             $this->getMockedServiceOption('service-option-id-uno', 250),
@@ -138,7 +152,7 @@ class PriceCalculatorTest extends TestCase
 
         $this->expectException(CalculationException::class);
         $this->expectExceptionMessage('Cannot calculate a price for given shipment; invalid option: ');
-        (new PriceCalculator())->calculate($shipment);
+        (new PriceCalculator())->calculate($shipment, $serviceRateMock);
     }
 
     /** @test */
