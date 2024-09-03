@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk\Tests\Unit;
 
+use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Enums\TaxTypeEnum;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
@@ -18,6 +19,7 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentItemInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentStatusInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
+use MyParcelCom\ApiSdk\Resources\PhysicalProperties;
 use MyParcelCom\ApiSdk\Resources\Shipment;
 use MyParcelCom\ApiSdk\Resources\TaxIdentificationNumber;
 use PHPUnit\Framework\TestCase;
@@ -304,7 +306,6 @@ class ShipmentTest extends TestCase
         $this->assertEquals($mock, $shipment->setCollection($mock)->getCollection());
     }
 
-
     /** @test */
     public function testStatus()
     {
@@ -313,6 +314,30 @@ class ShipmentTest extends TestCase
         $status = $this->getMockBuilder(ShipmentStatusInterface::class)->getMock();
 
         $this->assertEquals($status, $shipment->setShipmentStatus($status)->getShipmentStatus());
+    }
+
+    /** @test */
+    public function testVolumeCalculations()
+    {
+        $shipment = new Shipment();
+        $shipment->setPhysicalProperties(new PhysicalProperties());
+
+        $this->assertNull($shipment->calculateVolume());
+
+        $shipment->getPhysicalProperties()->setLength(20);
+
+        $this->assertNull($shipment->calculateVolume());
+
+        $shipment->getPhysicalProperties()->setWidth(40);
+
+        $this->assertNull($shipment->calculateVolume());
+
+        $shipment->getPhysicalProperties()->setHeight(60);
+
+        $this->assertEquals(48000, $shipment->calculateVolume());
+        $this->assertEquals(48000, $shipment->calculateVolume(DimensionUnitEnum::MM3));
+        $this->assertEquals(48, $shipment->calculateVolume(DimensionUnitEnum::CM3));
+        $this->assertEquals(0.048, $shipment->calculateVolume(DimensionUnitEnum::DM3));
     }
 
     /** @test */

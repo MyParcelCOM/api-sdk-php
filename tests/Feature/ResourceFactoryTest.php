@@ -80,7 +80,10 @@ class ResourceFactoryTest extends TestCase
 
         $this->assertInstanceOf(ContractInterface::class, $contract);
         $this->assertEquals([
-            'type' => 'contracts',
+            'type'       => 'contracts',
+            'attributes' => [
+                'volumetric_weight_divisor_factor' => 1.0,
+            ],
         ], $contract->jsonSerialize());
     }
 
@@ -90,8 +93,9 @@ class ResourceFactoryTest extends TestCase
             'id'            => 'carrier-id',
             'type'          => 'contracts',
             'attributes'    => [
-                'currency' => 'JPY',
-                'status'   => 'active',
+                'currency'                         => 'JPY',
+                'status'                           => 'active',
+                'volumetric_weight_divisor_factor' => 1.0,
             ],
             'relationships' => [
                 'carrier' => [
@@ -200,7 +204,7 @@ class ResourceFactoryTest extends TestCase
         $this->assertInstanceOf(PickUpDropOffLocationInterface::class, $pudoLocation);
         $this->assertEquals(
             $pudoProperties,
-            $pudoLocation->jsonSerialize()
+            $pudoLocation->jsonSerialize(),
         );
     }
 
@@ -254,7 +258,14 @@ class ResourceFactoryTest extends TestCase
 
         $this->assertInstanceOf(ServiceInterface::class, $service);
         $this->assertEquals([
-            'type' => 'services',
+            'type'       => 'services',
+            'attributes' => [
+                'transit_time'           => [],
+                'delivery_days'          => [],
+                'regions_from'           => [],
+                'regions_to'             => [],
+                'uses_volumetric_weight' => false,
+            ],
         ], $service->jsonSerialize());
     }
 
@@ -458,12 +469,11 @@ class ResourceFactoryTest extends TestCase
                     'currency' => 'EUR',
                 ],
                 'physical_properties'  => [
-                    'weight'            => 1000,
-                    'length'            => 1100,
-                    'height'            => 1300,
-                    'width'             => 1400,
-                    'volume'            => 2002,
-                    'volumetric_weight' => 400400,
+                    'weight' => 1000,
+                    'length' => 1100,
+                    'height' => 1300,
+                    'width'  => 1400,
+                    'volume' => 2002,
                 ],
                 'recipient_address'    => [
                     'street_1'             => 'Diagonally',
@@ -556,12 +566,11 @@ class ResourceFactoryTest extends TestCase
                     'currency' => 'EUR',
                 ],
                 'physical_properties'  => [
-                    'weight'            => 1000,
-                    'length'            => 1100,
-                    'height'            => 1300,
-                    'width'             => 1400,
-                    'volume'            => 2002,
-                    'volumetric_weight' => 400400,
+                    'weight' => 1000,
+                    'length' => 1100,
+                    'height' => 1300,
+                    'width'  => 1400,
+                    'volume' => 2002,
                 ],
                 'recipient_address'    => [
                     'street_1'             => 'Diagonally',

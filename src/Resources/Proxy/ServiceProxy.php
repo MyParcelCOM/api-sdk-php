@@ -178,6 +178,18 @@ class ServiceProxy implements ServiceInterface, ResourceProxyInterface
         return $this->getResource()->usesVolumetricWeight();
     }
 
+    public function setVolumetricWeightDivisor(?int $divisor): self
+    {
+        $this->getResource()->setVolumetricWeightDivisor($divisor);
+
+        return $this;
+    }
+
+    public function getVolumetricWeightDivisor(): ?int
+    {
+        return $this->getResource()->getVolumetricWeightDivisor();
+    }
+
     /**
      * @param ServiceRateInterface[] $serviceRates
      */

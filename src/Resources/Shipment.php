@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MyParcelCom\ApiSdk\Resources;
 
 use DateTime;
+use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
@@ -442,7 +443,7 @@ class Shipment implements ShipmentInterface
     }
 
     /**
-     * @deprecated Use Shipment::getPhysicalProperties()->setVolumetricWeight() instead.
+     * @deprecated Your code should not rely on this function. Do not calculate your own volumetric weight.
      */
     public function setVolumetricWeight(?int $volumetricWeight): self
     {
@@ -464,6 +465,24 @@ class Shipment implements ShipmentInterface
         }
 
         return $this->getPhysicalProperties()->getVolumetricWeight();
+    }
+
+    public function calculateVolume(string $unit = DimensionUnitEnum::MM3): ?float
+    {
+        $properties = $this->getPhysicalProperties() ?? new PhysicalProperties();
+
+        if (!$properties->getLength() || !$properties->getWidth() || !$properties->getHeight()) {
+            return null;
+        }
+
+        $volumeFloatInMm3 = $properties->getLength() * $properties->getWidth() * $properties->getHeight() * 1.0;
+
+        return match ($unit) {
+            DimensionUnitEnum::DM3 => $volumeFloatInMm3 / 1000000,
+            DimensionUnitEnum::CM3 => $volumeFloatInMm3 / 1000,
+            DimensionUnitEnum::MM3 => $volumeFloatInMm3,
+            default                => $volumeFloatInMm3,
+        };
     }
 
     public function setShop(?ShopInterface $shop): self
@@ -525,9 +544,10 @@ class Shipment implements ShipmentInterface
             return $this->relationships[self::RELATIONSHIP_FILES]['data'];
         }
 
-        return array_filter($this->relationships[self::RELATIONSHIP_FILES]['data'], function (FileInterface $file) use ($type) {
-            return $file->getDocumentType() === $type;
-        });
+        return array_filter(
+            $this->relationships[self::RELATIONSHIP_FILES]['data'],
+            fn (FileInterface $file) => $file->getDocumentType() === $type,
+        );
     }
 
     public function setShipmentStatus(ShipmentStatusInterface $status): self

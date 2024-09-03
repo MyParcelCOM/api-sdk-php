@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MyParcelCom\ApiSdk\Resources\Interfaces;
 
 use DateTime;
+use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Resources\TaxIdentificationNumber;
 
 interface ShipmentInterface extends ResourceInterface
@@ -144,6 +145,8 @@ interface ShipmentInterface extends ResourceInterface
      * @deprecated Use Shipment::getPhysicalProperties()->setVolumetricWeight() instead.
      */
     public function setVolumetricWeight(?int $volumetricWeight): self;
+
+    public function calculateVolume(string $unit = DimensionUnitEnum::MM3): ?float;
 
     /**
      * @param FileInterface[] $files

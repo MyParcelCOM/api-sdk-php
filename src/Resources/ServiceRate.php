@@ -31,7 +31,6 @@ class ServiceRate implements ServiceRateInterface
     const ATTRIBUTE_LENGTH_MAX = 'length_max';
     const ATTRIBUTE_HEIGHT_MAX = 'height_max';
     const ATTRIBUTE_VOLUME_MAX = 'volume_max';
-    const ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR = 'volumetric_weight_divisor';
     const ATTRIBUTE_IS_DYNAMIC = 'is_dynamic';
 
     const RELATIONSHIP_SERVICE = 'service';
@@ -55,28 +54,27 @@ class ServiceRate implements ServiceRateInterface
     private string $type = ResourceInterface::TYPE_SERVICE_RATE;
 
     private array $attributes = [
-        self::ATTRIBUTE_PRICE                     => [
+        self::ATTRIBUTE_PRICE          => [
             self::ATTRIBUTE_AMOUNT   => null,
             self::ATTRIBUTE_CURRENCY => null,
         ],
-        self::ATTRIBUTE_FUEL_SURCHARGE            => [
+        self::ATTRIBUTE_FUEL_SURCHARGE => [
             self::ATTRIBUTE_AMOUNT   => null,
             self::ATTRIBUTE_CURRENCY => null,
         ],
-        self::ATTRIBUTE_WEIGHT_MIN                => null,
-        self::ATTRIBUTE_WEIGHT_MAX                => null,
-        self::ATTRIBUTE_WEIGHT_BRACKET            => [
+        self::ATTRIBUTE_WEIGHT_MIN     => null,
+        self::ATTRIBUTE_WEIGHT_MAX     => null,
+        self::ATTRIBUTE_WEIGHT_BRACKET => [
             self::WEIGHT_BRACKET_START        => null,
             self::WEIGHT_BRACKET_START_AMOUNT => null,
             self::WEIGHT_BRACKET_SIZE         => null,
             self::WEIGHT_BRACKET_SIZE_AMOUNT  => null,
         ],
-        self::ATTRIBUTE_WIDTH_MAX                 => null,
-        self::ATTRIBUTE_LENGTH_MAX                => null,
-        self::ATTRIBUTE_HEIGHT_MAX                => null,
-        self::ATTRIBUTE_VOLUME_MAX                => null,
-        self::ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR => null,
-        self::ATTRIBUTE_IS_DYNAMIC                => null,
+        self::ATTRIBUTE_WIDTH_MAX      => null,
+        self::ATTRIBUTE_LENGTH_MAX     => null,
+        self::ATTRIBUTE_HEIGHT_MAX     => null,
+        self::ATTRIBUTE_VOLUME_MAX     => null,
+        self::ATTRIBUTE_IS_DYNAMIC     => null,
     ];
 
     private array $relationships = [
@@ -231,18 +229,6 @@ class ServiceRate implements ServiceRateInterface
     public function getVolumeMax(): float|int|null
     {
         return $this->attributes[self::ATTRIBUTE_VOLUME_MAX];
-    }
-
-    public function setVolumetricWeightDivisor(?int $volumetricWeightDivisor): self
-    {
-        $this->attributes[self::ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR] = $volumetricWeightDivisor;
-
-        return $this;
-    }
-
-    public function getVolumetricWeightDivisor(): ?int
-    {
-        return $this->attributes[self::ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR];
     }
 
     public function setCurrency(?string $currency): self

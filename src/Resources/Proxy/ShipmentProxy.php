@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MyParcelCom\ApiSdk\Resources\Proxy;
 
 use DateTime;
+use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
@@ -347,7 +348,7 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
     }
 
     /**
-     * @deprecated Use Shipment::getPhysicalProperties()->setVolumetricWeight() instead.
+     * @deprecated Your code should not rely on this function. Do not calculate your own volumetric weight.
      */
     public function setVolumetricWeight(?int $volumetricWeight): self
     {
@@ -362,6 +363,11 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
     public function getVolumetricWeight(): ?int
     {
         return $this->getResource()->getVolumetricWeight();
+    }
+
+    public function calculateVolume(string $unit = DimensionUnitEnum::MM3): ?float
+    {
+        return $this->getResource()->calculateVolume($unit);
     }
 
     public function setFiles(array $files): self

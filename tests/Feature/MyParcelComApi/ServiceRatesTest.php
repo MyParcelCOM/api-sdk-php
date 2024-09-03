@@ -170,7 +170,7 @@ class ServiceRatesTest extends TestCase
             ->setPhysicalProperties($physicalProperties)
             ->setRecipientAddress($recipient);
 
-        $volumetricWeight = $shipment->getVolumetricWeight();
+        $volumetricWeight = (400 * 400 * 400) / (4000 * 1.0); // l * b * h / divisor * factor
 
         $serviceRates = $this->api->getServiceRatesForShipment($shipment);
         $this->assertInstanceOf(CollectionInterface::class, $serviceRates);
