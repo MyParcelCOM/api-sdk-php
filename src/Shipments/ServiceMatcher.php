@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk\Shipments;
 
+use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
@@ -31,7 +32,7 @@ class ServiceMatcher
             && ($serviceRates = $service->getServiceRates([
                 'has_active_contract' => 'true',
                 'weight'              => $shipment->getPhysicalProperties()->getWeight(),
-                'volume'              => $shipment->calculateVolumeInDm3(),
+                'volume'              => $shipment->calculateVolume(DimensionUnitEnum::DM3),
             ]))
             && $this->getMatchedOptions($shipment, $serviceRates);
     }

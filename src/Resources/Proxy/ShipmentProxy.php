@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MyParcelCom\ApiSdk\Resources\Proxy;
 
 use DateTime;
+use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
@@ -364,14 +365,9 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
         return $this->getResource()->getVolumetricWeight();
     }
 
-    public function calculateVolumeInMm3(): ?int
+    public function calculateVolume(string $unit = DimensionUnitEnum::MM3): ?float
     {
-        return $this->getResource()->calculateVolumeInMm3();
-    }
-
-    public function calculateVolumeInDm3(): ?float
-    {
-        return $this->getResource()->calculateVolumeInDm3();
+        return $this->getResource()->calculateVolume($unit);
     }
 
     public function setFiles(array $files): self

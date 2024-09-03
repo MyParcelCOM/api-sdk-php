@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MyParcelCom\ApiSdk\Resources\Interfaces;
 
 use DateTime;
+use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Resources\TaxIdentificationNumber;
 
 interface ShipmentInterface extends ResourceInterface
@@ -145,9 +146,7 @@ interface ShipmentInterface extends ResourceInterface
      */
     public function setVolumetricWeight(?int $volumetricWeight): self;
 
-    public function calculateVolumeInMm3(): ?int;
-
-    public function calculateVolumeInDm3(): ?float;
+    public function calculateVolume(string $unit = DimensionUnitEnum::MM3): ?float;
 
     /**
      * @param FileInterface[] $files

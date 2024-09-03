@@ -65,7 +65,7 @@ trait MocksContract
         ?int $weight = 5000,
         ?ServiceInterface $service = null,
         array $serviceOptions = [],
-        ?int $volumeInMm3 = null,
+        ?float $volumeInMm3 = null,
     ): ShipmentInterface {
         $physicalPropertiesMock = $this->getMockBuilder(PhysicalPropertiesInterface::class)
             ->disableOriginalConstructor()
@@ -96,7 +96,7 @@ trait MocksContract
         if ($service) {
             $shipment->method('getService')->willReturn($service);
         }
-        $shipment->method('calculateVolumeInMm3')->willReturn($volumeInMm3);
+        $shipment->method('calculateVolume')->willReturn($volumeInMm3);
 
         return $shipment;
     }

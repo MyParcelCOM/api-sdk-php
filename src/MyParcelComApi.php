@@ -11,6 +11,7 @@ use MyParcelCom\ApiSdk\Authentication\AuthenticatorInterface;
 use MyParcelCom\ApiSdk\Collection\ArrayCollection;
 use MyParcelCom\ApiSdk\Collection\CollectionInterface as ResourceCollectionInterface;
 use MyParcelCom\ApiSdk\Collection\RequestCollection;
+use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Http\Contracts\HttpClient\RequestExceptionInterface;
@@ -312,7 +313,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         $url->addQuery($this->arrayToFilters([
             'has_active_contract' => 'true',
             'weight'              => $shipment->getPhysicalProperties()->getWeight(),
-            'volume'              => $shipment->calculateVolumeInDm3(),
+            'volume'              => $shipment->calculateVolume(DimensionUnitEnum::DM3),
             'service'             => implode(',', $serviceIds),
         ]));
         if ($shipment->getShop()) {

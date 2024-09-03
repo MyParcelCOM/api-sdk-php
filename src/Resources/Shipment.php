@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MyParcelCom\ApiSdk\Resources;
 
 use DateTime;
+use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
@@ -466,7 +467,7 @@ class Shipment implements ShipmentInterface
         return $this->getPhysicalProperties()->getVolumetricWeight();
     }
 
-    public function calculateVolumeInMm3(): ?int
+    public function calculateVolume(string $unit = DimensionUnitEnum::MM3): ?float
     {
         $properties = $this->getPhysicalProperties() ?? new PhysicalProperties();
 
@@ -474,14 +475,14 @@ class Shipment implements ShipmentInterface
             return null;
         }
 
-        return $properties->getLength() * $properties->getWidth() * $properties->getHeight();
-    }
+        $volumeFloatInMm3 = $properties->getLength() * $properties->getWidth() * $properties->getHeight() * 1.0;
 
-    public function calculateVolumeInDm3(): ?float
-    {
-        $volumeInMm3 = $this->calculateVolumeInMm3();
-
-        return $volumeInMm3 === null ? null : $volumeInMm3 / 1000000;
+        return match ($unit) {
+            DimensionUnitEnum::DM3 => $volumeFloatInMm3 / 1000000,
+            DimensionUnitEnum::CM3 => $volumeFloatInMm3 / 1000,
+            DimensionUnitEnum::MM3 => $volumeFloatInMm3,
+            default                => $volumeFloatInMm3,
+        };
     }
 
     public function setShop(?ShopInterface $shop): self
