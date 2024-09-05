@@ -106,15 +106,7 @@ class PhysicalProperties implements PhysicalPropertiesInterface
 
     public function getVolumetricWeight(): ?int
     {
-        if ($this->volumetricWeight) {
-            return $this->volumetricWeight;
-        }
-
-        if (!$this->length || !$this->width || !$this->height) {
-            return null;
-        }
-
-        return (int) ceil($this->length * $this->width * $this->height / 4000);
+        return $this->volumetricWeight;
     }
 
     public function setVolumetricWeight(?int $volumetricWeight): self
@@ -122,5 +114,24 @@ class PhysicalProperties implements PhysicalPropertiesInterface
         $this->volumetricWeight = $volumetricWeight;
 
         return $this;
+    }
+
+    /**
+     * We do not send the volumetric_weight to the API when saving a shipment, since the API calculates this internally.
+     */
+    public function jsonSerialize(): array
+    {
+        $values = get_object_vars($this);
+        unset($values['volumetricWeight']);
+
+        $json = $this->arrayValuesToArray($values);
+
+        foreach ($json as $property => $value) {
+            if ($this->isEmpty($value)) {
+                unset($json[$property]);
+            }
+        }
+
+        return $json;
     }
 }

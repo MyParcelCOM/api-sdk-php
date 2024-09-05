@@ -45,6 +45,10 @@ interface ServiceInterface extends ResourceInterface
 
     public function usesVolumetricWeight(): bool;
 
+    public function setVolumetricWeightDivisor(?int $divisor): self;
+
+    public function getVolumetricWeightDivisor(): ?int;
+
     /**
      * @param string[] $deliveryDays
      */

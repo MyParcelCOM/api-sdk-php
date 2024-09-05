@@ -28,6 +28,7 @@ class Service implements ServiceInterface
     const ATTRIBUTE_REGIONS_FROM = 'regions_from';
     const ATTRIBUTE_REGIONS_TO = 'regions_to';
     const ATTRIBUTE_USES_VOLUMETRIC_WEIGHT = 'uses_volumetric_weight';
+    const ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR = 'volumetric_weight_divisor';
 
     const RELATIONSHIP_CARRIER = 'carrier';
 
@@ -36,18 +37,20 @@ class Service implements ServiceInterface
     private string $type = ResourceInterface::TYPE_SERVICE;
 
     private array $attributes = [
-        self::ATTRIBUTE_NAME            => null,
-        self::ATTRIBUTE_CODE            => null,
-        self::ATTRIBUTE_PACKAGE_TYPE    => null,
-        self::ATTRIBUTE_REGIONS_FROM    => [],
-        self::ATTRIBUTE_REGIONS_TO      => [],
-        self::ATTRIBUTE_TRANSIT_TIME    => [
+        self::ATTRIBUTE_NAME                      => null,
+        self::ATTRIBUTE_CODE                      => null,
+        self::ATTRIBUTE_PACKAGE_TYPE              => null,
+        self::ATTRIBUTE_REGIONS_FROM              => [],
+        self::ATTRIBUTE_REGIONS_TO                => [],
+        self::ATTRIBUTE_TRANSIT_TIME              => [
             self::ATTRIBUTE_TRANSIT_TIME_MIN => null,
             self::ATTRIBUTE_TRANSIT_TIME_MAX => null,
         ],
-        self::ATTRIBUTE_HANDOVER_METHOD => null,
-        self::ATTRIBUTE_DELIVERY_DAYS   => [],
-        self::ATTRIBUTE_DELIVERY_METHOD => null,
+        self::ATTRIBUTE_HANDOVER_METHOD           => null,
+        self::ATTRIBUTE_DELIVERY_DAYS             => [],
+        self::ATTRIBUTE_DELIVERY_METHOD           => null,
+        self::ATTRIBUTE_USES_VOLUMETRIC_WEIGHT    => false,
+        self::ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR => null,
     ];
 
     private array $relationships = [
@@ -215,6 +218,18 @@ class Service implements ServiceInterface
     public function usesVolumetricWeight(): bool
     {
         return $this->attributes[self::ATTRIBUTE_USES_VOLUMETRIC_WEIGHT];
+    }
+
+    public function setVolumetricWeightDivisor(?int $divisor): self
+    {
+        $this->attributes[self::ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR] = $divisor;
+
+        return $this;
+    }
+
+    public function getVolumetricWeightDivisor(): ?int
+    {
+        return $this->attributes[self::ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR];
     }
 
     public function setServiceRates(array $serviceRates): self

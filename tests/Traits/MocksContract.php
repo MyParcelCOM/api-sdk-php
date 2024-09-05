@@ -65,7 +65,7 @@ trait MocksContract
         ?int $weight = 5000,
         ?ServiceInterface $service = null,
         array $serviceOptions = [],
-        ?int $volumetricWeight = null,
+        ?float $volumeInMm3 = null,
     ): ShipmentInterface {
         $physicalPropertiesMock = $this->getMockBuilder(PhysicalPropertiesInterface::class)
             ->disableOriginalConstructor()
@@ -74,7 +74,6 @@ trait MocksContract
             ->disallowMockingUnknownTypes()
             ->getMock();
         $physicalPropertiesMock->method('getWeight')->willReturn($weight);
-        $physicalPropertiesMock->method('getVolumetricWeight')->willReturn($volumetricWeight);
 
         $contractMock = $this->getMockBuilder(ContractInterface::class)
             ->disableOriginalConstructor()
@@ -82,6 +81,7 @@ trait MocksContract
             ->disableArgumentCloning()
             ->disallowMockingUnknownTypes()
             ->getMock();
+        $contractMock->method('getVolumetricWeightDivisorFactor')->willReturn(1.0);
 
         $shipment = $this->getMockBuilder(ShipmentInterface::class)
             ->disableOriginalConstructor()
@@ -96,6 +96,7 @@ trait MocksContract
         if ($service) {
             $shipment->method('getService')->willReturn($service);
         }
+        $shipment->method('calculateVolume')->willReturn($volumeInMm3);
 
         return $shipment;
     }
@@ -138,6 +139,8 @@ trait MocksContract
             ->willReturn($deliveryMethod);
         $mock->method('usesVolumetricWeight')
             ->willReturn($usesVolumetricWeight);
+        $mock->method('getVolumetricWeightDivisor')
+            ->willReturn($usesVolumetricWeight ? 4000 : null);
 
         return $mock;
     }

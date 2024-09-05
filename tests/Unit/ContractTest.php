@@ -55,6 +55,16 @@ class ContractTest extends TestCase
     }
 
     /** @test */
+    public function testVolumetricWeightDivisorFactor()
+    {
+        $contract = new Contract();
+        $this->assertEquals(1.0, $contract->getVolumetricWeightDivisorFactor());
+
+        $contract->setVolumetricWeightDivisorFactor(1.1);
+        $this->assertEquals(1.1, $contract->getVolumetricWeightDivisorFactor());
+    }
+
+    /** @test */
     public function testJsonSerialize()
     {
         $carrierMock = $this->getMockBuilder(CarrierInterface::class)
@@ -74,14 +84,16 @@ class ContractTest extends TestCase
             ->setId('contract-id')
             ->setCurrency('IOU')
             ->setCarrier($carrierMock)
-            ->setStatus('invalid');
+            ->setStatus('invalid')
+            ->setVolumetricWeightDivisorFactor(1.1);
 
         $this->assertEquals([
             'id'            => 'contract-id',
             'type'          => 'contracts',
             'attributes'    => [
-                'currency' => 'IOU',
-                'status'   => 'invalid',
+                'currency'                         => 'IOU',
+                'status'                           => 'invalid',
+                'volumetric_weight_divisor_factor' => 1.1,
             ],
             'relationships' => [
                 'carrier' => [

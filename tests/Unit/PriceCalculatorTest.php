@@ -28,8 +28,17 @@ class PriceCalculatorTest extends TestCase
         $serviceMock = $this->getMockedService([$serviceRateMock]);
         $shipment = $this->getMockedShipment(1337, $serviceMock, $serviceOptionMocks);
 
-        $priceCalculator = new PriceCalculator();
-        $this->assertEquals(6100, $priceCalculator->calculate($shipment));
+        $this->assertEquals(6100, (new PriceCalculator())->calculate($shipment));
+    }
+
+    /** @test */
+    public function testItCalculatesTheTotalPriceOfAShipmentWithVolumetricWeight()
+    {
+        $serviceRateMock = $this->getMockedServiceRate([], 333, 2001, 3000);
+        $serviceMock = $this->getMockedService([$serviceRateMock], 'delivery', true);
+        $shipment = $this->getMockedShipment(1500, $serviceMock, [], 8004000.0); // 8004000 / 4000 divisor = 2001 gram
+
+        $this->assertEquals(333, (new PriceCalculator())->calculate($shipment));
     }
 
     /** @test */
@@ -39,8 +48,7 @@ class PriceCalculatorTest extends TestCase
         $serviceMock = $this->getMockedService([$serviceRateMock]);
         $shipment = $this->getMockedShipment(1337, $serviceMock);
 
-        $priceCalculator = new PriceCalculator();
-        $this->assertEquals(321, $priceCalculator->calculate($shipment));
+        $this->assertEquals(321, (new PriceCalculator())->calculate($shipment));
     }
 
     /** @test */
@@ -54,8 +62,7 @@ class PriceCalculatorTest extends TestCase
         $serviceMock = $this->getMockedService([$serviceRateMock]);
         $shipment = $this->getMockedShipment(1337, $serviceMock, $serviceOptionMocks);
 
-        $priceCalculator = new PriceCalculator();
-        $this->assertEquals(6119, $priceCalculator->calculate($shipment));
+        $this->assertEquals(6119, (new PriceCalculator())->calculate($shipment));
     }
 
     /** @test */
@@ -69,8 +76,7 @@ class PriceCalculatorTest extends TestCase
         $serviceMock = $this->getMockedService([$serviceRateMock]);
         $shipment = $this->getMockedShipment(1337, $serviceMock, $serviceOptionMocks);
 
-        $priceCalculator = new PriceCalculator();
-        $this->assertEquals(1100, $priceCalculator->calculateOptionsPrice($shipment));
+        $this->assertEquals(1100, (new PriceCalculator())->calculateOptionsPrice($shipment));
     }
 
     /** @test */
@@ -85,8 +91,7 @@ class PriceCalculatorTest extends TestCase
         $serviceMock = $this->getMockedService([$serviceRateMock]);
         $shipment = $this->getMockedShipment(1337, $serviceMock, $serviceOptionMocks);
 
-        $priceCalculator = new PriceCalculator();
-        $this->assertNull($priceCalculator->calculate($shipment));
+        $this->assertNull((new PriceCalculator())->calculate($shipment));
     }
 
     /** @test */
@@ -94,10 +99,9 @@ class PriceCalculatorTest extends TestCase
     {
         $serviceRateMock = $this->getMockedServiceRate([], null, 0, 5000);
         $serviceMock = $this->getMockedService([$serviceRateMock]);
-        $shipment = $this->getMockedShipment(1337, $serviceMock, []);
+        $shipment = $this->getMockedShipment(1337, $serviceMock);
 
-        $priceCalculator = new PriceCalculator();
-        $this->assertNull($priceCalculator->calculate($shipment));
+        $this->assertNull((new PriceCalculator())->calculate($shipment));
     }
 
     /** @test */
@@ -107,8 +111,7 @@ class PriceCalculatorTest extends TestCase
         $serviceMock = $this->getMockedService([$serviceRateMock]);
         $shipment = $this->getMockedShipment(1337, $serviceMock);
 
-        $priceCalculator = new PriceCalculator();
-        $this->assertEquals(3914, $priceCalculator->calculate($shipment));
+        $this->assertEquals(3914, (new PriceCalculator())->calculate($shipment));
     }
 
     /** @test */
@@ -117,15 +120,27 @@ class PriceCalculatorTest extends TestCase
         $serviceMock = $this->getMockedService();
         $shipment = $this->getMockedShipment(1233, $serviceMock);
 
-        $priceCalculator = new PriceCalculator();
-
         $this->expectException(CalculationException::class);
         $this->expectExceptionMessage('Cannot find a matching service rate for given shipment');
-        $priceCalculator->calculate($shipment);
+        (new PriceCalculator())->calculate($shipment);
     }
 
     /** @test */
-    public function testItThrowsAnExceptionWhenShipmentHasInvalidOptions()
+    public function testItThrowsAnExceptionWhenNoServiceRateCanBeMatchedForShipmentWithOptions()
+    {
+        $serviceRateMock = $this->getMockedServiceRate([], 5000, 0, 5000);
+        $serviceMock = $this->getMockedService([$serviceRateMock]);
+        $shipment = $this->getMockedShipment(1337, $serviceMock, [
+            $this->getMockedServiceOption('service-option-id'),
+        ]);
+
+        $this->expectException(CalculationException::class);
+        $this->expectExceptionMessage('Cannot find a matching service rate for given shipment');
+        (new PriceCalculator())->calculate($shipment);
+    }
+
+    /** @test */
+    public function testItThrowsAnExceptionWhenPassedServiceRateHasInvalidOptions()
     {
         $serviceOptionMocks = [
             $this->getMockedServiceOption('service-option-id-uno', 250),
@@ -133,14 +148,11 @@ class PriceCalculatorTest extends TestCase
         ];
         $serviceRateMock = $this->getMockedServiceRate([], 5000, 0, 5000);
         $serviceMock = $this->getMockedService([$serviceRateMock]);
-
         $shipment = $this->getMockedShipment(1337, $serviceMock, $serviceOptionMocks);
-
-        $priceCalculator = new PriceCalculator();
 
         $this->expectException(CalculationException::class);
         $this->expectExceptionMessage('Cannot calculate a price for given shipment; invalid option: ');
-        $priceCalculator->calculate($shipment);
+        (new PriceCalculator())->calculate($shipment, $serviceRateMock);
     }
 
     /** @test */
@@ -149,11 +161,9 @@ class PriceCalculatorTest extends TestCase
         $serviceMock = $this->getMockedService();
         $shipment = $this->getMockedShipment(null, $serviceMock);
 
-        $priceCalculator = new PriceCalculator();
-
         $this->expectException(InvalidResourceException::class);
         $this->expectExceptionMessage('Cannot calculate shipment price without a valid shipment weight.');
-        $priceCalculator->calculate($shipment);
+        (new PriceCalculator())->calculate($shipment);
     }
 
     /** @test */
@@ -163,13 +173,11 @@ class PriceCalculatorTest extends TestCase
         $serviceMock = $this->getMockedService([$serviceRateMock]);
         $shipment = $this->getMockedShipment(999999, $serviceMock);
 
-        $priceCalculator = new PriceCalculator();
-
         $this->expectException(CalculationException::class);
         $this->expectExceptionMessage(
             'Could not calculate price for the given service rate since it does not support the shipment weight.'
         );
-        $priceCalculator->calculate($shipment);
+        (new PriceCalculator())->calculate($shipment);
     }
 
     /** @test */
@@ -179,24 +187,21 @@ class PriceCalculatorTest extends TestCase
         $serviceMock = $this->getMockedService([$serviceRateMock]);
         $shipment = $this->getMockedShipment(-545, $serviceMock);
 
-        $priceCalculator = new PriceCalculator();
-
-        $this->expectException(InvalidResourceException::class);
+        $this->expectException(CalculationException::class);
         $this->expectExceptionMessage(
-            'Cannot calculate shipment price without a valid shipment weight.'
+            'Could not calculate price for the given service rate since it does not support the shipment weight.'
         );
-        $priceCalculator->calculate($shipment);
+        (new PriceCalculator())->calculate($shipment);
     }
 
     /** @test */
     public function testItThrowsAnExceptionWhenCalculatingShipmentPriceButNoServiceIsSet()
     {
-        $shipment = $this->getMockedShipment(5000, null, []);
+        $shipment = $this->getMockedShipment();
 
-        $calculator = new PriceCalculator();
         $this->expectException(InvalidResourceException::class);
         $this->expectExceptionMessage('Cannot calculate shipment price without a set service.');
-        $calculator->calculate($shipment);
+        (new PriceCalculator())->calculate($shipment);
     }
 
     /** @test */
@@ -209,12 +214,10 @@ class PriceCalculatorTest extends TestCase
 
         $shipment->method('getPhysicalProperties')->willReturn($physicalProperties);
         $shipment->method('getService')->willReturn($this->createMock(ServiceInterface::class));
-
         $shipment->method('getContract')->willReturn(null);
 
-        $calculator = new PriceCalculator();
         $this->expectException(InvalidResourceException::class);
         $this->expectExceptionMessage('Cannot calculate shipment price without a set contract.');
-        $calculator->calculate($shipment);
+        (new PriceCalculator())->calculate($shipment);
     }
 }

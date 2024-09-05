@@ -18,6 +18,7 @@ class Contract implements ContractInterface
     const ATTRIBUTE_CURRENCY = 'currency';
     const ATTRIBUTE_NAME = 'name';
     const ATTRIBUTE_STATUS = 'status';
+    const ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR_FACTOR = 'volumetric_weight_divisor_factor';
 
     const RELATIONSHIP_CARRIER = 'carrier';
 
@@ -26,9 +27,10 @@ class Contract implements ContractInterface
     private string $type = ResourceInterface::TYPE_CONTRACT;
 
     private array $attributes = [
-        self::ATTRIBUTE_CURRENCY => null,
-        self::ATTRIBUTE_NAME     => null,
-        self::ATTRIBUTE_STATUS   => null,
+        self::ATTRIBUTE_CURRENCY                         => null,
+        self::ATTRIBUTE_NAME                             => null,
+        self::ATTRIBUTE_STATUS                           => null,
+        self::ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR_FACTOR => 1.0,
     ];
 
     private array $relationships = [
@@ -83,5 +85,17 @@ class Contract implements ContractInterface
     public function getStatus(): string
     {
         return $this->attributes[self::ATTRIBUTE_STATUS];
+    }
+
+    public function setVolumetricWeightDivisorFactor(float $factor): self
+    {
+        $this->attributes[self::ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR_FACTOR] = $factor;
+
+        return $this;
+    }
+
+    public function getVolumetricWeightDivisorFactor(): float
+    {
+        return $this->attributes[self::ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR_FACTOR];
     }
 }
