@@ -224,4 +224,10 @@ interface ShipmentInterface extends ResourceInterface
     public function setCollection(?CollectionInterface $collection): self;
 
     public function getCollection(): ?CollectionInterface;
+
+    public function setShipmentSurcharges(array $surcharges): self;
+
+    public function addShipmentSurcharge(ShipmentSurchargeInterface $surcharge): self;
+
+    public function getShipmentSurcharges(): array;
 }

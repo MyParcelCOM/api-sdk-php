@@ -25,6 +25,7 @@ interface ResourceInterface extends JsonSerializable
     const TYPE_SERVICE_RATE = 'service-rates';
     const TYPE_SHIPMENT = 'shipments';
     const TYPE_SHIPMENT_STATUS = 'shipment-statuses';
+    const TYPE_SHIPMENT_SURCHARGE = 'shipment-surcharges';
     const TYPE_SHOP = 'shops';
     const TYPE_STATUS = 'statuses';
 

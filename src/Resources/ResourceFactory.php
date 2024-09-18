@@ -45,6 +45,7 @@ use MyParcelCom\ApiSdk\Resources\Proxy\ServiceOptionProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ServiceProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ShipmentProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ShipmentStatusProxy;
+use MyParcelCom\ApiSdk\Resources\Proxy\ShipmentSurchargeProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ShopProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\StatusProxy;
 use MyParcelCom\ApiSdk\Utils\StringUtils;
@@ -98,19 +99,20 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
      * resources that are part of relationships.
      */
     private array $proxies = [
-        ResourceInterface::TYPE_CARRIER         => CarrierProxy::class,
-        ResourceInterface::TYPE_COLLECTION      => CollectionProxy::class,
-        ResourceInterface::TYPE_CONTRACT        => ContractProxy::class,
-        ResourceInterface::TYPE_FILE            => FileProxy::class,
-        ResourceInterface::TYPE_MANIFEST        => ManifestProxy::class,
-        ResourceInterface::TYPE_ORGANIZATION    => OrganizationProxy::class,
-        ResourceInterface::TYPE_REGION          => RegionProxy::class,
-        ResourceInterface::TYPE_SERVICE         => ServiceProxy::class,
-        ResourceInterface::TYPE_SERVICE_OPTION  => ServiceOptionProxy::class,
-        ResourceInterface::TYPE_SHIPMENT        => ShipmentProxy::class,
-        ResourceInterface::TYPE_SHIPMENT_STATUS => ShipmentStatusProxy::class,
-        ResourceInterface::TYPE_SHOP            => ShopProxy::class,
-        ResourceInterface::TYPE_STATUS          => StatusProxy::class,
+        ResourceInterface::TYPE_CARRIER            => CarrierProxy::class,
+        ResourceInterface::TYPE_COLLECTION         => CollectionProxy::class,
+        ResourceInterface::TYPE_CONTRACT           => ContractProxy::class,
+        ResourceInterface::TYPE_FILE               => FileProxy::class,
+        ResourceInterface::TYPE_MANIFEST           => ManifestProxy::class,
+        ResourceInterface::TYPE_ORGANIZATION       => OrganizationProxy::class,
+        ResourceInterface::TYPE_REGION             => RegionProxy::class,
+        ResourceInterface::TYPE_SERVICE            => ServiceProxy::class,
+        ResourceInterface::TYPE_SERVICE_OPTION     => ServiceOptionProxy::class,
+        ResourceInterface::TYPE_SHIPMENT           => ShipmentProxy::class,
+        ResourceInterface::TYPE_SHIPMENT_STATUS    => ShipmentStatusProxy::class,
+        ResourceInterface::TYPE_SHOP               => ShopProxy::class,
+        ResourceInterface::TYPE_STATUS             => StatusProxy::class,
+        ResourceInterface::TYPE_SHIPMENT_SURCHARGE => ShipmentSurchargeProxy::class,
     ];
 
     public function __construct()
@@ -122,6 +124,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         $shipmentItemFactory = [$this, 'shipmentItemFactory'];
         $customsFactory = [$this, 'customsFactory'];
         $carrierFactory = [$this, 'carrierFactory'];
+        $shipmentSurchargeFactory = [$this, 'shipmentSurchargeFactory'];
 
         $this->setFactoryForType(ResourceInterface::TYPE_SHIPMENT, $shipmentFactory);
         $this->setFactoryForType(ShipmentInterface::class, $shipmentFactory);
@@ -140,6 +143,9 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         $this->setFactoryForType(CustomsInterface::class, $customsFactory);
 
         $this->setFactoryForType(ResourceInterface::TYPE_CARRIER, $carrierFactory);
+
+        $this->setFactoryForType(ResourceInterface::TYPE_SHIPMENT_SURCHARGE, $shipmentSurchargeFactory);
+        $this->setFactoryForType(ShipmentSurcharge::class, $shipmentSurchargeFactory);
     }
 
     /**
@@ -381,6 +387,20 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         }
 
         return $carrier;
+    }
+
+    protected function shipmentSurchargeFactory(array &$attributes): ShipmentSurcharge
+    {
+        $surcharge = new ShipmentSurcharge();
+
+        if (isset($attributes['fee']['amount'])) {
+            $surcharge->setFeeAmount($attributes['fee']['amount']);
+            $surcharge->setFeeCurrency($attributes['fee']['currency']);
+
+            unset($attributes['fee']);
+        }
+
+        return $surcharge;
     }
 
     public function create(string $type, array $properties = []): ResourceInterface|JsonSerializable
