@@ -192,11 +192,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         if (isset($data['id'])) {
             $shipment->setStatusHistoryCallback(function () use ($data) {
                 return $this->api->getResourcesFromUri(
-                    str_replace(
-                        '{shipment_id}',
-                        $data['id'],
-                        MyParcelComApiInterface::PATH_SHIPMENT_STATUSES,
-                    ),
+                    str_replace('{shipment_id}', $data['id'], MyParcelComApiInterface::PATH_SHIPMENT_STATUSES),
                 );
             });
         }

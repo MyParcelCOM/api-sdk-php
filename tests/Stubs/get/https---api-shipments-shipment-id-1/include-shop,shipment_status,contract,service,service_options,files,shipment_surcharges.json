@@ -1,0 +1,294 @@
+{
+  "data": {
+    "type": "shipments",
+    "id": "shipment-id-1",
+    "attributes": {
+      "recipient_address": {
+        "street_1": "Some road",
+        "street_2": "Room 3",
+        "street_number": 17,
+        "street_number_suffix": "A",
+        "postal_code": "1GL HF1",
+        "city": "Cardiff",
+        "region_code": "CRF",
+        "country_code": "GB",
+        "first_name": "John",
+        "last_name": "Doe",
+        "company": "Acme Jewelry Co.",
+        "email": "john@doe.com",
+        "phone_number": "+31 234 567 890"
+      },
+      "recipient_tax_identification_numbers": [
+        {
+          "country_code": "GB",
+          "number": "IM2760000742",
+          "description": "eBay IOSS number",
+          "type": "ioss"
+        }
+      ],
+      "sender_address": {
+        "street_1": "Some road",
+        "street_2": "Room 3",
+        "street_number": 17,
+        "street_number_suffix": "A",
+        "postal_code": "1GL HF1",
+        "city": "Cardiff",
+        "region_code": "CRF",
+        "country_code": "GB",
+        "first_name": "John",
+        "last_name": "Doe",
+        "company": "Acme Jewelry Co.",
+        "email": "john@doe.com",
+        "phone_number": "+31 234 567 890"
+      },
+      "sender_tax_identification_numbers": [
+        {
+          "country_code": "GB",
+          "number": "XI123456789",
+          "description": "Eori XI number for Northern Ireland",
+          "type": "eori"
+        }
+      ],
+      "return_address": {
+        "street_1": "Some road",
+        "street_2": "Room 3",
+        "street_number": 17,
+        "street_number_suffix": "A",
+        "postal_code": "1GL HF1",
+        "city": "Cardiff",
+        "region_code": "CRF",
+        "country_code": "GB",
+        "first_name": "John",
+        "last_name": "Doe",
+        "company": "Acme Jewelry Co.",
+        "email": "john@doe.com",
+        "phone_number": "+31 234 567 890"
+      },
+      "pickup_location": {
+        "code": "123456",
+        "address": {
+          "street_1": "Some road",
+          "street_2": "Room 3",
+          "street_number": 17,
+          "street_number_suffix": "A",
+          "postal_code": "1GL HF1",
+          "city": "Cardiff",
+          "region_code": "CRF",
+          "country_code": "GB",
+          "first_name": "John",
+          "last_name": "Doe",
+          "company": "Acme Jewelry Co.",
+          "email": "john@doe.com",
+          "phone_number": "+31 234 567 890"
+        }
+      },
+      "description": "Fidget spinners",
+      "customer_reference": "#8008135",
+      "price": {
+        "amount": 100,
+        "currency": "EUR"
+      },
+      "total_value": {
+        "amount": 600,
+        "currency": "GBP"
+      },
+      "barcode": "3SABCD0123456789",
+      "tracking_code": "TR4CK1NGC0D3",
+      "tracking_url": "https://track.me/TR4CK1NGC0D3",
+      "tracking_page_url": "https://track.localhost.private/MyParcel.com%20Shop//1433%20DC",
+      "physical_properties": {
+        "height": 24,
+        "width": 50,
+        "length": 50,
+        "volume": 0.06,
+        "weight": 24,
+        "volumetric_weight": 12
+      },
+      "items": [
+        {
+          "sku": "123456789",
+          "description": "OnePlus X",
+          "item_value": {
+            "amount": 100,
+            "currency": "GBP"
+          },
+          "item_weight": 128,
+          "item_weight_unit": "mg",
+          "quantity": 2,
+          "hs_code": "8517.12.00",
+          "origin_country_code": "GB",
+          "is_preferential_origin": false
+        },
+        {
+          "sku": "213425",
+          "description": "OnePlus One",
+          "item_value": {
+            "amount": 200,
+            "currency": "GBP"
+          },
+          "item_weight": 256,
+          "item_weight_unit": "g",
+          "quantity": 3,
+          "hs_code": "8517.12.00",
+          "origin_country_code": "GB",
+          "is_preferential_origin": true
+        },
+        {
+          "sku": "6876",
+          "description": "OnePlus Two",
+          "item_value": {
+            "amount": 300,
+            "currency": "GBP"
+          },
+          "item_weight": 512,
+          "item_weight_unit": "kg",
+          "quantity": 1,
+          "hs_code": "8517.12.00",
+          "origin_country_code": "GB",
+          "is_preferential_origin": false
+        }
+      ],
+      "customs": {
+        "content_type": "documents",
+        "invoice_number": "NO.5",
+        "non_delivery": "return",
+        "incoterm": "DAP",
+        "license_number": "512842382",
+        "certificate_number": "2112211"
+      },
+      "register_at": 1526913941,
+      "created_at": 1504801719,
+      "updated_at": 1504801719,
+      "synced_at": 1504801719
+    },
+    "relationships": {
+      "service_options": {
+        "data": [
+          {
+            "type": "service-options",
+            "id": "service-option-id-1"
+          }
+        ]
+      },
+      "shop": {
+        "data": {
+          "type": "shops",
+          "id": "shop-id-1"
+        },
+        "links": {
+          "related": "https://api/shops/shop-id-1"
+        }
+      },
+      "shipment_status": {
+        "data": {
+          "type": "shipment-statuses",
+          "id": "shipment-status-id-1"
+        },
+        "links": {
+          "related": "https://api/shipments/shipment-id-1/statuses/shipment-status-id-1"
+        }
+      },
+      "service": {
+        "data": {
+          "type": "services",
+          "id": "service-id-1"
+        }
+      },
+      "contract": {
+        "data": {
+          "type": "contracts",
+          "id": "contract-id-1"
+        }
+      },
+      "collection": {
+        "data": {
+          "type": "collections",
+          "id": "collection-id-1"
+        }
+      },
+      "files": {
+        "data": [
+          {
+            "type": "files",
+            "id": "file-id-1"
+          }
+        ],
+        "links": {
+          "related": "https://api/shipments/shipment-id-1/files"
+        }
+      },
+      "shipment_surcharges": {
+        "data": [
+          {
+            "id": "4afa3758-c425-48bc-96ef-ba43c5da4082",
+            "type": "shipment-surcharges"
+          },
+          {
+            "id": "ff772f9d-ca39-4315-84b1-eac317b6001f",
+            "type": "shipment-surcharges"
+          }
+        ]
+      }
+    },
+    "links": {
+      "self": "https://api/shipments/shipment-id-1"
+    }
+  },
+  "included": [
+    {
+      "id": "4afa3758-c425-48bc-96ef-ba43c5da4082",
+      "type": "shipment-surcharges",
+      "attributes": {
+        "name": "test",
+        "description": "desc",
+        "fee": {
+          "amount": 123,
+          "currency": "ALL"
+        },
+        "created_at": 1726674123,
+        "updated_at": 1726674123
+      },
+      "links": {
+        "self": "https:\/\/api.localhost.private\/shipment-surcharges\/4afa3758-c425-48bc-96ef-ba43c5da4082"
+      },
+      "relationships": {
+        "shipment": {
+          "data": {
+            "id": "fa59fadf-880e-4e48-880b-32598f6c75d8",
+            "type": "shipments"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/shipments\/fa59fadf-880e-4e48-880b-32598f6c75d8"
+          }
+        }
+      }
+    },
+    {
+      "id": "ff772f9d-ca39-4315-84b1-eac317b6001f",
+      "type": "shipment-surcharges",
+      "attributes": {
+        "name": "asdasd",
+        "fee": {
+          "amount": 345,
+          "currency": "AMD"
+        },
+        "created_at": 1726674132,
+        "updated_at": 1726674132
+      },
+      "links": {
+        "self": "https:\/\/api.localhost.private\/shipment-surcharges\/ff772f9d-ca39-4315-84b1-eac317b6001f"
+      },
+      "relationships": {
+        "shipment": {
+          "data": {
+            "id": "fa59fadf-880e-4e48-880b-32598f6c75d8",
+            "type": "shipments"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/shipments\/fa59fadf-880e-4e48-880b-32598f6c75d8"
+          }
+        }
+      }
+    }
+  ]
+}
