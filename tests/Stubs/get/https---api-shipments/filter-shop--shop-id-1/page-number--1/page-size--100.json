@@ -199,6 +199,18 @@
           "links": {
             "related": "https://api/shipments/shipment-id-1/files"
           }
+        },
+        "shipment_surcharges": {
+          "data": [
+            {
+              "id": "4afa3758-c425-48bc-96ef-ba43c5da4082",
+              "type": "shipment-surcharges"
+            },
+            {
+              "id": "ff772f9d-ca39-4315-84b1-eac317b6001f",
+              "type": "shipment-surcharges"
+            }
+          ]
         }
       },
       "links": {

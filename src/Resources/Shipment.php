@@ -765,7 +765,7 @@ class Shipment implements ShipmentInterface
 
     public function setShipmentSurcharges(array $surcharges): self
     {
-        $this->relationships[self::RELATIONSHIP_SERVICE_OPTIONS]['data'] = [];
+        $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'] = [];
 
         array_walk($surcharges, function ($surcharge) {
             $this->addShipmentSurcharge($surcharge);

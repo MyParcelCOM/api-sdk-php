@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk\Resources;
 
+use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentSurchargeInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
 use MyParcelCom\ApiSdk\Resources\Traits\Resource;
@@ -16,9 +17,13 @@ class ShipmentSurcharge implements ShipmentSurchargeInterface
     const AMOUNT = 'amount';
     const CURRENCY = 'currency';
 
+    private ?string $id = null;
+
+    private string $type = ResourceInterface::TYPE_SHIPMENT_SURCHARGE;
+
     private ?string $name = null;
 
-    private ?string $description;
+    private ?string $description = null;
 
     private array $fee = [
         self::AMOUNT   => null,
