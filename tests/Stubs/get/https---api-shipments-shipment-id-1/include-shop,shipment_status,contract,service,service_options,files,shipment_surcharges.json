@@ -233,5 +233,62 @@
     "links": {
       "self": "https://api/shipments/shipment-id-1"
     }
-  }
+  },
+  "included": [
+    {
+      "id": "4afa3758-c425-48bc-96ef-ba43c5da4082",
+      "type": "shipment-surcharges",
+      "attributes": {
+        "name": "test",
+        "description": "desc",
+        "fee": {
+          "amount": 123,
+          "currency": "ALL"
+        },
+        "created_at": 1726674123,
+        "updated_at": 1726674123
+      },
+      "links": {
+        "self": "https:\/\/api.localhost.private\/shipment-surcharges\/4afa3758-c425-48bc-96ef-ba43c5da4082"
+      },
+      "relationships": {
+        "shipment": {
+          "data": {
+            "id": "fa59fadf-880e-4e48-880b-32598f6c75d8",
+            "type": "shipments"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/shipments\/fa59fadf-880e-4e48-880b-32598f6c75d8"
+          }
+        }
+      }
+    },
+    {
+      "id": "ff772f9d-ca39-4315-84b1-eac317b6001f",
+      "type": "shipment-surcharges",
+      "attributes": {
+        "name": "asdasd",
+        "fee": {
+          "amount": 345,
+          "currency": "AMD"
+        },
+        "created_at": 1726674132,
+        "updated_at": 1726674132
+      },
+      "links": {
+        "self": "https:\/\/api.localhost.private\/shipment-surcharges\/ff772f9d-ca39-4315-84b1-eac317b6001f"
+      },
+      "relationships": {
+        "shipment": {
+          "data": {
+            "id": "fa59fadf-880e-4e48-880b-32598f6c75d8",
+            "type": "shipments"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/shipments\/fa59fadf-880e-4e48-880b-32598f6c75d8"
+          }
+        }
+      }
+    }
+  ]
 }

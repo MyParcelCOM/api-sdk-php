@@ -19,6 +19,7 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentItemInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentStatusInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentSurchargeInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
 use MyParcelCom\ApiSdk\Resources\Traits\ProcessIncludes;
@@ -66,18 +67,20 @@ class Shipment implements ShipmentInterface
     const RELATIONSHIP_STATUS = 'shipment_status';
     const RELATIONSHIP_SHOP = 'shop';
     const RELATIONSHIP_COLLECTION = 'collection';
+    const RELATIONSHIP_SHIPMENT_SURCHARGES = 'shipment_surcharges';
 
     const META_LABEL_MIME_TYPE = 'label_mime_type';
     const META_SERVICE_CODE = 'service_code';
 
     const INCLUDES = [
-        ResourceInterface::TYPE_CONTRACT        => self::RELATIONSHIP_CONTRACT,
-        ResourceInterface::TYPE_FILE            => self::RELATIONSHIP_FILES,
-        ResourceInterface::TYPE_SERVICE         => self::RELATIONSHIP_SERVICE,
-        ResourceInterface::TYPE_SERVICE_OPTION  => self::RELATIONSHIP_SERVICE_OPTIONS,
-        ResourceInterface::TYPE_SHIPMENT_STATUS => self::RELATIONSHIP_STATUS,
-        ResourceInterface::TYPE_SHOP            => self::RELATIONSHIP_SHOP,
-        ResourceInterface::TYPE_COLLECTION      => self::RELATIONSHIP_COLLECTION,
+        ResourceInterface::TYPE_CONTRACT           => self::RELATIONSHIP_CONTRACT,
+        ResourceInterface::TYPE_FILE               => self::RELATIONSHIP_FILES,
+        ResourceInterface::TYPE_SERVICE            => self::RELATIONSHIP_SERVICE,
+        ResourceInterface::TYPE_SERVICE_OPTION     => self::RELATIONSHIP_SERVICE_OPTIONS,
+        ResourceInterface::TYPE_SHIPMENT_STATUS    => self::RELATIONSHIP_STATUS,
+        ResourceInterface::TYPE_SHOP               => self::RELATIONSHIP_SHOP,
+        ResourceInterface::TYPE_COLLECTION         => self::RELATIONSHIP_COLLECTION,
+        ResourceInterface::TYPE_SHIPMENT_SURCHARGE => self::RELATIONSHIP_SHIPMENT_SURCHARGES,
     ];
 
     private ?string $id = null;
@@ -113,29 +116,32 @@ class Shipment implements ShipmentInterface
     ];
 
     private array $relationships = [
-        self::RELATIONSHIP_SHOP            => [
+        self::RELATIONSHIP_SHOP                => [
             'data' => null,
         ],
-        self::RELATIONSHIP_STATUS          => [
+        self::RELATIONSHIP_STATUS              => [
             'data' => null,
         ],
-        self::RELATIONSHIP_SERVICE_OPTIONS => [
+        self::RELATIONSHIP_SERVICE_OPTIONS     => [
             'data' => [],
         ],
-        self::RELATIONSHIP_FILES           => [
+        self::RELATIONSHIP_FILES               => [
             'data' => [],
         ],
-        self::RELATIONSHIP_SERVICE         => [
+        self::RELATIONSHIP_SERVICE             => [
             'data' => null,
         ],
-        self::RELATIONSHIP_CONTRACT        => [
+        self::RELATIONSHIP_CONTRACT            => [
             'data' => null,
         ],
-        self::RELATIONSHIP_MANIFEST        => [
+        self::RELATIONSHIP_MANIFEST            => [
             'data' => null,
         ],
-        self::RELATIONSHIP_COLLECTION      => [
+        self::RELATIONSHIP_COLLECTION          => [
             'data' => null,
+        ],
+        self::RELATIONSHIP_SHIPMENT_SURCHARGES => [
+            'data' => [],
         ],
     ];
 
@@ -755,5 +761,28 @@ class Shipment implements ShipmentInterface
     public function getCollection(): ?CollectionInterface
     {
         return $this->relationships[self::RELATIONSHIP_COLLECTION]['data'];
+    }
+
+    public function setShipmentSurcharges(array $surcharges): self
+    {
+        $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'] = [];
+
+        array_walk($surcharges, function ($surcharge) {
+            $this->addShipmentSurcharge($surcharge);
+        });
+
+        return $this;
+    }
+
+    public function addShipmentSurcharge(ShipmentSurchargeInterface $surcharge): self
+    {
+        $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'][] = $surcharge;
+
+        return $this;
+    }
+
+    public function getShipmentSurcharges(): array
+    {
+        return $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'];
     }
 }

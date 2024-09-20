@@ -19,14 +19,7 @@
           "email": "john@doe.com",
           "phone_number": "+31 234 567 890"
         },
-        "recipient_tax_identification_numbers": [
-          {
-            "country_code": "GB",
-            "number": "IM2760000742",
-            "description": "eBay IOSS number",
-            "type": "ioss"
-          }
-        ],
+        "recipient_tax_number": "H111111-11",
         "sender_address": {
           "street_1": "Some road",
           "street_2": "Room 3",
@@ -42,14 +35,7 @@
           "email": "john@doe.com",
           "phone_number": "+31 234 567 890"
         },
-        "sender_tax_identification_numbers": [
-          {
-            "country_code": "GB",
-            "number": "XI123456789",
-            "description": "Eori XI number for Northern Ireland",
-            "type": "eori"
-          }
-        ],
+        "sender_tax_number": "G666666-66",
         "return_address": {
           "street_1": "Some road",
           "street_2": "Room 3",
@@ -148,7 +134,6 @@
         "barcode": "3SABCD0123456789",
         "tracking_code": "TR4CK1NGC0D3",
         "tracking_url": "https://track.me/TR4CK1NGC0D3",
-        "tracking_page_url": "https://track.localhost.private/MyParcel.com%20Shop//1433%20DC",
         "physical_properties": {
           "height": 24,
           "width": 50,
@@ -170,15 +155,6 @@
               "id": "service-option-id-1"
             }
           ]
-        },
-        "parent": {
-          "data": {
-            "type": "shipments",
-            "id": "shipment-id-0"
-          },
-          "links": {
-            "related": "https://api/shipments/shipment-id-0"
-          }
         },
         "shop": {
           "data": {
@@ -202,18 +178,15 @@
           "data": {
             "type": "services",
             "id": "service-id-1"
+          },
+          "links": {
+            "related": "https://api/services/service-id-1"
           }
         },
         "contract": {
           "data": {
             "type": "contracts",
             "id": "contract-id-1"
-          }
-        },
-        "collection": {
-          "data": {
-            "type": "collections",
-            "id": "collection-id-1"
           }
         },
         "files": {
@@ -226,6 +199,18 @@
           "links": {
             "related": "https://api/shipments/shipment-id-1/files"
           }
+        },
+        "shipment_surcharges": {
+          "data": [
+            {
+              "id": "4afa3758-c425-48bc-96ef-ba43c5da4082",
+              "type": "shipment-surcharges"
+            },
+            {
+              "id": "ff772f9d-ca39-4315-84b1-eac317b6001f",
+              "type": "shipment-surcharges"
+            }
+          ]
         }
       },
       "links": {
@@ -238,8 +223,65 @@
     "total_records": 1
   },
   "links": {
-    "self": "https://api/shipments?page[number]=1&page[size]=30",
-    "first": "https://api/shipments?page[number]=1&page[size]=30",
-    "last": "https://api/shipments?page[number]=1&page[size]=30"
-  }
+    "self": "https://api/shipments?filter[shop]=shop-id-1&page[number]=1&page[size]=30",
+    "first": "https://api/shipments?filter[shop]=shop-id-1&page[number]=1&page[size]=30",
+    "last": "https://api/shipments?filter[shop]=shop-id-1&page[number]=1&page[size]=30"
+  },
+  "included": [
+    {
+      "id": "4afa3758-c425-48bc-96ef-ba43c5da4082",
+      "type": "shipment-surcharges",
+      "attributes": {
+        "name": "test",
+        "description": "desc",
+        "fee": {
+          "amount": 123,
+          "currency": "ALL"
+        },
+        "created_at": 1726674123,
+        "updated_at": 1726674123
+      },
+      "links": {
+        "self": "https:\/\/api.localhost.private\/shipment-surcharges\/4afa3758-c425-48bc-96ef-ba43c5da4082"
+      },
+      "relationships": {
+        "shipment": {
+          "data": {
+            "id": "fa59fadf-880e-4e48-880b-32598f6c75d8",
+            "type": "shipments"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/shipments\/fa59fadf-880e-4e48-880b-32598f6c75d8"
+          }
+        }
+      }
+    },
+    {
+      "id": "ff772f9d-ca39-4315-84b1-eac317b6001f",
+      "type": "shipment-surcharges",
+      "attributes": {
+        "name": "asdasd",
+        "fee": {
+          "amount": 345,
+          "currency": "AMD"
+        },
+        "created_at": 1726674132,
+        "updated_at": 1726674132
+      },
+      "links": {
+        "self": "https:\/\/api.localhost.private\/shipment-surcharges\/ff772f9d-ca39-4315-84b1-eac317b6001f"
+      },
+      "relationships": {
+        "shipment": {
+          "data": {
+            "id": "fa59fadf-880e-4e48-880b-32598f6c75d8",
+            "type": "shipments"
+          },
+          "links": {
+            "related": "https:\/\/api.localhost.private\/shipments\/fa59fadf-880e-4e48-880b-32598f6c75d8"
+          }
+        }
+      }
+    }
+  ]
 }

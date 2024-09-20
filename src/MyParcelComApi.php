@@ -322,7 +322,12 @@ class MyParcelComApi implements MyParcelComApiInterface
             ]));
         }
         // Include the services to avoid extra http requests when the result is looped with: $serviceRate->getService().
-        $url->addQuery(['include' => 'contract,service']);
+        $url->addQuery([
+            'include' => implode(',', [
+                ServiceRate::RELATIONSHIP_CONTRACT,
+                ServiceRate::RELATIONSHIP_SERVICE,
+            ]),
+        ]);
 
         /** @var ServiceRate[] $serviceRates */
         $serviceRates = $this->getRequestCollection($url->getUrl(), $ttl);
@@ -417,6 +422,18 @@ class MyParcelComApi implements MyParcelComApiInterface
     {
         $url = new UrlBuilder($this->apiUri . self::PATH_SHIPMENTS);
 
+        $url->addQuery([
+            'include' => implode(',', [
+                Shipment::RELATIONSHIP_SHOP,
+                Shipment::RELATIONSHIP_STATUS,
+                Shipment::RELATIONSHIP_CONTRACT,
+                Shipment::RELATIONSHIP_SERVICE,
+                Shipment::RELATIONSHIP_SERVICE_OPTIONS,
+                Shipment::RELATIONSHIP_FILES,
+                Shipment::RELATIONSHIP_SHIPMENT_SURCHARGES,
+            ]),
+        ]);
+
         if (isset($shop)) {
             $url->addQuery(['filter[shop]' => $shop->getId()]);
         }
@@ -426,7 +443,17 @@ class MyParcelComApi implements MyParcelComApiInterface
 
     public function getShipment(string $id, int $ttl = self::TTL_NO_CACHE): ShipmentInterface
     {
-        return $this->getResourceById(ResourceInterface::TYPE_SHIPMENT, $id, $ttl);
+        $includes = [
+            Shipment::RELATIONSHIP_SHOP,
+            Shipment::RELATIONSHIP_STATUS,
+            Shipment::RELATIONSHIP_CONTRACT,
+            Shipment::RELATIONSHIP_SERVICE,
+            Shipment::RELATIONSHIP_SERVICE_OPTIONS,
+            Shipment::RELATIONSHIP_FILES,
+            Shipment::RELATIONSHIP_SHIPMENT_SURCHARGES,
+        ];
+
+        return $this->getResourceById(ResourceInterface::TYPE_SHIPMENT, $id, $ttl, $includes);
     }
 
     public function saveShipment(ShipmentInterface $shipment): ShipmentInterface
@@ -971,10 +998,16 @@ class MyParcelComApi implements MyParcelComApiInterface
         );
     }
 
-    public function getResourceById(string $resourceType, string $id, int $ttl = self::TTL_NO_CACHE): ResourceInterface
-    {
+    public function getResourceById(
+        string $resourceType,
+        string $id,
+        int $ttl = self::TTL_NO_CACHE,
+        array $includes = [],
+    ): ResourceInterface {
+        $include = empty($includes) ? '' : '?include=' . implode(',', $includes);
+
         $resources = $this->getResourcesArray(
-            $this->getResourceUri($resourceType, $id),
+            $this->getResourceUri($resourceType, $id) . $include,
             $ttl,
         );
 
