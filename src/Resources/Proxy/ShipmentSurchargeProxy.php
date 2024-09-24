@@ -6,6 +6,7 @@ namespace MyParcelCom\ApiSdk\Resources\Proxy;
 
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceProxyInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentSurchargeInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
 use MyParcelCom\ApiSdk\Resources\Traits\ProxiesResource;
@@ -62,6 +63,16 @@ class ShipmentSurchargeProxy implements ShipmentSurchargeInterface, ResourceProx
     public function getFeeCurrency(): string
     {
         return $this->getResource()->getFeeCurrency();
+    }
+
+    public function getShipment(): ?ShipmentInterface
+    {
+        return $this->getResource()->getShipment();
+    }
+
+    public function setShipment(?ShipmentInterface $shipment): self
+    {
+        return $this->getResource()->setShipment($shipment);
     }
 
     /**

@@ -25,6 +25,7 @@ class ShipmentSurchargesTest extends TestCase
         $this->assertEquals('desc', $shipmentSurcharge->getDescription());
         $this->assertEquals(123, $shipmentSurcharge->getFeeAmount());
         $this->assertEquals('ALL', $shipmentSurcharge->getFeeCurrency());
+        $this->assertEquals('shipment-id-1', $shipmentSurcharge->getShipment()->getId());
 
         $shipmentSurcharge = $shipmentSurcharges[1];
         $this->assertInstanceOf(ShipmentSurchargeInterface::class, $shipmentSurcharge);
@@ -32,5 +33,6 @@ class ShipmentSurchargesTest extends TestCase
         $this->assertNull($shipmentSurcharge->getDescription());
         $this->assertEquals(345, $shipmentSurcharge->getFeeAmount());
         $this->assertEquals('AMD', $shipmentSurcharge->getFeeCurrency());
+        $this->assertEquals('shipment-id-1', $shipmentSurcharge->getShipment()->getId());
     }
 }

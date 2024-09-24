@@ -21,4 +21,8 @@ interface ShipmentSurchargeInterface extends ResourceInterface
     public function setFeeCurrency(string $currency): self;
 
     public function getFeeCurrency(): string;
+
+    public function getShipment(): ?ShipmentInterface;
+
+    public function setShipment(?ShipmentInterface $shipment): self;
 }
