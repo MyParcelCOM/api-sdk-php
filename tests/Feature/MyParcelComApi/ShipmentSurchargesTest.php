@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk\Tests\Feature\MyParcelComApi;
 
+use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentSurchargeInterface;
 use MyParcelCom\ApiSdk\Tests\TestCase;
 
@@ -25,6 +26,7 @@ class ShipmentSurchargesTest extends TestCase
         $this->assertEquals('desc', $shipmentSurcharge->getDescription());
         $this->assertEquals(123, $shipmentSurcharge->getFeeAmount());
         $this->assertEquals('ALL', $shipmentSurcharge->getFeeCurrency());
+        $this->assertInstanceOf(ShipmentInterface::class, $shipmentSurcharge->getShipment());
         $this->assertEquals('shipment-id-1', $shipmentSurcharge->getShipment()->getId());
 
         $shipmentSurcharge = $shipmentSurcharges[1];
@@ -33,6 +35,7 @@ class ShipmentSurchargesTest extends TestCase
         $this->assertNull($shipmentSurcharge->getDescription());
         $this->assertEquals(345, $shipmentSurcharge->getFeeAmount());
         $this->assertEquals('AMD', $shipmentSurcharge->getFeeCurrency());
+        $this->assertInstanceOf(ShipmentInterface::class, $shipmentSurcharge->getShipment());
         $this->assertEquals('shipment-id-1', $shipmentSurcharge->getShipment()->getId());
     }
 }
