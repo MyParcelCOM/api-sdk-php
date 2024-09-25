@@ -269,16 +269,16 @@
         "updated_at": 1726674123
       },
       "links": {
-        "self": "https:\/\/api.localhost.private\/shipment-surcharges\/4afa3758-c425-48bc-96ef-ba43c5da4082"
+        "self": "https://api/shipment-surcharges/4afa3758-c425-48bc-96ef-ba43c5da4082"
       },
       "relationships": {
         "shipment": {
           "data": {
-            "id": "fa59fadf-880e-4e48-880b-32598f6c75d8",
+            "id": "shipment-id-1",
             "type": "shipments"
           },
           "links": {
-            "related": "https:\/\/api.localhost.private\/shipments\/fa59fadf-880e-4e48-880b-32598f6c75d8"
+            "related": "https://api/shipments/shipment-id-1"
           }
         }
       }
@@ -296,16 +296,16 @@
         "updated_at": 1726674132
       },
       "links": {
-        "self": "https:\/\/api.localhost.private\/shipment-surcharges\/ff772f9d-ca39-4315-84b1-eac317b6001f"
+        "self": "https://api/shipment-surcharges/ff772f9d-ca39-4315-84b1-eac317b6001f"
       },
       "relationships": {
         "shipment": {
           "data": {
-            "id": "fa59fadf-880e-4e48-880b-32598f6c75d8",
+            "id": "shipment-id-1",
             "type": "shipments"
           },
           "links": {
-            "related": "https:\/\/api.localhost.private\/shipments\/fa59fadf-880e-4e48-880b-32598f6c75d8"
+            "related": "https://api/shipments/shipment-id-1"
           }
         }
       }

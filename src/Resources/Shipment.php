@@ -339,6 +339,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_CUSTOMER_REFERENCE];
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own price on a shipment.
+     */
     public function setPrice(?int $price): self
     {
         $this->attributes[self::ATTRIBUTE_PRICE][self::ATTRIBUTE_AMOUNT] = $price;
@@ -351,6 +354,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_PRICE][self::ATTRIBUTE_AMOUNT] ?? null;
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own currency on a shipment.
+     */
     public function setCurrency(?string $currency): self
     {
         $this->attributes[self::ATTRIBUTE_PRICE][self::ATTRIBUTE_CURRENCY] = $currency;
@@ -363,6 +369,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_PRICE][self::ATTRIBUTE_CURRENCY] ?? null;
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own barcode on a shipment.
+     */
     public function setBarcode(?string $barcode): self
     {
         $this->attributes[self::ATTRIBUTE_BARCODE] = $barcode;
@@ -375,6 +384,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_BARCODE];
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own tracking code on a shipment.
+     */
     public function setTrackingCode(?string $trackingCode): self
     {
         $this->attributes[self::ATTRIBUTE_TRACKING_CODE] = $trackingCode;
@@ -387,6 +399,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_TRACKING_CODE];
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own tracking URL on a shipment.
+     */
     public function setTrackingUrl(?string $trackingUrl): self
     {
         $this->attributes[self::ATTRIBUTE_TRACKING_URL] = $trackingUrl;
@@ -399,6 +414,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_TRACKING_URL];
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own tracking URL on a shipment.
+     */
     public function setTrackingPageUrl(?string $trackingPageUrl): self
     {
         $this->attributes[self::ATTRIBUTE_TRACKING_PAGE_URL] = $trackingPageUrl;
@@ -526,6 +544,9 @@ class Shipment implements ShipmentInterface
         return $this->relationships[self::RELATIONSHIP_SERVICE_OPTIONS]['data'];
     }
 
+    /**
+     * @internal Method to process our API response.
+     */
     public function setFiles(array $files): self
     {
         $this->relationships[self::RELATIONSHIP_FILES]['data'] = [];
@@ -537,6 +558,9 @@ class Shipment implements ShipmentInterface
         return $this;
     }
 
+    /**
+     * @internal Method to process our API response.
+     */
     public function addFile(FileInterface $file): self
     {
         $this->relationships[self::RELATIONSHIP_FILES]['data'][] = $file;
@@ -556,6 +580,9 @@ class Shipment implements ShipmentInterface
         );
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own status on a shipment.
+     */
     public function setShipmentStatus(ShipmentStatusInterface $status): self
     {
         $this->relationships[self::RELATIONSHIP_STATUS]['data'] = $status;
@@ -568,6 +595,9 @@ class Shipment implements ShipmentInterface
         return $this->relationships[self::RELATIONSHIP_STATUS]['data'];
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own statuses on a shipment.
+     */
     public function setStatusHistory(array $statuses): self
     {
         $this->statusHistory = $statuses;
@@ -585,7 +615,7 @@ class Shipment implements ShipmentInterface
     }
 
     /**
-     * Set the callback to use when retrieving the status history.
+     * @internal Set the callback to use when retrieving the status history.
      */
     public function setStatusHistoryCallback(callable $callback): self
     {
@@ -763,6 +793,9 @@ class Shipment implements ShipmentInterface
         return $this->relationships[self::RELATIONSHIP_COLLECTION]['data'];
     }
 
+    /**
+     * @internal Method to process our API response. To add surcharges, use $api->createShipmentSurcharge($shipment)
+     */
     public function setShipmentSurcharges(array $surcharges): self
     {
         $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'] = [];
@@ -774,6 +807,9 @@ class Shipment implements ShipmentInterface
         return $this;
     }
 
+    /**
+     * @internal Method to process our API response. To add a surcharge, use $api->createShipmentSurcharge($shipment)
+     */
     public function addShipmentSurcharge(ShipmentSurchargeInterface $surcharge): self
     {
         $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'][] = $surcharge;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\Proxy;
+namespace MyParcelCom\ApiSdk\Tests\Feature\Proxy;
 
 use MyParcelCom\ApiSdk\MyParcelComApi;
 use MyParcelCom\ApiSdk\MyParcelComApiInterface;

@@ -1,0 +1,30 @@
+{
+  "data": {
+    "id": "4afa3758-c425-48bc-96ef-ba43c5da4082",
+    "type": "shipment-surcharges",
+    "attributes": {
+      "name": "test",
+      "description": "desc",
+      "fee": {
+        "amount": 123,
+        "currency": "ALL"
+      },
+      "created_at": 1726674123,
+      "updated_at": 1726674123
+    },
+    "links": {
+      "self": "https://api/shipment-surcharges/4afa3758-c425-48bc-96ef-ba43c5da4082"
+    },
+    "relationships": {
+      "shipment": {
+        "data": {
+          "id": "shipment-id-1",
+          "type": "shipments"
+        },
+        "links": {
+          "related": "https://api/shipments/shipment-id-1"
+        }
+      }
+    }
+  }
+}

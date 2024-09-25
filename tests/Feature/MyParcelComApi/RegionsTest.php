@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\MyParcelComApi;
+namespace MyParcelCom\ApiSdk\Tests\Feature\MyParcelComApi;
 
 use MyParcelCom\ApiSdk\Collection\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\RegionInterface;
