@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk\Tests\Feature\MyParcelComApi;
 
+use MyParcelCom\ApiSdk\Collection\CollectionInterface;
 use MyParcelCom\ApiSdk\Exceptions\InvalidResourceException;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentSurchargeInterface;
@@ -16,6 +17,17 @@ use MyParcelCom\ApiSdk\Tests\TestCase;
  */
 class ShipmentSurchargesTest extends TestCase
 {
+    public function testItRetrievesShipmentSurcharges(): void
+    {
+        $shipmentSurcharges = $this->api->getShipmentSurcharges();
+
+        $this->assertInstanceOf(CollectionInterface::class, $shipmentSurcharges);
+        $this->assertCount(2, $shipmentSurcharges);
+        foreach ($shipmentSurcharges as $shipmentSurcharge) {
+            $this->assertInstanceOf(ShipmentSurchargeInterface::class, $shipmentSurcharge);
+        }
+    }
+
     public function testItRetrievesAShipmentSurcharge(): void
     {
         $shipmentSurcharge = $this->api->getShipmentSurcharge('4afa3758-c425-48bc-96ef-ba43c5da4082');
@@ -53,14 +65,14 @@ class ShipmentSurchargesTest extends TestCase
 
     public function testItUpdatesAShipmentSurcharge(): void
     {
-        $shipmentSurcharge = new ShipmentSurcharge();
-        $shipmentSurcharge->setId('4afa3758-c425-48bc-96ef-ba43c5da4082');
+        $shipmentSurcharge = $this->api->getShipmentSurcharge('4afa3758-c425-48bc-96ef-ba43c5da4082');
         $shipmentSurcharge->setName('updated name');
 
         $updatedShipmentSurcharge = $this->api->updateShipmentSurcharge($shipmentSurcharge);
 
         $this->assertInstanceOf(ShipmentSurchargeInterface::class, $updatedShipmentSurcharge);
         $this->assertEquals('updated name', $updatedShipmentSurcharge->getName());
+        $this->assertEquals($shipmentSurcharge->jsonSerialize(), $updatedShipmentSurcharge->jsonSerialize());
     }
 
     public function testItCannotUpdateAShipmentSurchargeWithoutAnId(): void

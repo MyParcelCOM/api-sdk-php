@@ -90,7 +90,7 @@ class ShipmentSurcharge implements ShipmentSurchargeInterface
         return $this->relationships['shipment']['data'];
     }
 
-    public function setShipment(ShipmentInterface $shipment): self
+    public function setShipment(?ShipmentInterface $shipment): self
     {
         $this->relationships['shipment']['data'] = $shipment;
 
