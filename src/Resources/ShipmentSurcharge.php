@@ -37,7 +37,7 @@ class ShipmentSurcharge implements ShipmentSurchargeInterface
         ],
     ];
 
-    public function setName(?string $name): self
+    public function setName(string $name): self
     {
         $this->attributes['name'] = $name;
 
@@ -68,7 +68,7 @@ class ShipmentSurcharge implements ShipmentSurchargeInterface
         return $this;
     }
 
-    public function getFeeAmount(): int
+    public function getFeeAmount(): ?int
     {
         return $this->attributes['fee'][self::AMOUNT];
     }
@@ -80,7 +80,7 @@ class ShipmentSurcharge implements ShipmentSurchargeInterface
         return $this;
     }
 
-    public function getFeeCurrency(): string
+    public function getFeeCurrency(): ?string
     {
         return $this->attributes['fee'][self::CURRENCY];
     }
@@ -90,7 +90,7 @@ class ShipmentSurcharge implements ShipmentSurchargeInterface
         return $this->relationships['shipment']['data'];
     }
 
-    public function setShipment(?ShipmentInterface $shipment): self
+    public function setShipment(ShipmentInterface $shipment): self
     {
         $this->relationships['shipment']['data'] = $shipment;
 

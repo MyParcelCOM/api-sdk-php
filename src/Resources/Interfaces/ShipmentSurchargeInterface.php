@@ -6,7 +6,7 @@ namespace MyParcelCom\ApiSdk\Resources\Interfaces;
 
 interface ShipmentSurchargeInterface extends ResourceInterface
 {
-    public function setName(?string $name): self;
+    public function setName(string $name): self;
 
     public function getName(): ?string;
 
@@ -16,13 +16,13 @@ interface ShipmentSurchargeInterface extends ResourceInterface
 
     public function setFeeAmount(int $amount): self;
 
-    public function getFeeAmount(): int;
+    public function getFeeAmount(): ?int;
 
     public function setFeeCurrency(string $currency): self;
 
-    public function getFeeCurrency(): string;
+    public function getFeeCurrency(): ?string;
 
     public function getShipment(): ?ShipmentInterface;
 
-    public function setShipment(?ShipmentInterface $shipment): self;
+    public function setShipment(ShipmentInterface $shipment): self;
 }

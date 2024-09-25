@@ -25,7 +25,7 @@ class ShipmentSurchargeProxy implements ShipmentSurchargeInterface, ResourceProx
 
     private string $type = ResourceInterface::TYPE_SHIPMENT_SURCHARGE;
 
-    public function setName(?string $name): self
+    public function setName(string $name): self
     {
         return $this->getResource()->setName($name);
     }
@@ -50,7 +50,7 @@ class ShipmentSurchargeProxy implements ShipmentSurchargeInterface, ResourceProx
         return $this->getResource()->setFeeAmount($amount);
     }
 
-    public function getFeeAmount(): int
+    public function getFeeAmount(): ?int
     {
         return $this->getResource()->getFeeAmount();
     }
@@ -60,7 +60,7 @@ class ShipmentSurchargeProxy implements ShipmentSurchargeInterface, ResourceProx
         return $this->getResource()->setFeeCurrency($currency);
     }
 
-    public function getFeeCurrency(): string
+    public function getFeeCurrency(): ?string
     {
         return $this->getResource()->getFeeCurrency();
     }
@@ -70,7 +70,7 @@ class ShipmentSurchargeProxy implements ShipmentSurchargeInterface, ResourceProx
         return $this->getResource()->getShipment();
     }
 
-    public function setShipment(?ShipmentInterface $shipment): self
+    public function setShipment(ShipmentInterface $shipment): self
     {
         return $this->getResource()->setShipment($shipment);
     }
