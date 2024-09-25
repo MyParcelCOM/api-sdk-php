@@ -70,7 +70,7 @@ class ShipmentSurchargeProxy implements ShipmentSurchargeInterface, ResourceProx
         return $this->getResource()->getShipment();
     }
 
-    public function setShipment(ShipmentInterface $shipment): self
+    public function setShipment(?ShipmentInterface $shipment): self
     {
         return $this->getResource()->setShipment($shipment);
     }

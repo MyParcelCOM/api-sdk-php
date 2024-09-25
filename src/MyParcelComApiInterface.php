@@ -35,6 +35,7 @@ interface MyParcelComApiInterface
     const PATH_SERVICE_RATES = '/service-rates';
     const PATH_SHIPMENTS = '/shipments';
     const PATH_SHIPMENT_STATUSES = '/shipments/{shipment_id}/statuses';
+    const PATH_SHIPMENT_SURCHARGES = '/shipment-surcharges';
     const PATH_SHOPS = '/shops';
 
     const HEADER_IDEMPOTENCY_KEY = 'Idempotency-Key';

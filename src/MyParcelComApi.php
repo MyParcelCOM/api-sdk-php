@@ -34,6 +34,7 @@ use MyParcelCom\ApiSdk\Resources\ResourceFactory;
 use MyParcelCom\ApiSdk\Resources\Service;
 use MyParcelCom\ApiSdk\Resources\ServiceRate;
 use MyParcelCom\ApiSdk\Resources\Shipment;
+use MyParcelCom\ApiSdk\Resources\ShipmentSurcharge;
 use MyParcelCom\ApiSdk\Shipments\ServiceMatcher;
 use MyParcelCom\ApiSdk\Utils\UrlBuilder;
 use MyParcelCom\ApiSdk\Validators\CollectionValidator;
@@ -805,6 +806,14 @@ class MyParcelComApi implements MyParcelComApiInterface
     }
 
     /**
+     * @see https://api-specification.develop.myparcel.com/#tag/ShipmentSurcharges/paths/~1shipment-surcharges/get
+     */
+    public function getShipmentSurcharges(int $ttl = self::TTL_NO_CACHE): ResourceCollectionInterface
+    {
+        return $this->getRequestCollection($this->apiUri . self::PATH_SHIPMENT_SURCHARGES, $ttl);
+    }
+
+    /**
      * @see https://api-specification.myparcel.com/#tag/ShipmentSurcharges/paths/~1shipment-surcharges~1%7Bshipment_surcharge_id%7D/get
      */
     public function getShipmentSurcharge(
@@ -843,7 +852,11 @@ class MyParcelComApi implements MyParcelComApiInterface
             );
         }
 
-        return $this->patchResource($shipmentSurcharge);
+        // The shipment relationship cannot be patched, so we create a clone without it to get the valid JSON body.
+        $shipmentSurchargeToUpdate = clone $shipmentSurcharge;
+        $shipmentSurchargeToUpdate->setShipment(null);
+
+        return $this->patchResource($shipmentSurchargeToUpdate);
     }
 
     /**

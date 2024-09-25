@@ -24,5 +24,5 @@ interface ShipmentSurchargeInterface extends ResourceInterface
 
     public function getShipment(): ?ShipmentInterface;
 
-    public function setShipment(ShipmentInterface $shipment): self;
+    public function setShipment(?ShipmentInterface $shipment): self;
 }
