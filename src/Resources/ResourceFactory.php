@@ -45,6 +45,7 @@ use MyParcelCom\ApiSdk\Resources\Proxy\ServiceOptionProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ServiceProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ShipmentProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ShipmentStatusProxy;
+use MyParcelCom\ApiSdk\Resources\Proxy\ShipmentSurchargeProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\ShopProxy;
 use MyParcelCom\ApiSdk\Resources\Proxy\StatusProxy;
 use MyParcelCom\ApiSdk\Utils\StringUtils;
@@ -98,19 +99,20 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
      * resources that are part of relationships.
      */
     private array $proxies = [
-        ResourceInterface::TYPE_CARRIER         => CarrierProxy::class,
-        ResourceInterface::TYPE_COLLECTION      => CollectionProxy::class,
-        ResourceInterface::TYPE_CONTRACT        => ContractProxy::class,
-        ResourceInterface::TYPE_FILE            => FileProxy::class,
-        ResourceInterface::TYPE_MANIFEST        => ManifestProxy::class,
-        ResourceInterface::TYPE_ORGANIZATION    => OrganizationProxy::class,
-        ResourceInterface::TYPE_REGION          => RegionProxy::class,
-        ResourceInterface::TYPE_SERVICE         => ServiceProxy::class,
-        ResourceInterface::TYPE_SERVICE_OPTION  => ServiceOptionProxy::class,
-        ResourceInterface::TYPE_SHIPMENT        => ShipmentProxy::class,
-        ResourceInterface::TYPE_SHIPMENT_STATUS => ShipmentStatusProxy::class,
-        ResourceInterface::TYPE_SHOP            => ShopProxy::class,
-        ResourceInterface::TYPE_STATUS          => StatusProxy::class,
+        ResourceInterface::TYPE_CARRIER            => CarrierProxy::class,
+        ResourceInterface::TYPE_COLLECTION         => CollectionProxy::class,
+        ResourceInterface::TYPE_CONTRACT           => ContractProxy::class,
+        ResourceInterface::TYPE_FILE               => FileProxy::class,
+        ResourceInterface::TYPE_MANIFEST           => ManifestProxy::class,
+        ResourceInterface::TYPE_ORGANIZATION       => OrganizationProxy::class,
+        ResourceInterface::TYPE_REGION             => RegionProxy::class,
+        ResourceInterface::TYPE_SERVICE            => ServiceProxy::class,
+        ResourceInterface::TYPE_SERVICE_OPTION     => ServiceOptionProxy::class,
+        ResourceInterface::TYPE_SHIPMENT           => ShipmentProxy::class,
+        ResourceInterface::TYPE_SHIPMENT_STATUS    => ShipmentStatusProxy::class,
+        ResourceInterface::TYPE_SHOP               => ShopProxy::class,
+        ResourceInterface::TYPE_STATUS             => StatusProxy::class,
+        ResourceInterface::TYPE_SHIPMENT_SURCHARGE => ShipmentSurchargeProxy::class,
     ];
 
     public function __construct()
@@ -122,6 +124,7 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         $shipmentItemFactory = [$this, 'shipmentItemFactory'];
         $customsFactory = [$this, 'customsFactory'];
         $carrierFactory = [$this, 'carrierFactory'];
+        $shipmentSurchargeFactory = [$this, 'shipmentSurchargeFactory'];
 
         $this->setFactoryForType(ResourceInterface::TYPE_SHIPMENT, $shipmentFactory);
         $this->setFactoryForType(ShipmentInterface::class, $shipmentFactory);
@@ -140,63 +143,62 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         $this->setFactoryForType(CustomsInterface::class, $customsFactory);
 
         $this->setFactoryForType(ResourceInterface::TYPE_CARRIER, $carrierFactory);
+
+        $this->setFactoryForType(ResourceInterface::TYPE_SHIPMENT_SURCHARGE, $shipmentSurchargeFactory);
+        $this->setFactoryForType(ShipmentSurcharge::class, $shipmentSurchargeFactory);
     }
 
     /**
      * Shipment factory method that creates proxies for all relationships.
      */
-    protected function shipmentFactory(array &$properties): Shipment
+    protected function shipmentFactory(array &$data): Shipment
     {
         $shipment = new Shipment();
 
-        if (isset($properties['attributes']['price']['amount'])) {
-            $shipment->setPrice($properties['attributes']['price']['amount']);
-            if (isset($properties['attributes']['price']['currency'])) {
-                $shipment->setCurrency($properties['attributes']['price']['currency']);
+        if (isset($data['attributes']['price']['amount'])) {
+            $shipment->setPrice($data['attributes']['price']['amount']);
+            if (isset($data['attributes']['price']['currency'])) {
+                $shipment->setCurrency($data['attributes']['price']['currency']);
             }
 
-            unset($properties['attributes']['price']);
+            unset($data['attributes']['price']);
         }
 
-        if (isset($properties['attributes']['total_value']['amount'])) {
-            $shipment->setTotalValueAmount($properties['attributes']['total_value']['amount']);
-            if (isset($properties['attributes']['total_value']['currency'])) {
-                $shipment->setTotalValueCurrency($properties['attributes']['total_value']['currency']);
+        if (isset($data['attributes']['total_value']['amount'])) {
+            $shipment->setTotalValueAmount($data['attributes']['total_value']['amount']);
+            if (isset($data['attributes']['total_value']['currency'])) {
+                $shipment->setTotalValueCurrency($data['attributes']['total_value']['currency']);
             }
 
-            unset($properties['attributes']['total_value']);
+            unset($data['attributes']['total_value']);
         }
 
-        if (isset($properties['attributes']['pickup_location']['code'])) {
-            $shipment->setPickupLocationCode($properties['attributes']['pickup_location']['code']);
+        if (isset($data['attributes']['pickup_location']['code'])) {
+            $shipment->setPickupLocationCode($data['attributes']['pickup_location']['code']);
         }
 
-        if (isset($properties['attributes']['pickup_location']['address'])) {
+        if (isset($data['attributes']['pickup_location']['address'])) {
             /** @var AddressInterface $pudoAddress */
             $pudoAddress = $this->create(
                 AddressInterface::class,
-                $properties['attributes']['pickup_location']['address'],
+                $data['attributes']['pickup_location']['address'],
             );
 
             $shipment->setPickupLocationAddress($pudoAddress);
 
-            unset($properties['attributes']['pickup_location']);
+            unset($data['attributes']['pickup_location']);
         }
 
-        if (isset($properties['id'])) {
-            $shipment->setStatusHistoryCallback(function () use ($properties) {
+        if (isset($data['id'])) {
+            $shipment->setStatusHistoryCallback(function () use ($data) {
                 return $this->api->getResourcesFromUri(
-                    str_replace(
-                        '{shipment_id}',
-                        $properties['id'],
-                        MyParcelComApiInterface::PATH_SHIPMENT_STATUSES,
-                    ),
+                    str_replace('{shipment_id}', $data['id'], MyParcelComApiInterface::PATH_SHIPMENT_STATUSES),
                 );
             });
         }
 
-        if (isset($properties['attributes']['sender_tax_identification_numbers'])) {
-            foreach ($properties['attributes']['sender_tax_identification_numbers'] as $taxIdentificationNumber) {
+        if (isset($data['attributes']['sender_tax_identification_numbers'])) {
+            foreach ($data['attributes']['sender_tax_identification_numbers'] as $taxIdentificationNumber) {
                 $shipment->addSenderTaxIdentificationNumber(
                     (new TaxIdentificationNumber())
                         ->setType(new TaxTypeEnum($taxIdentificationNumber['type']))
@@ -205,11 +207,11 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
                         ->setDescription($taxIdentificationNumber['description'] ?? null),
                 );
             }
-            unset($properties['attributes']['sender_tax_identification_numbers']);
+            unset($data['attributes']['sender_tax_identification_numbers']);
         }
 
-        if (isset($properties['attributes']['recipient_tax_identification_numbers'])) {
-            foreach ($properties['attributes']['recipient_tax_identification_numbers'] as $taxIdentificationNumber) {
+        if (isset($data['attributes']['recipient_tax_identification_numbers'])) {
+            foreach ($data['attributes']['recipient_tax_identification_numbers'] as $taxIdentificationNumber) {
                 $shipment->addRecipientTaxIdentificationNumber(
                     (new TaxIdentificationNumber())
                         ->setType(new TaxTypeEnum($taxIdentificationNumber['type']))
@@ -218,36 +220,36 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
                         ->setDescription($taxIdentificationNumber['description'] ?? null),
                 );
             }
-            unset($properties['attributes']['recipient_tax_identification_numbers']);
+            unset($data['attributes']['recipient_tax_identification_numbers']);
         }
 
         return $shipment;
     }
 
-    protected function serviceFactory(array &$properties): Service
+    protected function serviceFactory(array &$data): Service
     {
         $service = new Service();
 
-        if (isset($properties['attributes']['transit_time']['min'])) {
-            $service->setTransitTimeMin($properties['attributes']['transit_time']['min']);
+        if (isset($data['attributes']['transit_time']['min'])) {
+            $service->setTransitTimeMin($data['attributes']['transit_time']['min']);
 
-            unset($properties['attributes']['transit_time']['min']);
+            unset($data['attributes']['transit_time']['min']);
         }
 
-        if (isset($properties['attributes']['transit_time']['max'])) {
-            $service->setTransitTimeMax($properties['attributes']['transit_time']['max']);
+        if (isset($data['attributes']['transit_time']['max'])) {
+            $service->setTransitTimeMax($data['attributes']['transit_time']['max']);
 
-            unset($properties['attributes']['transit_time']['max']);
+            unset($data['attributes']['transit_time']['max']);
         }
 
         // TODO: Remove this when we remove the region relationships from services.
-        unset($properties['relationships']['region_from']);
-        unset($properties['relationships']['region_to']);
+        unset($data['relationships']['region_from']);
+        unset($data['relationships']['region_to']);
 
-        if (isset($properties['id'])) {
-            $service->setServiceRatesCallback(function (array $filters = []) use ($properties) {
+        if (isset($data['id'])) {
+            $service->setServiceRatesCallback(function (array $filters = []) use ($data) {
                 $filters['has_active_contract'] = 'true';
-                $filters['service'] = $properties['id'];
+                $filters['service'] = $data['id'];
 
                 return $this->api->getServiceRates($filters)->get();
             });
@@ -256,26 +258,26 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         return $service;
     }
 
-    protected function serviceRateFactory(array &$properties): ServiceRate
+    protected function serviceRateFactory(array &$data): ServiceRate
     {
         $serviceRate = new ServiceRate();
 
-        if (isset($properties['attributes']['price']['amount'])) {
-            $serviceRate->setPrice($properties['attributes']['price']['amount']);
-            $serviceRate->setCurrency($properties['attributes']['price']['currency']);
+        if (isset($data['attributes']['price']['amount'])) {
+            $serviceRate->setPrice($data['attributes']['price']['amount']);
+            $serviceRate->setCurrency($data['attributes']['price']['currency']);
 
-            unset($properties['attributes']['price']);
+            unset($data['attributes']['price']);
         }
 
-        if (isset($properties['attributes']['fuel_surcharge']['amount'])) {
-            $serviceRate->setFuelSurchargeAmount($properties['attributes']['fuel_surcharge']['amount']);
-            $serviceRate->setFuelSurchargeCurrency($properties['attributes']['fuel_surcharge']['currency']);
+        if (isset($data['attributes']['fuel_surcharge']['amount'])) {
+            $serviceRate->setFuelSurchargeAmount($data['attributes']['fuel_surcharge']['amount']);
+            $serviceRate->setFuelSurchargeCurrency($data['attributes']['fuel_surcharge']['currency']);
 
-            unset($properties['attributes']['fuel_surcharge']);
+            unset($data['attributes']['fuel_surcharge']);
         }
 
-        if (isset($properties['relationships']['service_options'])) {
-            $serviceOptions = $properties['relationships']['service_options']['data'];
+        if (isset($data['relationships']['service_options'])) {
+            $serviceOptions = $data['relationships']['service_options']['data'];
 
             foreach ($serviceOptions as $serviceOption) {
                 $serviceOptionProxy = (new ServiceOptionProxy())
@@ -295,17 +297,17 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
                 $serviceRate->addServiceOption($serviceOptionProxy);
             }
 
-            unset($properties['relationships']['service_options']);
+            unset($data['relationships']['service_options']);
         }
 
-        if (isset($properties['meta']['bracket_price']['amount'])) {
-            $serviceRate->setBracketPrice($properties['meta']['bracket_price']['amount']);
-            $serviceRate->setBracketCurrency($properties['meta']['bracket_price']['currency']);
+        if (isset($data['meta']['bracket_price']['amount'])) {
+            $serviceRate->setBracketPrice($data['meta']['bracket_price']['amount']);
+            $serviceRate->setBracketCurrency($data['meta']['bracket_price']['currency']);
 
-            unset($properties['meta']['bracket_price']);
+            unset($data['meta']['bracket_price']);
         }
 
-        if (isset($properties['id'])) {
+        if (isset($data['id'])) {
             $serviceRate->setResolveDynamicRateForShipmentCallback(
                 function (ShipmentInterface $shipment, ServiceRateInterface $serviceRate) {
                     $serviceRates = $this->api->resolveDynamicServiceRates($shipment, $serviceRate);
@@ -322,17 +324,17 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
      * Factory method for creating file resources, adds proxy streams to the
      * file for requesting the file data.
      */
-    protected function fileFactory(array &$properties): File
+    protected function fileFactory(array &$data): File
     {
         $file = new File();
 
-        if (!isset($properties['attributes']['formats'])) {
+        if (!isset($data['attributes']['formats'])) {
             return $file;
         }
 
-        array_walk($properties['attributes']['formats'], function ($format) use ($file, $properties) {
+        array_walk($data['attributes']['formats'], function ($format) use ($file, $data) {
             $file->setStream(
-                new FileStreamProxy($properties['id'], $format['mime_type'], $this->api),
+                new FileStreamProxy($data['id'], $format['mime_type'], $this->api),
                 $format['mime_type'],
             );
         });
@@ -368,19 +370,33 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
         return $customs;
     }
 
-    protected function carrierFactory(array &$attributes): Carrier
+    protected function carrierFactory(array &$data): Carrier
     {
         $carrier = new Carrier();
 
-        if (isset($attributes['attributes']['collections'])) {
-            $carrier->setOffersCollections($attributes['attributes']['collections']['offers_collections']);
-            $carrier->setVoidsRegisteredCollections($attributes['attributes']['collections']['voids_registered_collections']);
-            $carrier->setAllowsAddingRegisteredShipmentsToCollection($attributes['attributes']['collections']['allows_adding_registered_shipments_to_collection']);
+        if (isset($data['attributes']['collections'])) {
+            $carrier->setOffersCollections($data['attributes']['collections']['offers_collections']);
+            $carrier->setVoidsRegisteredCollections($data['attributes']['collections']['voids_registered_collections']);
+            $carrier->setAllowsAddingRegisteredShipmentsToCollection($data['attributes']['collections']['allows_adding_registered_shipments_to_collection']);
 
-            unset($attributes['attributes']['collections']);
+            unset($data['attributes']['collections']);
         }
 
         return $carrier;
+    }
+
+    protected function shipmentSurchargeFactory(array &$data): ShipmentSurcharge
+    {
+        $surcharge = new ShipmentSurcharge();
+
+        if (isset($data['attributes']['fee']['amount'])) {
+            $surcharge->setFeeAmount($data['attributes']['fee']['amount']);
+            $surcharge->setFeeCurrency($data['attributes']['fee']['currency']);
+
+            unset($data['attributes']['fee']);
+        }
+
+        return $surcharge;
     }
 
     public function create(string $type, array $properties = []): ResourceInterface|JsonSerializable

@@ -19,6 +19,7 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentItemInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentStatusInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentSurchargeInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
 use MyParcelCom\ApiSdk\Resources\Shipment;
 use MyParcelCom\ApiSdk\Resources\TaxIdentificationNumber;
@@ -549,6 +550,21 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
     public function getCollection(): ?CollectionInterface
     {
         return $this->getResource()->getCollection();
+    }
+
+    public function setShipmentSurcharges(array $surcharges): self
+    {
+        return $this->getResource()->setShipmentSurcharges($surcharges);
+    }
+
+    public function addShipmentSurcharge(ShipmentSurchargeInterface $surcharge): self
+    {
+        return $this->getResource()->addShipmentSurcharge($surcharge);
+    }
+
+    public function getShipmentSurcharges(): array
+    {
+        return $this->getResource()->getShipmentSurcharges();
     }
 
     /**

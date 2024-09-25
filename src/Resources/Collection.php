@@ -29,7 +29,7 @@ class Collection implements CollectionInterface
     private array $attributes = [
         'description'     => null,
         'address'         => null,
-        'register'      => null,
+        'register'        => null,
         'collection_time' => null,
         'tracking_code'   => null,
     ];

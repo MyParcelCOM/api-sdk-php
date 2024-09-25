@@ -24,20 +24,22 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceFactoryInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
-use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceProxyInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceRateInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentSurchargeInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
 use MyParcelCom\ApiSdk\Resources\ResourceFactory;
 use MyParcelCom\ApiSdk\Resources\Service;
 use MyParcelCom\ApiSdk\Resources\ServiceRate;
 use MyParcelCom\ApiSdk\Resources\Shipment;
+use MyParcelCom\ApiSdk\Resources\ShipmentSurcharge;
 use MyParcelCom\ApiSdk\Shipments\ServiceMatcher;
 use MyParcelCom\ApiSdk\Utils\UrlBuilder;
 use MyParcelCom\ApiSdk\Validators\CollectionValidator;
 use MyParcelCom\ApiSdk\Validators\ManifestValidator;
+use MyParcelCom\ApiSdk\Validators\ShipmentSurchargeValidator;
 use MyParcelCom\ApiSdk\Validators\ShipmentValidator;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -274,8 +276,10 @@ class MyParcelComApi implements MyParcelComApiInterface
         return new ArrayCollection($services);
     }
 
-    public function getServicesForCarrier(CarrierInterface $carrier, int $ttl = self::TTL_10MIN): ResourceCollectionInterface
-    {
+    public function getServicesForCarrier(
+        CarrierInterface $carrier,
+        int $ttl = self::TTL_10MIN,
+    ): ResourceCollectionInterface {
         $url = new UrlBuilder($this->apiUri . self::PATH_SERVICES);
         $url->addQuery($this->arrayToFilters([
             'has_active_contract' => 'true',
@@ -322,7 +326,12 @@ class MyParcelComApi implements MyParcelComApiInterface
             ]));
         }
         // Include the services to avoid extra http requests when the result is looped with: $serviceRate->getService().
-        $url->addQuery(['include' => 'contract,service']);
+        $url->addQuery([
+            'include' => implode(',', [
+                ServiceRate::RELATIONSHIP_CONTRACT,
+                ServiceRate::RELATIONSHIP_SERVICE,
+            ]),
+        ]);
 
         /** @var ServiceRate[] $serviceRates */
         $serviceRates = $this->getRequestCollection($url->getUrl(), $ttl);
@@ -417,6 +426,18 @@ class MyParcelComApi implements MyParcelComApiInterface
     {
         $url = new UrlBuilder($this->apiUri . self::PATH_SHIPMENTS);
 
+        $url->addQuery([
+            'include' => implode(',', [
+                Shipment::RELATIONSHIP_SHOP,
+                Shipment::RELATIONSHIP_STATUS,
+                Shipment::RELATIONSHIP_CONTRACT,
+                Shipment::RELATIONSHIP_SERVICE,
+                Shipment::RELATIONSHIP_SERVICE_OPTIONS,
+                Shipment::RELATIONSHIP_FILES,
+                Shipment::RELATIONSHIP_SHIPMENT_SURCHARGES,
+            ]),
+        ]);
+
         if (isset($shop)) {
             $url->addQuery(['filter[shop]' => $shop->getId()]);
         }
@@ -426,7 +447,17 @@ class MyParcelComApi implements MyParcelComApiInterface
 
     public function getShipment(string $id, int $ttl = self::TTL_NO_CACHE): ShipmentInterface
     {
-        return $this->getResourceById(ResourceInterface::TYPE_SHIPMENT, $id, $ttl);
+        $includes = [
+            Shipment::RELATIONSHIP_SHOP,
+            Shipment::RELATIONSHIP_STATUS,
+            Shipment::RELATIONSHIP_CONTRACT,
+            Shipment::RELATIONSHIP_SERVICE,
+            Shipment::RELATIONSHIP_SERVICE_OPTIONS,
+            Shipment::RELATIONSHIP_FILES,
+            Shipment::RELATIONSHIP_SHIPMENT_SURCHARGES,
+        ];
+
+        return $this->getResourceById(ResourceInterface::TYPE_SHIPMENT, $id, $ttl, $includes);
     }
 
     public function saveShipment(ShipmentInterface $shipment): ShipmentInterface
@@ -654,7 +685,7 @@ class MyParcelComApi implements MyParcelComApiInterface
 
         if ($collection->getAddress() === null) {
             $collection->setAddress(
-                $collection->getShop()->getSenderAddress() ?? $collection->getShop()->getReturnAddress()
+                $collection->getShop()->getSenderAddress() ?? $collection->getShop()->getReturnAddress(),
             );
         }
 
@@ -735,7 +766,7 @@ class MyParcelComApi implements MyParcelComApiInterface
      */
     public function addShipmentsToCollection(
         CollectionInterface $collection,
-        array $shipments
+        array $shipments,
     ): CollectionInterface {
         if (!$collection->getId()) {
             throw new InvalidResourceException(
@@ -772,6 +803,76 @@ class MyParcelComApi implements MyParcelComApiInterface
         $json = json_decode((string) $response->getBody(), true);
 
         return $this->resourceFactory->create('manifests', $json['data']);
+    }
+
+    /**
+     * @see https://api-specification.develop.myparcel.com/#tag/ShipmentSurcharges/paths/~1shipment-surcharges/get
+     */
+    public function getShipmentSurcharges(int $ttl = self::TTL_NO_CACHE): ResourceCollectionInterface
+    {
+        return $this->getRequestCollection($this->apiUri . self::PATH_SHIPMENT_SURCHARGES, $ttl);
+    }
+
+    /**
+     * @see https://api-specification.myparcel.com/#tag/ShipmentSurcharges/paths/~1shipment-surcharges~1%7Bshipment_surcharge_id%7D/get
+     */
+    public function getShipmentSurcharge(
+        string $shipmentSurchargeId,
+        int $ttl = self::TTL_NO_CACHE,
+    ): ShipmentSurchargeInterface {
+        return $this->getResourceById(ResourceInterface::TYPE_SHIPMENT_SURCHARGE, $shipmentSurchargeId, $ttl);
+    }
+
+    /**
+     * @see https://api-specification.myparcel.com/#tag/ShipmentSurcharges/paths/~1shipment-surcharges/post
+     */
+    public function createShipmentSurcharge(ShipmentSurchargeInterface $shipmentSurcharge): ShipmentSurchargeInterface
+    {
+        $validator = new ShipmentSurchargeValidator($shipmentSurcharge);
+
+        if (!$validator->isValid()) {
+            $message = 'This shipment surcharge contains invalid data. ' . implode('. ', $validator->getErrors()) . '.';
+            $exception = new InvalidResourceException($message);
+            $exception->setErrors($validator->getErrors());
+
+            throw $exception;
+        }
+
+        return $this->postResource($shipmentSurcharge);
+    }
+
+    /**
+     * @see https://api-specification.myparcel.com/#tag/ShipmentSurcharges/paths/~1shipment-surcharges~1%7Bshipment_surcharge_id%7D/patch
+     */
+    public function updateShipmentSurcharge(ShipmentSurchargeInterface $shipmentSurcharge): ShipmentSurchargeInterface
+    {
+        if (!$shipmentSurcharge->getId()) {
+            throw new InvalidResourceException(
+                'Could not update shipment surcharge. This shipment surcharge does not have an id, use createShipmentSurcharge() to save it.',
+            );
+        }
+
+        // The shipment relationship cannot be patched, so we create a clone without it to get the valid JSON body.
+        $shipmentSurchargeToUpdate = clone $shipmentSurcharge;
+        $shipmentSurchargeToUpdate->setShipment(null);
+
+        return $this->patchResource($shipmentSurchargeToUpdate);
+    }
+
+    /**
+     * @see https://api-specification.myparcel.com/#tag/ShipmentSurcharges/paths/~1shipment-surcharges~1%7Bshipment_surcharge_id%7D/delete
+     */
+    public function deleteShipmentSurcharge(ShipmentSurchargeInterface $shipmentSurcharge): bool
+    {
+        if (!$shipmentSurcharge->getId()) {
+            throw new InvalidResourceException(
+                'Could not delete shipment surcharge. This shipment surcharge does not have an id.',
+            );
+        }
+
+        $this->deleteResource($shipmentSurcharge);
+
+        return true;
     }
 
     /**
@@ -971,10 +1072,16 @@ class MyParcelComApi implements MyParcelComApiInterface
         );
     }
 
-    public function getResourceById(string $resourceType, string $id, int $ttl = self::TTL_NO_CACHE): ResourceInterface
-    {
+    public function getResourceById(
+        string $resourceType,
+        string $id,
+        int $ttl = self::TTL_NO_CACHE,
+        array $includes = [],
+    ): ResourceInterface {
+        $include = empty($includes) ? '' : '?include=' . implode(',', $includes);
+
         $resources = $this->getResourcesArray(
-            $this->getResourceUri($resourceType, $id),
+            $this->getResourceUri($resourceType, $id) . $include,
             $ttl,
         );
 
@@ -1027,7 +1134,7 @@ class MyParcelComApi implements MyParcelComApiInterface
             $this->getResourceUri($resource->getType(), $resource->getId()),
             'delete',
             [],
-            $this->authenticator->getAuthorizationHeader() + $headers
+            $this->authenticator->getAuthorizationHeader() + $headers,
         );
     }
 

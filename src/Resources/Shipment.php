@@ -19,6 +19,7 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentItemInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentStatusInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentSurchargeInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
 use MyParcelCom\ApiSdk\Resources\Traits\ProcessIncludes;
@@ -66,18 +67,20 @@ class Shipment implements ShipmentInterface
     const RELATIONSHIP_STATUS = 'shipment_status';
     const RELATIONSHIP_SHOP = 'shop';
     const RELATIONSHIP_COLLECTION = 'collection';
+    const RELATIONSHIP_SHIPMENT_SURCHARGES = 'shipment_surcharges';
 
     const META_LABEL_MIME_TYPE = 'label_mime_type';
     const META_SERVICE_CODE = 'service_code';
 
     const INCLUDES = [
-        ResourceInterface::TYPE_CONTRACT        => self::RELATIONSHIP_CONTRACT,
-        ResourceInterface::TYPE_FILE            => self::RELATIONSHIP_FILES,
-        ResourceInterface::TYPE_SERVICE         => self::RELATIONSHIP_SERVICE,
-        ResourceInterface::TYPE_SERVICE_OPTION  => self::RELATIONSHIP_SERVICE_OPTIONS,
-        ResourceInterface::TYPE_SHIPMENT_STATUS => self::RELATIONSHIP_STATUS,
-        ResourceInterface::TYPE_SHOP            => self::RELATIONSHIP_SHOP,
-        ResourceInterface::TYPE_COLLECTION      => self::RELATIONSHIP_COLLECTION,
+        ResourceInterface::TYPE_CONTRACT           => self::RELATIONSHIP_CONTRACT,
+        ResourceInterface::TYPE_FILE               => self::RELATIONSHIP_FILES,
+        ResourceInterface::TYPE_SERVICE            => self::RELATIONSHIP_SERVICE,
+        ResourceInterface::TYPE_SERVICE_OPTION     => self::RELATIONSHIP_SERVICE_OPTIONS,
+        ResourceInterface::TYPE_SHIPMENT_STATUS    => self::RELATIONSHIP_STATUS,
+        ResourceInterface::TYPE_SHOP               => self::RELATIONSHIP_SHOP,
+        ResourceInterface::TYPE_COLLECTION         => self::RELATIONSHIP_COLLECTION,
+        ResourceInterface::TYPE_SHIPMENT_SURCHARGE => self::RELATIONSHIP_SHIPMENT_SURCHARGES,
     ];
 
     private ?string $id = null;
@@ -113,29 +116,32 @@ class Shipment implements ShipmentInterface
     ];
 
     private array $relationships = [
-        self::RELATIONSHIP_SHOP            => [
+        self::RELATIONSHIP_SHOP                => [
             'data' => null,
         ],
-        self::RELATIONSHIP_STATUS          => [
+        self::RELATIONSHIP_STATUS              => [
             'data' => null,
         ],
-        self::RELATIONSHIP_SERVICE_OPTIONS => [
+        self::RELATIONSHIP_SERVICE_OPTIONS     => [
             'data' => [],
         ],
-        self::RELATIONSHIP_FILES           => [
+        self::RELATIONSHIP_FILES               => [
             'data' => [],
         ],
-        self::RELATIONSHIP_SERVICE         => [
+        self::RELATIONSHIP_SERVICE             => [
             'data' => null,
         ],
-        self::RELATIONSHIP_CONTRACT        => [
+        self::RELATIONSHIP_CONTRACT            => [
             'data' => null,
         ],
-        self::RELATIONSHIP_MANIFEST        => [
+        self::RELATIONSHIP_MANIFEST            => [
             'data' => null,
         ],
-        self::RELATIONSHIP_COLLECTION      => [
+        self::RELATIONSHIP_COLLECTION          => [
             'data' => null,
+        ],
+        self::RELATIONSHIP_SHIPMENT_SURCHARGES => [
+            'data' => [],
         ],
     ];
 
@@ -333,6 +339,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_CUSTOMER_REFERENCE];
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own price on a shipment.
+     */
     public function setPrice(?int $price): self
     {
         $this->attributes[self::ATTRIBUTE_PRICE][self::ATTRIBUTE_AMOUNT] = $price;
@@ -345,6 +354,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_PRICE][self::ATTRIBUTE_AMOUNT] ?? null;
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own currency on a shipment.
+     */
     public function setCurrency(?string $currency): self
     {
         $this->attributes[self::ATTRIBUTE_PRICE][self::ATTRIBUTE_CURRENCY] = $currency;
@@ -357,6 +369,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_PRICE][self::ATTRIBUTE_CURRENCY] ?? null;
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own barcode on a shipment.
+     */
     public function setBarcode(?string $barcode): self
     {
         $this->attributes[self::ATTRIBUTE_BARCODE] = $barcode;
@@ -369,6 +384,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_BARCODE];
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own tracking code on a shipment.
+     */
     public function setTrackingCode(?string $trackingCode): self
     {
         $this->attributes[self::ATTRIBUTE_TRACKING_CODE] = $trackingCode;
@@ -381,6 +399,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_TRACKING_CODE];
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own tracking URL on a shipment.
+     */
     public function setTrackingUrl(?string $trackingUrl): self
     {
         $this->attributes[self::ATTRIBUTE_TRACKING_URL] = $trackingUrl;
@@ -393,6 +414,9 @@ class Shipment implements ShipmentInterface
         return $this->attributes[self::ATTRIBUTE_TRACKING_URL];
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own tracking URL on a shipment.
+     */
     public function setTrackingPageUrl(?string $trackingPageUrl): self
     {
         $this->attributes[self::ATTRIBUTE_TRACKING_PAGE_URL] = $trackingPageUrl;
@@ -520,6 +544,9 @@ class Shipment implements ShipmentInterface
         return $this->relationships[self::RELATIONSHIP_SERVICE_OPTIONS]['data'];
     }
 
+    /**
+     * @internal Method to process our API response.
+     */
     public function setFiles(array $files): self
     {
         $this->relationships[self::RELATIONSHIP_FILES]['data'] = [];
@@ -531,6 +558,9 @@ class Shipment implements ShipmentInterface
         return $this;
     }
 
+    /**
+     * @internal Method to process our API response.
+     */
     public function addFile(FileInterface $file): self
     {
         $this->relationships[self::RELATIONSHIP_FILES]['data'][] = $file;
@@ -550,6 +580,9 @@ class Shipment implements ShipmentInterface
         );
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own status on a shipment.
+     */
     public function setShipmentStatus(ShipmentStatusInterface $status): self
     {
         $this->relationships[self::RELATIONSHIP_STATUS]['data'] = $status;
@@ -562,6 +595,9 @@ class Shipment implements ShipmentInterface
         return $this->relationships[self::RELATIONSHIP_STATUS]['data'];
     }
 
+    /**
+     * @internal Method to process our API response. You should not set your own statuses on a shipment.
+     */
     public function setStatusHistory(array $statuses): self
     {
         $this->statusHistory = $statuses;
@@ -579,7 +615,7 @@ class Shipment implements ShipmentInterface
     }
 
     /**
-     * Set the callback to use when retrieving the status history.
+     * @internal Set the callback to use when retrieving the status history.
      */
     public function setStatusHistoryCallback(callable $callback): self
     {
@@ -755,5 +791,34 @@ class Shipment implements ShipmentInterface
     public function getCollection(): ?CollectionInterface
     {
         return $this->relationships[self::RELATIONSHIP_COLLECTION]['data'];
+    }
+
+    /**
+     * @internal Method to process our API response. To add surcharges, use $api->createShipmentSurcharge($shipment)
+     */
+    public function setShipmentSurcharges(array $surcharges): self
+    {
+        $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'] = [];
+
+        array_walk($surcharges, function ($surcharge) {
+            $this->addShipmentSurcharge($surcharge);
+        });
+
+        return $this;
+    }
+
+    /**
+     * @internal Method to process our API response. To add a surcharge, use $api->createShipmentSurcharge($shipment)
+     */
+    public function addShipmentSurcharge(ShipmentSurchargeInterface $surcharge): self
+    {
+        $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'][] = $surcharge;
+
+        return $this;
+    }
+
+    public function getShipmentSurcharges(): array
+    {
+        return $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'];
     }
 }
