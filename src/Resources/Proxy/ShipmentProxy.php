@@ -519,12 +519,16 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
 
     public function setTags(?array $tags): self
     {
-        return $this->getResource()->setTags($tags);
+        $this->getResource()->setTags($tags);
+
+        return $this;
     }
 
     public function addTag($tag): self
     {
-        return $this->getResource()->addTag($tag);
+        $this->getResource()->addTag($tag);
+
+        return $this;
     }
 
     public function getTags(): ?array
@@ -534,17 +538,23 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
 
     public function clearTags(): self
     {
-        return $this->getResource()->clearTags();
+        $this->getResource()->clearTags();
+
+        return $this;
     }
 
-    public function setLabelMimeType(string $labelMimeType)
+    public function setLabelMimeType(string $labelMimeType): self
     {
-        return $this->getResource()->setLabelMimeType($labelMimeType);
+        $this->getResource()->setLabelMimeType($labelMimeType);
+
+        return $this;
     }
 
     public function setCollection(?CollectionInterface $collection): self
     {
-        return $this->getResource()->setCollection($collection);
+        $this->getResource()->setCollection($collection);
+
+        return $this;
     }
 
     public function getCollection(): ?CollectionInterface
@@ -554,12 +564,16 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
 
     public function setShipmentSurcharges(array $surcharges): self
     {
-        return $this->getResource()->setShipmentSurcharges($surcharges);
+        $this->getResource()->setShipmentSurcharges($surcharges);
+
+        return $this;
     }
 
     public function addShipmentSurcharge(ShipmentSurchargeInterface $surcharge): self
     {
-        return $this->getResource()->addShipmentSurcharge($surcharge);
+        $this->getResource()->addShipmentSurcharge($surcharge);
+
+        return $this;
     }
 
     public function getShipmentSurcharges(): array

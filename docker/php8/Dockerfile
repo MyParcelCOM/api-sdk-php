@@ -1,4 +1,4 @@
-FROM php:8.2.7-cli
+FROM php:8.2.25-cli
 
 RUN apt-get update \
     && apt-get install -y curl zip unzip software-properties-common gettext-base iproute2 \
