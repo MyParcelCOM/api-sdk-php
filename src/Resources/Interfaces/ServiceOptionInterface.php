@@ -29,4 +29,8 @@ interface ServiceOptionInterface extends ResourceInterface
     public function setIncluded(bool $included): self;
 
     public function isIncluded(): bool;
+
+    public function setValues(?array $values): self;
+
+    public function getValues(): ?array;
 }
