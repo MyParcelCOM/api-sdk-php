@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MyParcelCom\ApiSdk\Resources\Traits;
 
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceProxyInterface;
 
 trait ProcessIncludes
 {
@@ -28,13 +29,21 @@ trait ProcessIncludes
             if (is_array($relationship)) {
                 foreach ($relationship as $index => $item) {
                     if ($resource->getType() === $item->getType() && $resource->getId() === $item->getId()) {
-                        $this->relationships[$relationshipKey]['data'][$index] = $resource;
+                        if ($this->relationships[$relationshipKey]['data'][$index] instanceof ResourceProxyInterface) {
+                            $this->relationships[$relationshipKey]['data'][$index]->setResource($resource);
+                        } else {
+                            $this->relationships[$relationshipKey]['data'][$index] = $resource;
+                        }
                         break;
                     }
                 }
             } else {
                 if ($resource->getType() === $relationship->getType() && $resource->getId() === $relationship->getId()) {
-                    $this->relationships[$relationshipKey]['data'] = $resource;
+                    if ($this->relationships[$relationshipKey]['data'] instanceof ResourceProxyInterface) {
+                        $this->relationships[$relationshipKey]['data']->setResource($resource);
+                    } else {
+                        $this->relationships[$relationshipKey]['data'] = $resource;
+                    }
                 }
             }
         }

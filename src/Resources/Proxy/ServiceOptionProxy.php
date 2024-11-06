@@ -25,17 +25,21 @@ class ServiceOptionProxy implements ServiceOptionInterface, ResourceProxyInterfa
     const META_PRICE_AMOUNT = 'amount';
     const META_PRICE_CURRENCY = 'currency';
     const META_INCLUDED = 'included';
+    const META_VALUES = 'values';
 
     private ?string $id = null;
 
     private string $type = ResourceInterface::TYPE_SERVICE_OPTION;
 
     private array $meta = [
+        // Relationships returned from the service-rates endpoints can have a price and indication if they are included.
         self::META_PRICE    => [
             self::META_PRICE_AMOUNT   => null,
             self::META_PRICE_CURRENCY => null,
         ],
         self::META_INCLUDED => null,
+        // Relationships returned from the shipment endpoints can have values (according to the defined values_format).
+        self::META_VALUES => null,
     ];
 
     public function setName(string $name): self
@@ -74,6 +78,18 @@ class ServiceOptionProxy implements ServiceOptionInterface, ResourceProxyInterfa
         return $this->getResource()->getCategory();
     }
 
+    public function setValuesFormat(?array $valuesFormat): self
+    {
+        $this->getResource()->setValuesFormat($valuesFormat);
+
+        return $this;
+    }
+
+    public function getValuesFormat(): ?array
+    {
+        return $this->getResource()->getValuesFormat();
+    }
+
     public function setPrice(?int $price): self
     {
         $this->meta[self::META_PRICE][self::META_PRICE_AMOUNT] = $price;
@@ -108,6 +124,18 @@ class ServiceOptionProxy implements ServiceOptionInterface, ResourceProxyInterfa
     public function isIncluded(): bool
     {
         return (bool) $this->meta[self::META_INCLUDED];
+    }
+
+    public function setValues(?array $values): self
+    {
+        $this->meta[self::META_VALUES] = $values;
+
+        return $this;
+    }
+
+    public function getValues(): ?array
+    {
+        return $this->meta[self::META_VALUES];
     }
 
     /**

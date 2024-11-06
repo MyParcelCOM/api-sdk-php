@@ -31,6 +31,13 @@ trait ProxiesResource
         return $this;
     }
 
+    public function setResource(ResourceInterface $resource): self
+    {
+        $this->resource = $resource;
+
+        return $this;
+    }
+
     /**
      * Get the resource that this instance is a proxy for.
      */
