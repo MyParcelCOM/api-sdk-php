@@ -1,11 +1,9 @@
-version: '3'
-
 services:
   php8:
     build:
       context: ./docker/php8
       dockerfile: Dockerfile
-    image: myparcelcom/sdk-php8:v1-dev
+    image: myparcelcom/sdk-php8:v2-dev
     working_dir: /opt/sdk
     volumes:
       - .:/opt/sdk

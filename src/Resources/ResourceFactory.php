@@ -223,6 +223,24 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
             unset($data['attributes']['recipient_tax_identification_numbers']);
         }
 
+        if (isset($data['relationships']['service_options'])) {
+            $serviceOptions = $data['relationships']['service_options']['data'];
+
+            foreach ($serviceOptions as $serviceOption) {
+                $serviceOptionProxy = (new ServiceOptionProxy())
+                    ->setMyParcelComApi($this->api)
+                    ->setId($serviceOption['id']);
+
+                if (isset($serviceOption['meta']['values'])) {
+                    $serviceOptionProxy->setValues($serviceOption['meta']['values']);
+                }
+
+                $shipment->addServiceOption($serviceOptionProxy);
+            }
+
+            unset($data['relationships']['service_options']);
+        }
+
         return $shipment;
     }
 

@@ -5,13 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Composer
         uses: php-actions/composer@v6
         with:
           php_version: 8.0
       - name: PHPUnit
-        uses: php-actions/phpunit@v3
+        uses: php-actions/phpunit@v4
         with:
           version: 9
           php_version: 8.0
@@ -20,13 +20,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Composer
         uses: php-actions/composer@v6
         with:
           php_version: 8.1
       - name: PHPUnit
-        uses: php-actions/phpunit@v3
+        uses: php-actions/phpunit@v4
         with:
           version: 9
           php_version: 8.1
@@ -35,14 +35,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Composer
         uses: php-actions/composer@v6
         with:
           php_version: 8.2
       - name: PHPUnit
-        uses: php-actions/phpunit@v3
+        uses: php-actions/phpunit@v4
         with:
           version: 9
           php_version: 8.2
+          configuration: phpunit.xml
+  php83:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Composer
+        uses: php-actions/composer@v6
+        with:
+          php_version: 8.3
+      - name: PHPUnit
+        uses: php-actions/phpunit@v4
+        with:
+          version: 9
+          php_version: 8.3
           configuration: phpunit.xml
