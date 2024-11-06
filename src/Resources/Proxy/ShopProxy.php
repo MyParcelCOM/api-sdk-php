@@ -90,7 +90,9 @@ class ShopProxy implements ShopInterface, ResourceProxyInterface
 
     public function setOrganization(OrganizationInterface $organization): self
     {
-        return $this->getResource()->setOrganization($organization);
+        $this->getResource()->setOrganization($organization);
+
+        return $this;
     }
 
     public function getOrganization(): OrganizationInterface
