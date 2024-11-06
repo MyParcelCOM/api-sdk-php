@@ -4,37 +4,29 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk\Tests\Feature\Proxy;
 
-use MyParcelCom\ApiSdk\Authentication\AuthenticatorInterface;
 use MyParcelCom\ApiSdk\MyParcelComApi;
 use MyParcelCom\ApiSdk\MyParcelComApiInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Proxy\ServiceOptionProxy;
 use MyParcelCom\ApiSdk\Tests\Traits\MocksApiCommunication;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Client\ClientInterface;
 
 class ServiceOptionProxyTest extends TestCase
 {
     use MocksApiCommunication;
 
-    /** @var ClientInterface */
-    private $client;
-    /** @var AuthenticatorInterface */
-    private $authenticator;
-    /** @var MyParcelComApiInterface */
-    private $api;
-    /** @var ServiceOptionProxy */
-    private $serviceOptionProxy;
+    private MyParcelComApiInterface $api;
+    private ServiceOptionProxy $serviceOptionProxy;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->client = $this->getClientMock();
-        $this->authenticator = $this->getAuthenticatorMock();
-        $this->api = (new MyParcelComApi('https://api', $this->client))
+        $client = $this->getClientMock();
+        $authenticator = $this->getAuthenticatorMock();
+        $this->api = (new MyParcelComApi('https://api', $client))
             ->setCache($this->getNullCache())
-            ->authenticate($this->authenticator);
+            ->authenticate($authenticator);
 
         $this->serviceOptionProxy = (new ServiceOptionProxy())
             ->setMyParcelComApi($this->api)
@@ -45,9 +37,18 @@ class ServiceOptionProxyTest extends TestCase
     public function testAccessors()
     {
         $this->assertEquals('Drone delivery', $this->serviceOptionProxy->setName('Drone delivery')->getName());
-        $this->assertEquals('delivery-method', $this->serviceOptionProxy->setCategory('delivery-method')->getCategory());
-        $this->assertEquals('delivery-method-drone', $this->serviceOptionProxy->setCode('delivery-method-drone')->getCode());
-        $this->assertEquals('an-id-for-a-service-option', $this->serviceOptionProxy->setId('an-id-for-a-service-option')->getId());
+        $this->assertEquals(
+            'delivery-method',
+            $this->serviceOptionProxy->setCategory('delivery-method')->getCategory(),
+        );
+        $this->assertEquals(
+            'delivery-method-drone',
+            $this->serviceOptionProxy->setCode('delivery-method-drone')->getCode(),
+        );
+        $this->assertEquals(
+            'an-id-for-a-service-option',
+            $this->serviceOptionProxy->setId('an-id-for-a-service-option')->getId(),
+        );
     }
 
     /** @test */
@@ -71,6 +72,9 @@ class ServiceOptionProxyTest extends TestCase
 
         $this->assertFalse($this->serviceOptionProxy->isIncluded());
         $this->assertTrue($this->serviceOptionProxy->setIncluded(true)->isIncluded());
+
+        $this->assertNull($this->serviceOptionProxy->getValues());
+        $this->assertEquals(['val'], $this->serviceOptionProxy->setValues(['val'])->getValues());
     }
 
     /** @test */
@@ -108,7 +112,8 @@ class ServiceOptionProxyTest extends TestCase
             ->setId('service-option-id-1')
             ->setIncluded(false)
             ->setPrice(500)
-            ->setCurrency('GBP');
+            ->setCurrency('GBP')
+            ->setValues(['val']);
 
         $this->assertEquals([
             'id'   => 'service-option-id-1',
@@ -119,6 +124,7 @@ class ServiceOptionProxyTest extends TestCase
                     'amount'   => 500,
                     'currency' => 'GBP',
                 ],
+                'values'   => ['val'],
             ],
         ], $serviceProxy->jsonSerialize());
     }

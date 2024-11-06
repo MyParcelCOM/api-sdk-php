@@ -152,7 +152,13 @@
           "data": [
             {
               "type": "service-options",
-              "id": "service-option-id-1"
+              "id": "service-option-id-1",
+              "meta": {
+                "values": {
+                  "amount": 100,
+                  "currency": "GBP"
+                }
+              }
             }
           ]
         },

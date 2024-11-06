@@ -15,14 +15,14 @@ trait JsonSerializable
     {
         $json = $this->arrayValuesToArray(get_object_vars($this));
 
-        // We remove all empty properties
+        // Remove all empty top-level properties (id, attributes, relationships, meta).
         foreach ($json as $property => $value) {
             if ($this->isEmpty($value)) {
                 unset($json[$property]);
             }
         }
 
-        // If there are attributes, we make sure no empty attributes are serialized
+        // If there are attributes, make sure no empty properties are serialized.
         if (isset($json['attributes'])) {
             foreach ($json['attributes'] as $attribute => $value) {
                 if ($this->isEmpty($value)) {
@@ -31,11 +31,19 @@ trait JsonSerializable
             }
         }
 
-        // If there are relationships, we remove any possible attributes still
-        // present. This can happen when a resource (not a proxy) is set as a
-        // relationship on another resource.
+        // If there are relationships, remove any possible 'attributes' still present on the related resource.
+        // This can happen when a resource (not a proxy) is set as a relationship on another resource.
         if (isset($json['relationships'])) {
             $json['relationships'] = $this->removeRelationshipAttributes($json['relationships']);
+        }
+
+        // If there is a meta, make sure no empty properties are serialized
+        if (isset($json['meta'])) {
+            foreach ($json['meta'] as $attribute => $value) {
+                if ($this->isEmpty($value)) {
+                    unset($json['meta'][$attribute]);
+                }
+            }
         }
 
         return $json;
