@@ -36,10 +36,17 @@ class ServiceOptionProxyTest extends TestCase
     /** @test */
     public function testAccessors()
     {
-        $this->assertEquals('Drone delivery', $this->serviceOptionProxy->setName('Drone delivery')->getName());
+        $this->assertEquals(
+            'Drone delivery',
+            $this->serviceOptionProxy->setName('Drone delivery')->getName(),
+        );
         $this->assertEquals(
             'delivery-method',
             $this->serviceOptionProxy->setCategory('delivery-method')->getCategory(),
+        );
+        $this->assertEquals(
+            ['json' => 'schema'],
+            $this->serviceOptionProxy->setValuesFormat(['json' => 'schema'])->getValuesFormat(),
         );
         $this->assertEquals(
             'delivery-method-drone',
@@ -58,6 +65,20 @@ class ServiceOptionProxyTest extends TestCase
         $this->assertEquals('Collection', $this->serviceOptionProxy->getName());
         $this->assertEquals('handover-method', $this->serviceOptionProxy->getCategory());
         $this->assertEquals('handover-method-collection', $this->serviceOptionProxy->getCode());
+        $this->assertEquals(
+            [
+                'required'   => ['amount', 'currency'],
+                'properties' => [
+                    'amount'   => [
+                        'type' => 'integer',
+                    ],
+                    'currency' => [
+                        'type' => 'string',
+                    ],
+                ],
+            ],
+            $this->serviceOptionProxy->getValuesFormat(),
+        );
         $this->assertEquals('d4637e6a-4b7a-44c8-8b4d-8311d0cf1238', $this->serviceOptionProxy->getId());
     }
 

@@ -17,6 +17,7 @@ class ServiceOption implements ServiceOptionInterface
     const ATTRIBUTE_NAME = 'name';
     const ATTRIBUTE_CODE = 'code';
     const ATTRIBUTE_CATEGORY = 'category';
+    const ATTRIBUTE_VALUES_FORMAT = 'values_format';
 
     const META_PRICE = 'price';
     const META_PRICE_AMOUNT = 'amount';
@@ -29,9 +30,10 @@ class ServiceOption implements ServiceOptionInterface
     private string $type = ResourceInterface::TYPE_SERVICE_OPTION;
 
     private array $attributes = [
-        self::ATTRIBUTE_NAME     => null,
-        self::ATTRIBUTE_CODE     => null,
-        self::ATTRIBUTE_CATEGORY => null,
+        self::ATTRIBUTE_NAME          => null,
+        self::ATTRIBUTE_CODE          => null,
+        self::ATTRIBUTE_CATEGORY      => null,
+        self::ATTRIBUTE_VALUES_FORMAT => null,
     ];
 
     private array $meta = [
@@ -42,7 +44,7 @@ class ServiceOption implements ServiceOptionInterface
         ],
         self::META_INCLUDED => null,
         // Relationships posted to the shipment endpoints can have values (according to the defined values_format).
-        self::META_VALUES => null,
+        self::META_VALUES   => null,
     ];
 
     public function setName(string $name): self
@@ -79,6 +81,18 @@ class ServiceOption implements ServiceOptionInterface
     public function getCategory(): ?string
     {
         return $this->attributes[self::ATTRIBUTE_CATEGORY];
+    }
+
+    public function setValuesFormat(?array $valuesFormat): self
+    {
+        $this->attributes[self::ATTRIBUTE_VALUES_FORMAT] = $valuesFormat;
+
+        return $this;
+    }
+
+    public function getValuesFormat(): ?array
+    {
+        return $this->attributes[self::ATTRIBUTE_VALUES_FORMAT];
     }
 
     public function setPrice(?int $price): self

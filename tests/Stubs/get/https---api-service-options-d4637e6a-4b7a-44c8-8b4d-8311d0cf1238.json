@@ -5,7 +5,21 @@
     "attributes": {
       "name": "Collection",
       "category": "handover-method",
-      "code": "handover-method-collection"
+      "code": "handover-method-collection",
+      "values_format": {
+        "required": [
+          "amount",
+          "currency"
+        ],
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }

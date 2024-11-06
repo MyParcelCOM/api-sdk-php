@@ -78,6 +78,18 @@ class ServiceOptionProxy implements ServiceOptionInterface, ResourceProxyInterfa
         return $this->getResource()->getCategory();
     }
 
+    public function setValuesFormat(?array $valuesFormat): self
+    {
+        $this->getResource()->setValuesFormat($valuesFormat);
+
+        return $this;
+    }
+
+    public function getValuesFormat(): ?array
+    {
+        return $this->getResource()->getValuesFormat();
+    }
+
     public function setPrice(?int $price): self
     {
         $this->meta[self::META_PRICE][self::META_PRICE_AMOUNT] = $price;

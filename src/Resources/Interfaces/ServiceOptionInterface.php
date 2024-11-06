@@ -18,6 +18,10 @@ interface ServiceOptionInterface extends ResourceInterface
 
     public function getCategory(): ?string;
 
+    public function setValuesFormat(?array $valuesFormat): self;
+
+    public function getValuesFormat(): ?array;
+
     public function setPrice(?int $price): self;
 
     public function getPrice(): ?int;

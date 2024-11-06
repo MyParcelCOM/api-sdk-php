@@ -45,6 +45,13 @@ class ServiceOptionTest extends TestCase
     }
 
     /** @test */
+    public function testValuesFormat(): void
+    {
+        $option = new ServiceOption();
+        $this->assertEquals(['json' => 'schema'], $option->setValuesFormat(['json' => 'schema'])->getValuesFormat());
+    }
+
+    /** @test */
     public function testItSetsAndGetsPrice(): void
     {
         $option = new ServiceOption();
@@ -85,18 +92,18 @@ class ServiceOptionTest extends TestCase
             ->setName('Sign on delivery')
             ->setCode('some-code')
             ->setCategory('some-category')
-            ->setValues(['val']);
+            ->setValuesFormat(['json' => 'schema']);
 
         $this->assertEquals([
             'id'         => 'service-option-id',
             'type'       => 'service-options',
             'attributes' => [
-                'name'     => 'Sign on delivery',
-                'code'     => 'some-code',
-                'category' => 'some-category',
-            ],
-            'meta'       => [
-                'values' => ['val'],
+                'name'          => 'Sign on delivery',
+                'code'          => 'some-code',
+                'category'      => 'some-category',
+                'values_format' => [
+                    'json' => 'schema',
+                ],
             ],
         ], $option->jsonSerialize());
     }
