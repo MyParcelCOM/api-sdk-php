@@ -130,6 +130,39 @@ class ShipmentsTest extends TestCase
         $this->assertNotNull($shipment->getFiles()[0]->getBase64Data());
     }
 
+    public function testCreateRegisteredMultiColliShipment(): void
+    {
+        $recipient = (new Address())
+            ->setFirstName('Sherlock')
+            ->setLastName('Holmes')
+            ->setCity('London')
+            ->setStreet1('Baker Street')
+            ->setStreetNumber(221)
+            ->setPostalCode('NW1 6XE')
+            ->setCountryCode('GB');
+
+        $shipment = (new Shipment())
+            ->setPhysicalProperties((new PhysicalProperties())->setWeight(500))
+            ->setRecipientAddress($recipient)
+            ->setServiceCode('myparcelcom-unstamped');
+
+        $shipment->setColli([clone $shipment, clone $shipment]);
+
+        $shipment = $this->api->createAndRegisterMultiColliShipment($shipment);
+
+        $this->assertNotNull($shipment->getService());
+        $this->assertNotNull($shipment->getContract());
+//        $this->assertCount(2, $shipment->getFiles());
+//        $this->assertNotNull($shipment->getFiles()[0]->getBase64Data());
+//        $this->assertNotNull($shipment->getFiles()[1]->getBase64Data());
+
+        $this->assertCount(2, $shipment->getColli());
+        $this->assertCount(1, $shipment->getColli()[0]->getFiles());
+        $this->assertNotNull($shipment->getColli()[0]->getFiles()[0]->getBase64Data());
+        $this->assertCount(1, $shipment->getColli()[1]->getFiles());
+        $this->assertNotNull($shipment->getColli()[1]->getFiles()[0]->getBase64Data());
+    }
+
     public function testSaveShipment(): void
     {
         $initialAddress = (new Address())

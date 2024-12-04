@@ -79,6 +79,7 @@ class Shipment implements ShipmentInterface
         ResourceInterface::TYPE_FILE               => self::RELATIONSHIP_FILES,
         ResourceInterface::TYPE_SERVICE            => self::RELATIONSHIP_SERVICE,
         ResourceInterface::TYPE_SERVICE_OPTION     => self::RELATIONSHIP_SERVICE_OPTIONS,
+        ResourceInterface::TYPE_SHIPMENT           => self::RELATIONSHIP_COLLI,
         ResourceInterface::TYPE_SHIPMENT_STATUS    => self::RELATIONSHIP_STATUS,
         ResourceInterface::TYPE_SHOP               => self::RELATIONSHIP_SHOP,
         ResourceInterface::TYPE_COLLECTION         => self::RELATIONSHIP_COLLECTION,

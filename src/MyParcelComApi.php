@@ -24,6 +24,7 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceFactoryInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceProxyInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceRateInterface;
@@ -658,6 +659,9 @@ class MyParcelComApi implements MyParcelComApiInterface
             // After the included colli models have been populated, we hydrate them with the base64 data from the meta.
             foreach ($registeredShipment->getColli() as $collo) {
                 foreach ($collo->getFiles() as $file) {
+                    if ($file instanceof ResourceProxyInterface) {
+                        $file->setResourceFromIncludes($includedResources);
+                    }
                     $format = $file->getFormats()[0];
 
                     foreach ($relationshipColli as $relationshipCollo) {
