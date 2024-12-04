@@ -59,6 +59,7 @@ class Shipment implements ShipmentInterface
     const ATTRIBUTE_TOTAL_VALUE = 'total_value';
     const ATTRIBUTE_TAGS = 'tags';
 
+    const RELATIONSHIP_COLLI = 'colli';
     const RELATIONSHIP_CONTRACT = 'contract';
     const RELATIONSHIP_FILES = 'files';
     const RELATIONSHIP_MANIFEST = 'manifest';
@@ -141,6 +142,9 @@ class Shipment implements ShipmentInterface
             'data' => null,
         ],
         self::RELATIONSHIP_SHIPMENT_SURCHARGES => [
+            'data' => [],
+        ],
+        self::RELATIONSHIP_COLLI               => [
             'data' => [],
         ],
     ];
@@ -820,5 +824,28 @@ class Shipment implements ShipmentInterface
     public function getShipmentSurcharges(): array
     {
         return $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'];
+    }
+
+    public function setColli(array $colli): self
+    {
+        $this->relationships[self::RELATIONSHIP_COLLI]['data'] = [];
+
+        array_walk($colli, function ($collo) {
+            $this->addCollo($collo);
+        });
+
+        return $this;
+    }
+
+    public function addCollo(ShipmentInterface $collo): self
+    {
+        $this->relationships[self::RELATIONSHIP_COLLI]['data'][] = $collo;
+
+        return $this;
+    }
+
+    public function getColli(): array
+    {
+        return $this->relationships[self::RELATIONSHIP_COLLI]['data'];
     }
 }

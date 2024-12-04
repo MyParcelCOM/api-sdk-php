@@ -230,4 +230,10 @@ interface ShipmentInterface extends ResourceInterface
     public function addShipmentSurcharge(ShipmentSurchargeInterface $surcharge): self;
 
     public function getShipmentSurcharges(): array;
+
+    public function setColli(array $colli): self;
+
+    public function addCollo(ShipmentInterface $collo): self;
+
+    public function getColli(): array;
 }
