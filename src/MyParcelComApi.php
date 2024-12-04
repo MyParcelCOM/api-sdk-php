@@ -633,7 +633,7 @@ class MyParcelComApi implements MyParcelComApiInterface
                 'meta' => array_merge(
                     [
                         'colli' => array_map(
-                            fn (Shipment $collo) => $collo->jsonSerialize()['attributes'],
+                            fn (ShipmentInterface $collo) => $collo->jsonSerialize()['attributes'] ?? null,
                             $shipment->getColli(),
                         ),
                     ],
