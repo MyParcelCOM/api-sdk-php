@@ -152,15 +152,22 @@ class ShipmentsTest extends TestCase
 
         $this->assertNotNull($shipment->getService());
         $this->assertNotNull($shipment->getContract());
-//        $this->assertCount(2, $shipment->getFiles());
-//        $this->assertNotNull($shipment->getFiles()[0]->getBase64Data());
-//        $this->assertNotNull($shipment->getFiles()[1]->getBase64Data());
+        $this->assertNull($shipment->getColloNumber());
+        $this->assertCount(2, $shipment->getFiles(), 'Master shipment should return colli files.');
+        $this->assertNotNull($shipment->getFiles()[0]->getBase64Data());
+        $this->assertNotNull($shipment->getFiles()[1]->getBase64Data());
 
         $this->assertCount(2, $shipment->getColli());
-        $this->assertCount(1, $shipment->getColli()[0]->getFiles());
-        $this->assertNotNull($shipment->getColli()[0]->getFiles()[0]->getBase64Data());
-        $this->assertCount(1, $shipment->getColli()[1]->getFiles());
-        $this->assertNotNull($shipment->getColli()[1]->getFiles()[0]->getBase64Data());
+
+        $collo = $shipment->getColli()[0];
+        $this->assertEquals(1, $collo->getColloNumber());
+        $this->assertCount(1, $collo->getFiles());
+        $this->assertNotNull($collo->getFiles()[0]->getBase64Data());
+
+        $collo = $shipment->getColli()[1];
+        $this->assertEquals(2, $collo->getColloNumber());
+        $this->assertCount(1, $collo->getFiles());
+        $this->assertNotNull($collo->getFiles()[0]->getBase64Data());
     }
 
     public function testSaveShipment(): void

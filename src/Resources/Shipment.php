@@ -577,6 +577,16 @@ class Shipment implements ShipmentInterface
 
     public function getFiles(string $type = null): array
     {
+        // For multi-colli `master` shipments we make this function return all files from the related `colli` shipments.
+        if (!empty($this->getColli())) {
+            $colliFiles = array_map(
+                fn (ShipmentInterface $collo) => $collo->getFiles($type),
+                $this->getColli(),
+            );
+
+            return array_merge(...$colliFiles);
+        }
+
         if ($type === null) {
             return $this->relationships[self::RELATIONSHIP_FILES]['data'];
         }
