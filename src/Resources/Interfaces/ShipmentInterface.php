@@ -182,6 +182,9 @@ interface ShipmentInterface extends ResourceInterface
 
     public function addItem(ShipmentItemInterface $item): self;
 
+    /**
+     * @return ShipmentItemInterface[]|null
+     */
     public function getItems(): ?array;
 
     /**
@@ -231,9 +234,19 @@ interface ShipmentInterface extends ResourceInterface
 
     public function getShipmentSurcharges(): array;
 
+    /**
+     * @param ShipmentInterface[] $colli
+     */
     public function setColli(array $colli): self;
 
     public function addCollo(ShipmentInterface $collo): self;
 
+    /**
+     * @return ShipmentInterface[]
+     */
     public function getColli(): array;
+
+    public function setColloNumber(?int $colloNumber): self;
+
+    public function getColloNumber(): ?int;
 }

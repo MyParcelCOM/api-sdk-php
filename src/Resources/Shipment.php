@@ -58,6 +58,7 @@ class Shipment implements ShipmentInterface
     const ATTRIBUTE_REGISTER_AT = 'register_at';
     const ATTRIBUTE_TOTAL_VALUE = 'total_value';
     const ATTRIBUTE_TAGS = 'tags';
+    const ATTRIBUTE_COLLO_NUMBER = 'collo_number';
 
     const RELATIONSHIP_COLLI = 'colli';
     const RELATIONSHIP_CONTRACT = 'contract';
@@ -114,6 +115,7 @@ class Shipment implements ShipmentInterface
             'currency' => null,
         ],
         self::ATTRIBUTE_TAGS                                 => null,
+        self::ATTRIBUTE_COLLO_NUMBER                         => null,
     ];
 
     private array $relationships = [
@@ -847,5 +849,20 @@ class Shipment implements ShipmentInterface
     public function getColli(): array
     {
         return $this->relationships[self::RELATIONSHIP_COLLI]['data'];
+    }
+
+    /**
+     * @internal Method to process our API response. You should not set your own collo number on a shipment.
+     */
+    public function setColloNumber(?int $colloNumber): self
+    {
+        $this->attributes[self::ATTRIBUTE_COLLO_NUMBER] = $colloNumber;
+
+        return $this;
+    }
+
+    public function getColloNumber(): ?int
+    {
+        return $this->attributes[self::ATTRIBUTE_COLLO_NUMBER];
     }
 }
