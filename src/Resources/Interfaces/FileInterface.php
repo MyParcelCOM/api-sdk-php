@@ -62,6 +62,11 @@ interface FileInterface extends ResourceInterface
     public function getStream(?string $mimeType = null): ?StreamInterface;
 
     /**
+     * Set the base64 encoded data of the first format of this file, using the meta.files JSON of a response.
+     */
+    public function setBase64DataFromResponseMeta(array $metaFiles): self;
+
+    /**
      * Set the base64 encoded data of this file for given mime type.
      */
     public function setBase64Data(string $data, string $mimeType): self;
