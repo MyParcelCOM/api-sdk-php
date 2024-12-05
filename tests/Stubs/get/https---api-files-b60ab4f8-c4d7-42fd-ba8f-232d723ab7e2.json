@@ -1,0 +1,18 @@
+{
+  "data": {
+    "type": "files",
+    "id": "b60ab4f8-c4d7-42fd-ba8f-232d723ab7e2",
+    "attributes": {
+      "document_type": "label",
+      "formats": [
+        {
+          "extension": "pdf",
+          "mime_type": "application/pdf"
+        }
+      ]
+    },
+    "links": {
+      "self": "https://api/files/b60ab4f8-c4d7-42fd-ba8f-232d723ab7e2"
+    }
+  }
+}
