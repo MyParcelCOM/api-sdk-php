@@ -24,6 +24,7 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ManifestInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceFactoryInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceProxyInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceRateInterface;
@@ -34,7 +35,6 @@ use MyParcelCom\ApiSdk\Resources\ResourceFactory;
 use MyParcelCom\ApiSdk\Resources\Service;
 use MyParcelCom\ApiSdk\Resources\ServiceRate;
 use MyParcelCom\ApiSdk\Resources\Shipment;
-use MyParcelCom\ApiSdk\Resources\ShipmentSurcharge;
 use MyParcelCom\ApiSdk\Shipments\ServiceMatcher;
 use MyParcelCom\ApiSdk\Utils\UrlBuilder;
 use MyParcelCom\ApiSdk\Validators\CollectionValidator;
@@ -556,7 +556,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         }
 
         $response = $this->doRequest(
-            '/registered-shipments?' . http_build_query(['include' => 'files']),
+            '/registered-shipments?' . http_build_query(['include' => Shipment::RELATIONSHIP_FILES]),
             'post',
             [
                 'data' => $shipment,
@@ -571,22 +571,99 @@ class MyParcelComApi implements MyParcelComApiInterface
 
         /** @var Shipment $registeredShipment */
         $registeredShipment = $this->resourceFactory->create('shipments', $json['data']);
-        $included = isset($json['included']) ? $json['included'] : [];
-        $metaFiles = isset($json['meta']['files']) ? $json['meta']['files'] : [];
+        $included = $json['included'] ?? [];
+        $metaFiles = $json['meta']['files'] ?? [];
 
-        if (!empty($included)) {
-            $includedResources = $this->jsonToResources($included);
-            $registeredShipment->processIncludedResources($includedResources);
+        if (empty($included)) {
+            return $registeredShipment;
+        }
 
-            foreach ($registeredShipment->getFiles() as $file) {
-                $format = $file->getFormats()[0];
+        $includedResources = $this->jsonToResources($included);
+        $registeredShipment->processIncludedResources($includedResources);
 
-                foreach ($metaFiles as $metaFile) {
-                    if ($metaFile['document_type'] === $file->getDocumentType()
-                        && $metaFile['mime_type'] === $format[FileInterface::FORMAT_MIME_TYPE]
-                        && $metaFile['extension'] === $format[FileInterface::FORMAT_EXTENSION]
-                    ) {
-                        $file->setBase64Data($metaFile['contents'], $metaFile['mime_type']);
+        // After the included file models have been populated, we hydrate them with the base64 data from the meta.
+        foreach ($registeredShipment->getFiles() as $file) {
+            $file->setBase64DataFromResponseMeta($metaFiles);
+        }
+
+        return $registeredShipment;
+    }
+
+    /**
+     * This function is similar to createAndRegisterShipment() and immediately communicates the shipment to the carrier.
+     * The carrier response is processed before your request is completed, so files and base64 data will be available.
+     * Note that files will not be set on the `master` shipment, but each individual `collo` shipment will have a file.
+     */
+    public function createAndRegisterMultiColliShipment(
+        ShipmentInterface $shipment,
+        ?string $idempotencyKey = null,
+    ): ShipmentInterface {
+        $this->populateShipmentWithDefaultsFromShop($shipment);
+        $this->validateShipment($shipment);
+
+        if (count($shipment->getColli()) < 1) {
+            throw new InvalidResourceException(
+                'Could not create multi-colli shipment without any colli. Please add one or more collo shipments to this master shipment.',
+            );
+        }
+
+        $headers = [];
+
+        if ($idempotencyKey) {
+            $headers[self::HEADER_IDEMPOTENCY_KEY] = $idempotencyKey;
+        }
+
+        $response = $this->doRequest(
+            '/multi-colli-shipments?' . http_build_query([
+                'include' => implode(',', [
+                    Shipment::RELATIONSHIP_COLLI,
+                    Shipment::RELATIONSHIP_COLLI . '.' . Shipment::RELATIONSHIP_FILES,
+                ]),
+            ]),
+            'post',
+            [
+                'data' => $shipment,
+                'meta' => array_merge(
+                    [
+                        'colli' => array_map(
+                            fn (ShipmentInterface $collo) => $collo->jsonSerialize()['attributes'] ?? null,
+                            $shipment->getColli(),
+                        ),
+                    ],
+                    array_filter($shipment->getMeta()),
+                ),
+            ],
+            $this->authenticator->getAuthorizationHeader() + [
+                AuthenticatorInterface::HEADER_ACCEPT => AuthenticatorInterface::MIME_TYPE_JSONAPI,
+            ] + $headers,
+        );
+
+        $json = json_decode((string) $response->getBody(), true);
+
+        /** @var Shipment $registeredShipment */
+        $registeredShipment = $this->resourceFactory->create('shipments', $json['data']);
+        $included = $json['included'] ?? [];
+        $relationshipColli = $json['data']['relationships']['colli']['data'] ?? [];
+
+        if (empty($included)) {
+            return $registeredShipment;
+        }
+
+        $includedResources = $this->jsonToResources($included);
+        $registeredShipment->processIncludedResources($includedResources);
+
+        // After the included colli models have been populated, we hydrate them with the base64 data from the meta.
+        foreach ($registeredShipment->getColli() as $collo) {
+            foreach ($collo->getFiles() as $file) {
+                if ($file instanceof ResourceProxyInterface) {
+                    $file->setResourceFromIncludes($includedResources);
+                }
+
+                foreach ($relationshipColli as $relationshipCollo) {
+                    if ($relationshipCollo['meta']['collo_number'] === $collo->getColloNumber()) {
+                        $metaFiles = $relationshipCollo['meta']['files'] ?? [];
+
+                        $file->setBase64DataFromResponseMeta($metaFiles);
                     }
                 }
             }

@@ -38,6 +38,18 @@ trait ProxiesResource
         return $this;
     }
 
+    public function setResourceFromIncludes(array $includedResources): self
+    {
+        foreach ($includedResources as $resource) {
+            if ($this->getType() === $resource->getType() && $this->getId() === $resource->getId()) {
+                $this->resource = $resource;
+                break;
+            }
+        }
+
+        return $this;
+    }
+
     /**
      * Get the resource that this instance is a proxy for.
      */
