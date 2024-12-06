@@ -574,23 +574,16 @@ class MyParcelComApi implements MyParcelComApiInterface
         $included = $json['included'] ?? [];
         $metaFiles = $json['meta']['files'] ?? [];
 
-        if (!empty($included)) {
-            $includedResources = $this->jsonToResources($included);
-            $registeredShipment->processIncludedResources($includedResources);
+        if (empty($included)) {
+            return $registeredShipment;
+        }
 
-            // After the included file models have been populated, we hydrate them with the base64 data from the meta.
-            foreach ($registeredShipment->getFiles() as $file) {
-                $format = $file->getFormats()[0];
+        $includedResources = $this->jsonToResources($included);
+        $registeredShipment->processIncludedResources($includedResources);
 
-                foreach ($metaFiles as $metaFile) {
-                    if ($metaFile['document_type'] === $file->getDocumentType()
-                        && $metaFile['mime_type'] === $format[FileInterface::FORMAT_MIME_TYPE]
-                        && $metaFile['extension'] === $format[FileInterface::FORMAT_EXTENSION]
-                    ) {
-                        $file->setBase64Data($metaFile['contents'], $metaFile['mime_type']);
-                    }
-                }
-            }
+        // After the included file models have been populated, we hydrate them with the base64 data from the meta.
+        foreach ($registeredShipment->getFiles() as $file) {
+            $file->setBase64DataFromResponseMeta($metaFiles);
         }
 
         return $registeredShipment;
@@ -652,31 +645,25 @@ class MyParcelComApi implements MyParcelComApiInterface
         $included = $json['included'] ?? [];
         $relationshipColli = $json['data']['relationships']['colli']['data'] ?? [];
 
-        if (!empty($included)) {
-            $includedResources = $this->jsonToResources($included);
-            $registeredShipment->processIncludedResources($includedResources);
+        if (empty($included)) {
+            return $registeredShipment;
+        }
 
-            // After the included colli models have been populated, we hydrate them with the base64 data from the meta.
-            foreach ($registeredShipment->getColli() as $collo) {
-                foreach ($collo->getFiles() as $file) {
-                    if ($file instanceof ResourceProxyInterface) {
-                        $file->setResourceFromIncludes($includedResources);
-                    }
-                    $format = $file->getFormats()[0];
+        $includedResources = $this->jsonToResources($included);
+        $registeredShipment->processIncludedResources($includedResources);
 
-                    foreach ($relationshipColli as $relationshipCollo) {
-                        if ($relationshipCollo['meta']['collo_number'] === $collo->getColloNumber()) {
-                            $metaFiles = $relationshipCollo['meta']['files'] ?? [];
+        // After the included colli models have been populated, we hydrate them with the base64 data from the meta.
+        foreach ($registeredShipment->getColli() as $collo) {
+            foreach ($collo->getFiles() as $file) {
+                if ($file instanceof ResourceProxyInterface) {
+                    $file->setResourceFromIncludes($includedResources);
+                }
 
-                            foreach ($metaFiles as $metaFile) {
-                                if ($metaFile['document_type'] === $file->getDocumentType()
-                                    && $metaFile['mime_type'] === $format[FileInterface::FORMAT_MIME_TYPE]
-                                    && $metaFile['extension'] === $format[FileInterface::FORMAT_EXTENSION]
-                                ) {
-                                    $file->setBase64Data($metaFile['contents'], $metaFile['mime_type']);
-                                }
-                            }
-                        }
+                foreach ($relationshipColli as $relationshipCollo) {
+                    if ($relationshipCollo['meta']['collo_number'] === $collo->getColloNumber()) {
+                        $metaFiles = $relationshipCollo['meta']['files'] ?? [];
+
+                        $file->setBase64DataFromResponseMeta($metaFiles);
                     }
                 }
             }
