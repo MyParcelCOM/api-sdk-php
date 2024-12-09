@@ -114,6 +114,22 @@ class File implements FileInterface
         return null;
     }
 
+    public function setBase64DataFromResponseMeta(array $metaFiles): self
+    {
+        $format = $this->getFormats()[0];
+
+        foreach ($metaFiles as $metaFile) {
+            if ($metaFile['document_type'] === $this->getDocumentType()
+                && $metaFile['mime_type'] === $format[FileInterface::FORMAT_MIME_TYPE]
+                && $metaFile['extension'] === $format[FileInterface::FORMAT_EXTENSION]
+            ) {
+                $this->setBase64Data($metaFile['contents'], $metaFile['mime_type']);
+            }
+        }
+
+        return $this;
+    }
+
     public function setBase64Data(string $data, string $mimeType): self
     {
         $this->base64Data[$mimeType] = $data;

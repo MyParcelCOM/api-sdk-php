@@ -69,6 +69,13 @@ class FileProxy implements FileInterface, ResourceProxyInterface
         return $this->getResource()->getStream($mimeType);
     }
 
+    public function setBase64DataFromResponseMeta(array $metaFiles): self
+    {
+        $this->getResource()->setBase64DataFromResponseMeta($metaFiles);
+
+        return $this;
+    }
+
     public function setBase64Data(string $data, string $mimeType): self
     {
         $this->getResource()->setBase64Data($data, $mimeType);

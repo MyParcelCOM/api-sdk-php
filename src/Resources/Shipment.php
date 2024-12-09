@@ -58,7 +58,9 @@ class Shipment implements ShipmentInterface
     const ATTRIBUTE_REGISTER_AT = 'register_at';
     const ATTRIBUTE_TOTAL_VALUE = 'total_value';
     const ATTRIBUTE_TAGS = 'tags';
+    const ATTRIBUTE_COLLO_NUMBER = 'collo_number';
 
+    const RELATIONSHIP_COLLI = 'colli';
     const RELATIONSHIP_CONTRACT = 'contract';
     const RELATIONSHIP_FILES = 'files';
     const RELATIONSHIP_MANIFEST = 'manifest';
@@ -77,6 +79,7 @@ class Shipment implements ShipmentInterface
         ResourceInterface::TYPE_FILE               => self::RELATIONSHIP_FILES,
         ResourceInterface::TYPE_SERVICE            => self::RELATIONSHIP_SERVICE,
         ResourceInterface::TYPE_SERVICE_OPTION     => self::RELATIONSHIP_SERVICE_OPTIONS,
+        ResourceInterface::TYPE_SHIPMENT           => self::RELATIONSHIP_COLLI,
         ResourceInterface::TYPE_SHIPMENT_STATUS    => self::RELATIONSHIP_STATUS,
         ResourceInterface::TYPE_SHOP               => self::RELATIONSHIP_SHOP,
         ResourceInterface::TYPE_COLLECTION         => self::RELATIONSHIP_COLLECTION,
@@ -113,6 +116,7 @@ class Shipment implements ShipmentInterface
             'currency' => null,
         ],
         self::ATTRIBUTE_TAGS                                 => null,
+        self::ATTRIBUTE_COLLO_NUMBER                         => null,
     ];
 
     private array $relationships = [
@@ -141,6 +145,9 @@ class Shipment implements ShipmentInterface
             'data' => null,
         ],
         self::RELATIONSHIP_SHIPMENT_SURCHARGES => [
+            'data' => [],
+        ],
+        self::RELATIONSHIP_COLLI               => [
             'data' => [],
         ],
     ];
@@ -570,6 +577,16 @@ class Shipment implements ShipmentInterface
 
     public function getFiles(string $type = null): array
     {
+        // For multi-colli `master` shipments we make this function return all files from the related `colli` shipments.
+        if (!empty($this->getColli())) {
+            $colliFiles = array_map(
+                fn (ShipmentInterface $collo) => $collo->getFiles($type),
+                $this->getColli(),
+            );
+
+            return array_merge(...$colliFiles);
+        }
+
         if ($type === null) {
             return $this->relationships[self::RELATIONSHIP_FILES]['data'];
         }
@@ -820,5 +837,43 @@ class Shipment implements ShipmentInterface
     public function getShipmentSurcharges(): array
     {
         return $this->relationships[self::RELATIONSHIP_SHIPMENT_SURCHARGES]['data'];
+    }
+
+    public function setColli(array $colli): self
+    {
+        $this->relationships[self::RELATIONSHIP_COLLI]['data'] = [];
+
+        array_walk($colli, function ($collo) {
+            $this->addCollo($collo);
+        });
+
+        return $this;
+    }
+
+    public function addCollo(ShipmentInterface $collo): self
+    {
+        $this->relationships[self::RELATIONSHIP_COLLI]['data'][] = $collo;
+
+        return $this;
+    }
+
+    public function getColli(): array
+    {
+        return $this->relationships[self::RELATIONSHIP_COLLI]['data'];
+    }
+
+    /**
+     * @internal Method to process our API response. You should not set your own collo number on a shipment.
+     */
+    public function setColloNumber(?int $colloNumber): self
+    {
+        $this->attributes[self::ATTRIBUTE_COLLO_NUMBER] = $colloNumber;
+
+        return $this;
+    }
+
+    public function getColloNumber(): ?int
+    {
+        return $this->attributes[self::ATTRIBUTE_COLLO_NUMBER];
     }
 }

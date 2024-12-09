@@ -581,6 +581,37 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
         return $this->getResource()->getShipmentSurcharges();
     }
 
+    public function setColli(array $colli): self
+    {
+        $this->getResource()->setColli($colli);
+
+        return $this;
+    }
+
+    public function addCollo(ShipmentInterface $collo): self
+    {
+        $this->getResource()->addCollo($collo);
+
+        return $this;
+    }
+
+    public function getColli(): array
+    {
+        return $this->getResource()->getColli();
+    }
+
+    public function setColloNumber(?int $colloNumber): self
+    {
+        $this->getResource()->setColloNumber($colloNumber);
+
+        return $this;
+    }
+
+    public function getColloNumber(): ?int
+    {
+        return $this->getResource()->getColloNumber();
+    }
+
     /**
      * This function puts all object properties in an array and returns it.
      */
