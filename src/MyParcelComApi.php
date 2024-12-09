@@ -413,7 +413,17 @@ class MyParcelComApi implements MyParcelComApiInterface
             ];
         }
 
-        $response = $this->doRequest('/get-dynamic-service-rates', 'post', ['data' => $data], [
+        $body = array_filter([
+            'data' => $data,
+            'meta' => array_filter([
+                'colli' => array_map(
+                    fn (ShipmentInterface $collo) => $collo->jsonSerialize()['attributes'] ?? null,
+                    $shipmentData?->getColli() ?? [],
+                ),
+            ]),
+        ]);
+
+        $response = $this->doRequest('/get-dynamic-service-rates', 'post', $body, [
             AuthenticatorInterface::HEADER_ACCEPT => AuthenticatorInterface::MIME_TYPE_JSON,
         ]);
         $json = json_decode((string) $response->getBody(), true);
