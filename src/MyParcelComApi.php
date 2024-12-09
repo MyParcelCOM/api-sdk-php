@@ -31,6 +31,7 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceRateInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentSurchargeInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
+use MyParcelCom\ApiSdk\Resources\PhysicalProperties;
 use MyParcelCom\ApiSdk\Resources\ResourceFactory;
 use MyParcelCom\ApiSdk\Resources\Service;
 use MyParcelCom\ApiSdk\Resources\ServiceRate;
@@ -504,6 +505,20 @@ class MyParcelComApi implements MyParcelComApiInterface
         }
     }
 
+    protected function populateShipmentWithWeightFromColli(ShipmentInterface $shipment): void
+    {
+        // If no weight is set, use the sum of the weight of all colli.
+        if ($shipment->getPhysicalProperties()?->getWeight() === null) {
+            $physicalProperties = $shipment->getPhysicalProperties() ?? new PhysicalProperties();
+            $physicalProperties->setWeight(
+                array_reduce($shipment->getColli(), function (mixed $carry, Shipment $item) {
+                    return $item->getWeight() ? $carry + $item->getWeight() : $carry;
+                }, 0),
+            );
+            $shipment->setPhysicalProperties($physicalProperties);
+        }
+    }
+
     public function validateShipment(ShipmentInterface $shipment): void
     {
         $validator = new ShipmentValidator($shipment);
@@ -609,6 +624,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         ?string $idempotencyKey = null,
     ): ShipmentInterface {
         $this->populateShipmentWithDefaultsFromShop($shipment);
+        $this->populateShipmentWithWeightFromColli($shipment);
         $this->validateShipment($shipment);
 
         if (count($shipment->getColli()) < 1) {
