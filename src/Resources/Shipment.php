@@ -163,6 +163,22 @@ class Shipment implements ShipmentInterface
     /** @var callable */
     private $statusHistoryCallback = null;
 
+    /**
+     * Prepare the data for a request to our API. This filters the read-only relationships to avoid validation errors.
+     */
+    public function getData(): array
+    {
+        $data = $this->jsonSerialize();
+
+        // Remove read-only relationships.
+        unset($data['relationships']['colli']);
+        unset($data['relationships']['files']);
+        unset($data['relationships']['shipment_status']);
+        unset($data['relationships']['shipment_surcharges']);
+
+        return $data;
+    }
+
     public function getMeta(): array
     {
         return $this->meta;

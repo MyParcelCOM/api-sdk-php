@@ -40,6 +40,11 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
 
     private string $type = ResourceInterface::TYPE_SHIPMENT;
 
+    public function getData(): array
+    {
+        return $this->getResource()->getData();
+    }
+
     public function getMeta(): array
     {
         return $this->getResource()->getMeta();
