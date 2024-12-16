@@ -385,7 +385,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         ShipmentInterface|array $shipmentData,
         ?ServiceRateInterface $dynamicServiceRate = null,
     ): array {
-        $data = ($shipmentData instanceof ShipmentInterface) ? $shipmentData->jsonSerialize() : $shipmentData;
+        $data = ($shipmentData instanceof ShipmentInterface) ? $shipmentData->getData() : $shipmentData;
 
         if (!isset($data['relationships'])) {
             $data['relationships'] = [];
@@ -584,7 +584,7 @@ class MyParcelComApi implements MyParcelComApiInterface
             '/registered-shipments?' . http_build_query(['include' => Shipment::RELATIONSHIP_FILES]),
             'post',
             [
-                'data' => $shipment,
+                'data' => $shipment->getData(),
                 'meta' => array_filter($shipment->getMeta()),
             ],
             $this->authenticator->getAuthorizationHeader() + [
@@ -648,7 +648,7 @@ class MyParcelComApi implements MyParcelComApiInterface
             ]),
             'post',
             [
-                'data' => $shipment,
+                'data' => $shipment->getData(),
                 'meta' => array_merge(
                     [
                         'colli' => array_map(
