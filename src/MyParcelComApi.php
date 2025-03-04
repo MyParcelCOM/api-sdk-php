@@ -55,8 +55,8 @@ class MyParcelComApi implements MyParcelComApiInterface
     protected ResourceFactoryInterface $resourceFactory;
     protected AuthenticatorInterface $authenticator;
     private ClientInterface $client;
+    private ServiceMatcher $serviceMatcher;
     private bool $authRetry = false;
-
     private static ?MyParcelComApi $singleton = null;
 
     /**
@@ -68,8 +68,9 @@ class MyParcelComApi implements MyParcelComApiInterface
         ClientInterface $httpClient = null,
         CacheInterface $cache = null,
         ResourceFactoryInterface $resourceFactory = null,
+        ServiceMatcher $serviceMatcher = null,
     ): self {
-        return self::$singleton = (new self($apiUri, $httpClient, $cache, $resourceFactory))
+        return self::$singleton = (new self($apiUri, $httpClient, $cache, $resourceFactory, $serviceMatcher))
             ->authenticate($authenticator);
     }
 
@@ -90,6 +91,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         ClientInterface $httpClient = null,
         CacheInterface $cache = null,
         ResourceFactoryInterface $resourceFactory = null,
+        ServiceMatcher $serviceMatcher = null,
     ) {
         if ($httpClient === null) {
             $httpClient = HttpClientDiscovery::find();
@@ -108,6 +110,11 @@ class MyParcelComApi implements MyParcelComApiInterface
 
         // Either use the given resource factory or instantiate a new one.
         $this->setResourceFactory($resourceFactory ?: new ResourceFactory());
+
+        if ($serviceMatcher === null) {
+            $serviceMatcher = new ServiceMatcher();
+        }
+        $this->setServiceMatcher($serviceMatcher);
     }
 
     public function authenticate(AuthenticatorInterface $authenticator): self
@@ -266,11 +273,10 @@ class MyParcelComApi implements MyParcelComApiInterface
 
         $services = $this->getResourcesArray($url->getUrl(), $ttl);
 
-        $matcher = new ServiceMatcher();
         $services = array_values(
             array_filter(
                 $services,
-                fn (ServiceInterface $service) => $matcher->matchesDeliveryMethod($shipment, $service),
+                fn (ServiceInterface $service) => $this->serviceMatcher->matchesDeliveryMethod($shipment, $service),
             ),
         );
 
@@ -1037,6 +1043,13 @@ class MyParcelComApi implements MyParcelComApiInterface
     protected function getHttpClient(): ClientInterface
     {
         return $this->client;
+    }
+
+    public function setServiceMatcher(ServiceMatcher $serviceMatcher): self
+    {
+        $this->serviceMatcher = $serviceMatcher;
+
+        return $this;
     }
 
     /**
