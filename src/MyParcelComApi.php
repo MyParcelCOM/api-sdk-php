@@ -36,7 +36,6 @@ use MyParcelCom\ApiSdk\Resources\ResourceFactory;
 use MyParcelCom\ApiSdk\Resources\Service;
 use MyParcelCom\ApiSdk\Resources\ServiceRate;
 use MyParcelCom\ApiSdk\Resources\Shipment;
-use MyParcelCom\ApiSdk\Shipments\ServiceMatcher;
 use MyParcelCom\ApiSdk\Utils\UrlBuilder;
 use MyParcelCom\ApiSdk\Validators\CollectionValidator;
 use MyParcelCom\ApiSdk\Validators\ManifestValidator;
@@ -266,15 +265,23 @@ class MyParcelComApi implements MyParcelComApiInterface
 
         $services = $this->getResourcesArray($url->getUrl(), $ttl);
 
-        $matcher = new ServiceMatcher();
         $services = array_values(
             array_filter(
                 $services,
-                fn (ServiceInterface $service) => $matcher->matchesDeliveryMethod($shipment, $service),
+                fn (ServiceInterface $service) => $this->matchesDeliveryMethod($shipment, $service),
             ),
         );
 
         return new ArrayCollection($services);
+    }
+
+    protected function matchesDeliveryMethod(ShipmentInterface $shipment, ServiceInterface $service): bool
+    {
+        $deliveryMethod = $shipment->getPickupLocationCode()
+            ? ServiceInterface::DELIVERY_METHOD_PICKUP
+            : ServiceInterface::DELIVERY_METHOD_DELIVERY;
+
+        return $service->getDeliveryMethod() === $deliveryMethod;
     }
 
     public function getServicesForCarrier(

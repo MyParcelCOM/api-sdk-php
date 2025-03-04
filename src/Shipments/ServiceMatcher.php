@@ -10,6 +10,9 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 
+/**
+ * @deprecated This class is deprecated and will be removed in the next major release.
+ */
 class ServiceMatcher
 {
     /**
