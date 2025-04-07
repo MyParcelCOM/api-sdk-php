@@ -183,11 +183,11 @@ class PickUpDropOffLocationsTest extends TestCase
             null,
             $carrier,
             false,
-            ['location_type' => ['office']],
+            filters: ['location_type' => ['office']],
         );
 
         // The carrier with pudo locations should return a set of pudo locations.
-        $this->assertNotEmpty($pudoLocations);
+        $this->assertCount(10, $pudoLocations);
 
         /** @var \MyParcelCom\ApiSdk\Resources\PickUpDropOffLocation $pudoLocation */
         foreach ($pudoLocations as $pudoLocation) {

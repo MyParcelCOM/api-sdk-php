@@ -151,8 +151,8 @@ class MyParcelComApi implements MyParcelComApiInterface
         ?string $streetNumber = null,
         CarrierInterface $specificCarrier = null,
         bool $onlyActiveContracts = true,
-        ?array $filters = null,
         int $ttl = self::TTL_10MIN,
+        ?array $filters = null,
     ): ResourceCollectionInterface|array {
         $carriers = $this->determineCarriersForPudoLocations($onlyActiveContracts, $specificCarrier);
 
