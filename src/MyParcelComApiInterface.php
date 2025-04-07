@@ -75,6 +75,7 @@ interface MyParcelComApiInterface
         ?string $streetNumber = null,
         CarrierInterface $specificCarrier = null,
         bool $onlyActiveContracts = true,
+        ?array $filters = null,
         int $ttl = self::TTL_10MIN,
     ): ResourceCollectionInterface|array;
 
