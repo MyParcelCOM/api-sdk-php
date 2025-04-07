@@ -168,4 +168,30 @@ class PickUpDropOffLocationsTest extends TestCase
         // The other carrier does not have any pudo services and should thus not return pudo locations.
         $this->assertEmpty($pudoLocations);
     }
+
+    public function testGetPudoLocationsWithLocationTypesFilter()
+    {
+        $carrier = $this->createMock(CarrierInterface::class);
+        $carrier
+            ->method('getId')
+            ->willReturn('eef00b32-177e-43d3-9b26-715365e4ce46');
+
+        $pudoLocations = $this->api->getPickUpDropOffLocations(
+            'GB',
+            'B48 7QN',
+            null,
+            null,
+            $carrier,
+            false,
+            filters: ['location_type' => ['office']],
+        );
+
+        // The carrier with pudo locations should return a set of pudo locations.
+        $this->assertCount(10, $pudoLocations);
+
+        /** @var \MyParcelCom\ApiSdk\Resources\PickUpDropOffLocation $pudoLocation */
+        foreach ($pudoLocations as $pudoLocation) {
+            $this->assertEquals('office', $pudoLocation->getLocationType());
+        }
+    }
 }
