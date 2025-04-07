@@ -152,6 +152,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         CarrierInterface $specificCarrier = null,
         bool $onlyActiveContracts = true,
         int $ttl = self::TTL_10MIN,
+        ?array $filters = null,
     ): ResourceCollectionInterface|array {
         $carriers = $this->determineCarriersForPudoLocations($onlyActiveContracts, $specificCarrier);
 
@@ -175,6 +176,9 @@ class MyParcelComApi implements MyParcelComApiInterface
         }
         if ($streetNumber) {
             $uri->addQuery(['street_number' => $streetNumber]);
+        }
+        if ($filters) {
+            $uri->addQuery($this->arrayToFilters($filters));
         }
 
         $pudoLocations = [];

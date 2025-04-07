@@ -183,6 +183,7 @@ class PickUpDropOffLocationTest extends TestCase
             ->setOpeningHours([$openingHour])
             ->setPosition($position)
             ->setDistance(5000)
+            ->setLocationType('office')
             ->setCategories(['drop-off', 'pick-up']);
 
         $this->assertEquals([
@@ -219,6 +220,7 @@ class PickUpDropOffLocationTest extends TestCase
                     'drop-off',
                     'pick-up',
                 ],
+                'location_type' => 'office',
             ],
             'meta'       => [
                 'distance' => 5000,
