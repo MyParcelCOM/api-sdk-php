@@ -26,6 +26,7 @@ interface MyParcelComApiInterface
 {
     const PATH_CARRIERS = '/carriers';
     const PATH_COLLECTIONS = '/collections';
+    const PATH_DELIVERY_DATES = '/shipping/v2/available-delivery-dates';
     const PATH_FILES_ID = '/files/{file_id}';
     const PATH_MANIFESTS = '/manifests';
     const PATH_MANIFESTS_ID_FILES_ID = '/manifests/{manifest_id}/files/{file_id}';
