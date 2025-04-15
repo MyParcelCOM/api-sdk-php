@@ -995,6 +995,7 @@ class MyParcelComApi implements MyParcelComApiInterface
     }
 
     /**
+     * @return list<array{ date_from: DateTimeImmutable, date_to: DateTimeImmutable }>
      * @throws RequestException
      * @throws JsonException
      * @throws DateMalformedStringException
@@ -1029,9 +1030,9 @@ class MyParcelComApi implements MyParcelComApiInterface
         return array_map(
             static fn ($deliveryWindow) => [
                 'date_from' => new DateTimeImmutable($deliveryWindow['date_from']),
-                'date_to' => new DateTimeImmutable($deliveryWindow['date_to']),
+                'date_to'   => new DateTimeImmutable($deliveryWindow['date_to']),
             ],
-            $json['data']
+            $json['data'],
         );
     }
 
