@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk;
 
+use DateMalformedStringException;
+use DateTimeImmutable;
+use DateTimeInterface;
+use JsonException;
 use MyParcelCom\ApiSdk\Authentication\AuthenticatorInterface;
 use MyParcelCom\ApiSdk\Collection\CollectionInterface as ResourceCollectionInterface;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
 use MyParcelCom\ApiSdk\Http\Exceptions\RequestException;
+use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
@@ -17,7 +22,6 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceRateInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
-use MyParcelCom\ApiSdk\Resources\Shipment;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -26,6 +30,7 @@ interface MyParcelComApiInterface
 {
     const PATH_CARRIERS = '/carriers';
     const PATH_COLLECTIONS = '/collections';
+    const PATH_DELIVERY_DATES = '/shipping/v2/available-delivery-dates';
     const PATH_FILES_ID = '/files/{file_id}';
     const PATH_MANIFESTS = '/manifests';
     const PATH_MANIFESTS_ID_FILES_ID = '/manifests/{manifest_id}/files/{file_id}';
@@ -111,7 +116,10 @@ interface MyParcelComApiInterface
      *
      * @throws MyParcelComException
      */
-    public function getServicesForCarrier(CarrierInterface $carrier, int $ttl = self::TTL_10MIN): ResourceCollectionInterface;
+    public function getServicesForCarrier(
+        CarrierInterface $carrier,
+        int $ttl = self::TTL_10MIN,
+    ): ResourceCollectionInterface;
 
     /**
      * Retrieves service rates based on the set filters. Available filters are: service, contract and weight. Note that
@@ -149,7 +157,10 @@ interface MyParcelComApiInterface
      *
      * @throws MyParcelComException
      */
-    public function getShipments(ShopInterface $shop = null, int $ttl = self::TTL_NO_CACHE): ResourceCollectionInterface;
+    public function getShipments(
+        ShopInterface $shop = null,
+        int $ttl = self::TTL_NO_CACHE,
+    ): ResourceCollectionInterface;
 
     /**
      * Get a specific shipment from the API.
@@ -242,13 +253,41 @@ interface MyParcelComApiInterface
     public function deleteCollection(CollectionInterface $collection): bool;
 
     /**
-     * @param CollectionInterface             $collection
+     * @param CollectionInterface $collection
      * @param array<ShipmentInterface|string> $shipments Either an array of strings or an array of ShipmentInterface objects.
      * @return CollectionInterface
      */
     public function addShipmentsToCollection(CollectionInterface $collection, array $shipments): CollectionInterface;
 
     public function generateManifestForCollection(CollectionInterface $collection): ManifestInterface;
+
+    /**
+     * Get delivery date time windows from a carrier for the provided service.
+     * Accepts an optional array of `delivery-window` service option codes
+     *
+     * @param string            $serviceCode
+     * @param AddressInterface  $address
+     * @param DateTimeInterface $startDate
+     * @param DateTimeInterface $endDate
+     * @param array             $serviceOptionCodes
+     * @param int               $ttl
+     * @return list<array{
+     *      date_from: DateTimeImmutable,
+     *      date_to: DateTimeImmutable
+     *  }>
+     * @throws RequestException
+     * @throws JsonException
+     * @throws DateMalformedStringException
+     */
+    public function getDeliveryDates(
+        string $serviceCode,
+        AddressInterface $address,
+        DatetimeInterface $startDate,
+        DatetimeInterface $endDate,
+        array $serviceOptionCodes = [],
+        $ttl = self::TTL_10MIN,
+    ): array;
+
     /**
      * Set the URI of the MyParcel.com API.
      */
