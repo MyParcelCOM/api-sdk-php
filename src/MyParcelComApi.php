@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk;
 
+use DateMalformedStringException;
+use DateTimeImmutable;
+use DateTimeInterface;
 use GuzzleHttp\Psr7\Message;
 use GuzzleHttp\Psr7\Request;
 use Http\Discovery\HttpClientDiscovery;
+use JsonException;
 use MyParcelCom\ApiSdk\Authentication\AuthenticatorInterface;
 use MyParcelCom\ApiSdk\Collection\ArrayCollection;
 use MyParcelCom\ApiSdk\Collection\CollectionInterface as ResourceCollectionInterface;
@@ -18,6 +22,7 @@ use MyParcelCom\ApiSdk\Http\Contracts\HttpClient\RequestExceptionInterface;
 use MyParcelCom\ApiSdk\Http\Exceptions\RequestException;
 use MyParcelCom\ApiSdk\Resources\Collection;
 use MyParcelCom\ApiSdk\Resources\File;
+use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\FileInterface;
@@ -987,6 +992,48 @@ class MyParcelComApi implements MyParcelComApiInterface
         $this->deleteResource($shipmentSurcharge);
 
         return true;
+    }
+
+    /**
+     * @return list<array{ date_from: DateTimeImmutable, date_to: DateTimeImmutable }>
+     * @throws RequestException
+     * @throws JsonException
+     * @throws DateMalformedStringException
+     */
+    public function getDeliveryDates(
+        string $serviceCode,
+        AddressInterface $address,
+        DatetimeInterface $startDate,
+        DatetimeInterface $endDate,
+        array $serviceOptionCodes = [],
+        $ttl = self::TTL_10MIN,
+    ): array {
+        $response = $this->doRequest(
+            self::PATH_DELIVERY_DATES,
+            'post',
+            [
+                'service_code'         => $serviceCode,
+                'service_option_codes' => $serviceOptionCodes,
+                'address'              => [
+                    'country_code'  => $address->getCountryCode(),
+                    'postal_code'   => $address->getPostalCode(),
+                    'street_number' => $address->getStreetNumber(),
+                ],
+                'start_date'           => $startDate->format('c'), // ISO 8601 date
+                'end_date'             => $endDate->format('c'), // ISO 8601 date
+            ],
+            ttl: $ttl,
+        );
+
+        $json = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+        return array_map(
+            static fn ($deliveryWindow) => [
+                'date_from' => new DateTimeImmutable($deliveryWindow['date_from']),
+                'date_to'   => new DateTimeImmutable($deliveryWindow['date_to']),
+            ],
+            $json['data'],
+        );
     }
 
     /**
