@@ -266,6 +266,7 @@ interface MyParcelComApiInterface
      * Accepts an optional array of `delivery-window` service option codes
      *
      * @param string            $serviceCode
+     * @param string            $carrierCode
      * @param AddressInterface  $address
      * @param DateTimeInterface $startDate
      * @param DateTimeInterface $endDate
@@ -281,6 +282,7 @@ interface MyParcelComApiInterface
      */
     public function getDeliveryDates(
         string $serviceCode,
+        string $carrierCode,
         AddressInterface $address,
         DatetimeInterface $startDate,
         DatetimeInterface $endDate,

@@ -1002,6 +1002,7 @@ class MyParcelComApi implements MyParcelComApiInterface
      */
     public function getDeliveryDates(
         string $serviceCode,
+        string $carrierCode,
         AddressInterface $address,
         DatetimeInterface $startDate,
         DatetimeInterface $endDate,
@@ -1013,6 +1014,7 @@ class MyParcelComApi implements MyParcelComApiInterface
             'post',
             [
                 'service_code'         => $serviceCode,
+                'carrier_code'         => $carrierCode,
                 'service_option_codes' => $serviceOptionCodes,
                 'address'              => [
                     'country_code'  => $address->getCountryCode(),
