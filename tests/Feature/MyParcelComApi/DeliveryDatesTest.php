@@ -24,6 +24,7 @@ class DeliveryDatesTest extends TestCase
 
         $deliveryDates = $this->api->getDeliveryDates(
             'service-code',
+            'carrier-code',
             $address,
             new DateTime(),
             new DateTime(),
