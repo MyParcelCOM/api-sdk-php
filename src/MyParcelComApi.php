@@ -1001,8 +1001,8 @@ class MyParcelComApi implements MyParcelComApiInterface
      * @throws DateMalformedStringException
      */
     public function getDeliveryDates(
-        string $serviceCode,
         string $carrierCode,
+        string $serviceCode,
         AddressInterface $address,
         DatetimeInterface $startDate,
         DatetimeInterface $endDate,
