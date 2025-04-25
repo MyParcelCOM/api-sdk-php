@@ -23,8 +23,8 @@ class DeliveryDatesTest extends TestCase
             ->setStreetNumber(221);
 
         $deliveryDates = $this->api->getDeliveryDates(
-            'service-code',
             'carrier-code',
+            'service-code',
             $address,
             new DateTime(),
             new DateTime(),

@@ -1013,8 +1013,8 @@ class MyParcelComApi implements MyParcelComApiInterface
             self::PATH_DELIVERY_DATES,
             'post',
             [
-                'service_code'         => $serviceCode,
                 'carrier_code'         => $carrierCode,
+                'service_code'         => $serviceCode,
                 'service_option_codes' => $serviceOptionCodes,
                 'address'              => [
                     'country_code'  => $address->getCountryCode(),
