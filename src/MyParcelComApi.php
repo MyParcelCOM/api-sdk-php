@@ -1001,6 +1001,7 @@ class MyParcelComApi implements MyParcelComApiInterface
      * @throws DateMalformedStringException
      */
     public function getDeliveryDates(
+        string $carrierCode,
         string $serviceCode,
         AddressInterface $address,
         DatetimeInterface $startDate,
@@ -1012,6 +1013,7 @@ class MyParcelComApi implements MyParcelComApiInterface
             self::PATH_DELIVERY_DATES,
             'post',
             [
+                'carrier_code'         => $carrierCode,
                 'service_code'         => $serviceCode,
                 'service_option_codes' => $serviceOptionCodes,
                 'address'              => [

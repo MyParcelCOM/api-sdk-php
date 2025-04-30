@@ -265,6 +265,7 @@ interface MyParcelComApiInterface
      * Get delivery date time windows from a carrier for the provided service.
      * Accepts an optional array of `delivery-window` service option codes
      *
+     * @param string            $carrierCode
      * @param string            $serviceCode
      * @param AddressInterface  $address
      * @param DateTimeInterface $startDate
@@ -280,6 +281,7 @@ interface MyParcelComApiInterface
      * @throws DateMalformedStringException
      */
     public function getDeliveryDates(
+        string $carrierCode,
         string $serviceCode,
         AddressInterface $address,
         DatetimeInterface $startDate,
