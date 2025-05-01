@@ -1013,16 +1013,18 @@ class MyParcelComApi implements MyParcelComApiInterface
             self::PATH_DELIVERY_DATES,
             'post',
             [
-                'carrier_code'         => $carrierCode,
-                'service_code'         => $serviceCode,
-                'service_option_codes' => $serviceOptionCodes,
-                'address'              => [
-                    'country_code'  => $address->getCountryCode(),
-                    'postal_code'   => $address->getPostalCode(),
-                    'street_number' => $address->getStreetNumber(),
-                ],
-                'start_date'           => $startDate->format('c'), // ISO 8601 date
-                'end_date'             => $endDate->format('c'), // ISO 8601 date
+                'data' => [
+                    'carrier_code'         => $carrierCode,
+                    'service_code'         => $serviceCode,
+                    'service_option_codes' => $serviceOptionCodes,
+                    'address'              => [
+                        'country_code'  => $address->getCountryCode(),
+                        'postal_code'   => $address->getPostalCode(),
+                        'street_number' => $address->getStreetNumber(),
+                    ],
+                    'start_date'           => $startDate->format('c'), // ISO 8601 date
+                    'end_date'             => $endDate->format('c'), // ISO 8601 date
+                ]
             ],
             ttl: $ttl,
         );
