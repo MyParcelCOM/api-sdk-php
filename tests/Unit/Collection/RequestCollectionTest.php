@@ -9,6 +9,7 @@ use MyParcelCom\ApiSdk\Collection\RequestCollection;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class RequestCollectionTest extends TestCase
 {
@@ -29,8 +30,10 @@ class RequestCollectionTest extends TestCase
             $this->pageNumber = $pageNumber;
             $this->pageSize = $pageSize;
 
+            $streamMock = $this->createMock(StreamInterface::class);
+            $streamMock->method('__toString')->willReturn('{"data": "something something", "meta": {"total_records": 123}}');
             $response = $this->createMock(ResponseInterface::class);
-            $response->method('getBody')->willReturn('{"data": "something something", "meta": {"total_records": 123}}');
+            $response->method('getBody')->willReturn($streamMock);
 
             return $response;
         };

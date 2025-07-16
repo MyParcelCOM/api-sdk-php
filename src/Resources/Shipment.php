@@ -171,10 +171,10 @@ class Shipment implements ShipmentInterface
         $data = $this->jsonSerialize();
 
         // Remove read-only relationships.
-        unset($data['relationships']['colli']);
-        unset($data['relationships']['files']);
-        unset($data['relationships']['shipment_status']);
-        unset($data['relationships']['shipment_surcharges']);
+        unset($data['relationships'][self::RELATIONSHIP_COLLI]);
+        unset($data['relationships'][self::RELATIONSHIP_FILES]);
+        unset($data['relationships'][self::RELATIONSHIP_STATUS]);
+        unset($data['relationships'][self::RELATIONSHIP_SHIPMENT_SURCHARGES]);
 
         return $data;
     }
