@@ -79,7 +79,7 @@ class FileStreamProxy implements StreamInterface
      *
      * @return int|null Returns the size in bytes if known, or null if unknown.
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return $this->getStream()->getSize();
     }
@@ -90,7 +90,7 @@ class FileStreamProxy implements StreamInterface
      * @return int Position of the file pointer
      * @throws \RuntimeException on error.
      */
-    public function tell()
+    public function tell(): int
     {
         return $this->getStream()->tell();
     }
@@ -123,9 +123,9 @@ class FileStreamProxy implements StreamInterface
      *                    SEEK_END: Set position to end-of-stream plus offset.
      * @throws \RuntimeException on failure.
      */
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): void
     {
-        return $this->getStream()->seek($offset, $whence);
+        $this->getStream()->seek($offset, $whence);
     }
 
     /**
@@ -138,9 +138,9 @@ class FileStreamProxy implements StreamInterface
      * @link http://www.php.net/manual/en/function.fseek.php
      * @see  seek()
      */
-    public function rewind()
+    public function rewind(): void
     {
-        return $this->getStream()->rewind();
+        $this->getStream()->rewind();
     }
 
     /**
@@ -158,7 +158,7 @@ class FileStreamProxy implements StreamInterface
      * @return int Returns the number of bytes written to the stream.
      * @throws \RuntimeException on failure.
      */
-    public function write($string)
+    public function write($string): int
     {
         return $this->getStream()->write($string);
     }
@@ -181,7 +181,7 @@ class FileStreamProxy implements StreamInterface
      *                    if no bytes are available.
      * @throws \RuntimeException if an error occurs.
      */
-    public function read($length)
+    public function read($length): string
     {
         return $this->getStream()->read($length);
     }
@@ -193,7 +193,7 @@ class FileStreamProxy implements StreamInterface
      * @throws \RuntimeException if unable to read or an error occurs while
      *     reading.
      */
-    public function getContents()
+    public function getContents(): string
     {
         return $this->getStream()->getContents();
     }

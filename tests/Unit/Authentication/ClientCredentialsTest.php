@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class ClientCredentialsTest extends TestCase
 {
@@ -41,11 +42,14 @@ class ClientCredentialsTest extends TestCase
             ->getMock();
         $this->response->method('getBody')
             ->willReturnCallback(function () {
-                return json_encode([
+                $streamMock = $this->createMock(StreamInterface::class);
+                $streamMock->method('__toString')->willReturn(json_encode([
                     'token_type'   => 'Bearer',
                     'expires_in'   => 86400,
                     'access_token' => 'an-access-token-for-the-myparcelcom-api-' . $this->tokenSuffix,
-                ]);
+                ]));
+
+                return $streamMock;
             });
         $this->response->method('getStatusCode')
             ->willReturn(200);
