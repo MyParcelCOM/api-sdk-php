@@ -1148,7 +1148,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         array $headers = [],
         $ttl = self::TTL_NO_CACHE,
     ): ResponseInterface {
-        if (!str_starts_with($uri, 'http')) {
+        if (str_starts_with($uri, '/')) {
             $uri = $this->apiUri . $uri;
         }
         $headers += $this->authenticator->getAuthorizationHeader() + [
