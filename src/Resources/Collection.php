@@ -16,12 +16,21 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\StatusInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
+use MyParcelCom\ApiSdk\Resources\Traits\ProcessIncludes;
 use MyParcelCom\ApiSdk\Resources\Traits\Resource;
 
 class Collection implements CollectionInterface
 {
     use JsonSerializable;
+    use ProcessIncludes;
     use Resource;
+
+    const INCLUDES = [
+        ResourceInterface::TYPE_CONTRACT => 'contract',
+        ResourceInterface::TYPE_MANIFEST => 'manifest',
+        ResourceInterface::TYPE_SHOP     => 'shop',
+        ResourceInterface::TYPE_STATUS   => 'status',
+    ];
 
     private ?string $id = null;
     private string $type = ResourceInterface::TYPE_COLLECTION;

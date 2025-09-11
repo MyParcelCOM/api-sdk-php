@@ -10,12 +10,14 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\OrganizationInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
+use MyParcelCom\ApiSdk\Resources\Traits\ProcessIncludes;
 use MyParcelCom\ApiSdk\Resources\Traits\Resource;
 use MyParcelCom\ApiSdk\Utils\DateUtils;
 
 class Shop implements ShopInterface
 {
     use JsonSerializable;
+    use ProcessIncludes;
     use Resource;
 
     const ATTRIBUTE_NAME = 'name';
@@ -25,6 +27,10 @@ class Shop implements ShopInterface
     const ATTRIBUTE_CREATED_AT = 'created_at';
 
     const RELATIONSHIP_ORGANIZATION = 'organization';
+
+    const INCLUDES = [
+        ResourceInterface::TYPE_ORGANIZATION => self::RELATIONSHIP_ORGANIZATION,
+    ];
 
     private ?string $id = null;
 

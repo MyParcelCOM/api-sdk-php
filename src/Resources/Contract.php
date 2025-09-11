@@ -8,11 +8,13 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
+use MyParcelCom\ApiSdk\Resources\Traits\ProcessIncludes;
 use MyParcelCom\ApiSdk\Resources\Traits\Resource;
 
 class Contract implements ContractInterface
 {
     use JsonSerializable;
+    use ProcessIncludes;
     use Resource;
 
     const ATTRIBUTE_CURRENCY = 'currency';
@@ -21,6 +23,10 @@ class Contract implements ContractInterface
     const ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR_FACTOR = 'volumetric_weight_divisor_factor';
 
     const RELATIONSHIP_CARRIER = 'carrier';
+
+    const INCLUDES = [
+        ResourceInterface::TYPE_CARRIER => self::RELATIONSHIP_CARRIER,
+    ];
 
     private ?string $id = null;
 
