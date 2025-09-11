@@ -12,12 +12,14 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentStatusInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\StatusInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
+use MyParcelCom\ApiSdk\Resources\Traits\ProcessIncludes;
 use MyParcelCom\ApiSdk\Resources\Traits\Resource;
 use MyParcelCom\ApiSdk\Utils\DateUtils;
 
 class ShipmentStatus implements ShipmentStatusInterface
 {
     use JsonSerializable;
+    use ProcessIncludes;
     use Resource;
 
     const ATTRIBUTE_CARRIER_STATUSES = 'carrier_statuses';
@@ -26,6 +28,11 @@ class ShipmentStatus implements ShipmentStatusInterface
 
     const RELATIONSHIP_STATUS = 'status';
     const RELATIONSHIP_SHIPMENT = 'shipment';
+
+    const INCLUDES = [
+        ResourceInterface::TYPE_SHIPMENT => self::RELATIONSHIP_SHIPMENT,
+        ResourceInterface::TYPE_STATUS   => self::RELATIONSHIP_STATUS,
+    ];
 
     private ?string $id = null;
 
