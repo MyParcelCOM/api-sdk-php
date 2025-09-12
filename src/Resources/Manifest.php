@@ -15,12 +15,18 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShipmentInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ShopInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
+use MyParcelCom\ApiSdk\Resources\Traits\ProcessIncludes;
 use MyParcelCom\ApiSdk\Resources\Traits\Resource;
 
 class Manifest implements ManifestInterface
 {
     use JsonSerializable;
+    use ProcessIncludes;
     use Resource;
+
+    const INCLUDES = [
+        ResourceInterface::TYPE_CONTRACT => 'contract',
+    ];
 
     private ?string $id = null;
     private string $type = ResourceInterface::TYPE_MANIFEST;

@@ -9,11 +9,13 @@ use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceRateInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
+use MyParcelCom\ApiSdk\Resources\Traits\ProcessIncludes;
 use MyParcelCom\ApiSdk\Resources\Traits\Resource;
 
 class Service implements ServiceInterface
 {
     use JsonSerializable;
+    use ProcessIncludes;
     use Resource;
 
     const ATTRIBUTE_NAME = 'name';
@@ -31,6 +33,10 @@ class Service implements ServiceInterface
     const ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR = 'volumetric_weight_divisor';
 
     const RELATIONSHIP_CARRIER = 'carrier';
+
+    const INCLUDES = [
+        ResourceInterface::TYPE_CARRIER => self::RELATIONSHIP_CARRIER,
+    ];
 
     private ?string $id = null;
 
