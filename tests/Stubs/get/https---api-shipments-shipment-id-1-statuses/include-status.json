@@ -195,6 +195,22 @@
     "total_pages": 1,
     "total_records": 5
   },
+  "included": [
+    {
+      "type": "statuses",
+      "id": "status-id-5",
+      "attributes": {
+        "code": "shipment-concept",
+        "resource_type": "shipments",
+        "level": "concept",
+        "name": "Concept",
+        "description": "The shipment is a concept"
+      },
+      "links": {
+        "self": "https://api/statuses/status-id-5"
+      }
+    }
+  ],
   "links": {
     "self": "https://api/shipments/shipment-id-1/statuses?page[number]=1&page[size]=30",
     "first": "https://api/shipments/shipment-id-1/statuses?page[number]=1&page[size]=30",
