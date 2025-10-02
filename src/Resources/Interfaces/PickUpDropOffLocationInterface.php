@@ -43,4 +43,8 @@ interface PickUpDropOffLocationInterface extends ResourceInterface
     public function setCategories(array $categories): self;
 
     public function getCategories(): array;
+
+    public function setLocationType(string $type): self;
+
+    public function getLocationType(): string;
 }
