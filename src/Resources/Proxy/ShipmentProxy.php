@@ -390,7 +390,7 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
         return $this;
     }
 
-    public function getFiles(string $type = null): array
+    public function getFiles(?string $type = null): array
     {
         return $this->getResource()->getFiles($type);
     }

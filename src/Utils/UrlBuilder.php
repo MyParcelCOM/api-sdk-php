@@ -16,7 +16,7 @@ class UrlBuilder
     protected ?string $fragment = null;
     protected array $query = [];
 
-    public function __construct(string $url = null)
+    public function __construct(?string $url = null)
     {
         if ($url !== null) {
             $this->setUrl($url);
