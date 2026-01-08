@@ -78,7 +78,7 @@ interface MyParcelComApiInterface
         string $postalCode,
         ?string $streetName = null,
         ?string $streetNumber = null,
-        CarrierInterface $specificCarrier = null,
+        ?CarrierInterface $specificCarrier = null,
         bool $onlyActiveContracts = true,
         int $ttl = self::TTL_10MIN,
         ?array $filters = null,
@@ -106,7 +106,7 @@ interface MyParcelComApiInterface
      * @throws MyParcelComException
      */
     public function getServices(
-        ShipmentInterface $shipment = null,
+        ?ShipmentInterface $shipment = null,
         array $filters = ['has_active_contract' => 'true'],
         int $ttl = self::TTL_10MIN,
     ): ResourceCollectionInterface;
@@ -158,7 +158,7 @@ interface MyParcelComApiInterface
      * @throws MyParcelComException
      */
     public function getShipments(
-        ShopInterface $shop = null,
+        ?ShopInterface $shop = null,
         int $ttl = self::TTL_NO_CACHE,
     ): ResourceCollectionInterface;
 

@@ -591,7 +591,7 @@ class Shipment implements ShipmentInterface
         return $this;
     }
 
-    public function getFiles(string $type = null): array
+    public function getFiles(?string $type = null): array
     {
         // For multi-colli `master` shipments we make this function return all files from the related `colli` shipments.
         if (!empty($this->getColli())) {

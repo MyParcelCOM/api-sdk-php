@@ -69,9 +69,9 @@ class MyParcelComApi implements MyParcelComApiInterface
     public static function createSingleton(
         AuthenticatorInterface $authenticator,
         string $apiUri = 'https://api.sandbox.myparcel.com',
-        ClientInterface $httpClient = null,
-        CacheInterface $cache = null,
-        ResourceFactoryInterface $resourceFactory = null,
+        ?ClientInterface $httpClient = null,
+        ?CacheInterface $cache = null,
+        ?ResourceFactoryInterface $resourceFactory = null,
     ): self {
         return self::$singleton = (new self($apiUri, $httpClient, $cache, $resourceFactory))
             ->authenticate($authenticator);
@@ -91,9 +91,9 @@ class MyParcelComApi implements MyParcelComApiInterface
      */
     public function __construct(
         string $apiUri = 'https://api.sandbox.myparcel.com',
-        ClientInterface $httpClient = null,
-        CacheInterface $cache = null,
-        ResourceFactoryInterface $resourceFactory = null,
+        ?ClientInterface $httpClient = null,
+        ?CacheInterface $cache = null,
+        ?ResourceFactoryInterface $resourceFactory = null,
     ) {
         if ($httpClient === null) {
             $httpClient = HttpClientDiscovery::find();
@@ -154,7 +154,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         string $postalCode,
         ?string $streetName = null,
         ?string $streetNumber = null,
-        CarrierInterface $specificCarrier = null,
+        ?CarrierInterface $specificCarrier = null,
         bool $onlyActiveContracts = true,
         int $ttl = self::TTL_10MIN,
         ?array $filters = null,
@@ -242,7 +242,7 @@ class MyParcelComApi implements MyParcelComApiInterface
     }
 
     public function getServices(
-        ShipmentInterface $shipment = null,
+        ?ShipmentInterface $shipment = null,
         array $filters = ['has_active_contract' => 'true'],
         int $ttl = self::TTL_10MIN,
     ): ResourceCollectionInterface {
@@ -453,8 +453,10 @@ class MyParcelComApi implements MyParcelComApiInterface
         return $this->jsonToResources($json['data'], $included);
     }
 
-    public function getShipments(ShopInterface $shop = null, int $ttl = self::TTL_NO_CACHE): ResourceCollectionInterface
-    {
+    public function getShipments(
+        ?ShopInterface $shop = null,
+        int $ttl = self::TTL_NO_CACHE
+    ): ResourceCollectionInterface {
         $url = new UrlBuilder($this->apiUri . self::PATH_SHIPMENTS);
 
         $url->addQuery([
@@ -1337,7 +1339,7 @@ class MyParcelComApi implements MyParcelComApiInterface
         return reset($resources);
     }
 
-    protected function getResourceUri(string $resourceType, string $id = null): string
+    protected function getResourceUri(string $resourceType, ?string $id = null): string
     {
         return implode(
             '/',
@@ -1384,7 +1386,7 @@ class MyParcelComApi implements MyParcelComApiInterface
      */
     private function determineCarriersForPudoLocations(
         bool $onlyActiveContracts,
-        CarrierInterface $specificCarrier = null,
+        ?CarrierInterface $specificCarrier = null,
     ): array {
         // If we're looking for a specific carrier but it doesn't
         // matter if it has active contracts, just return it immediately.
