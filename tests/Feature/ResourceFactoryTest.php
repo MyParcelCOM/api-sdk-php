@@ -304,11 +304,14 @@ class ResourceFactoryTest extends TestCase
                 'uses_volumetric_weight' => true,
             ],
             'relationships' => [
-                'carrier' => [
+                'carrier'         => [
                     'data' => [
                         'id'   => 'carrier-id-1',
                         'type' => 'carriers',
                     ],
+                ],
+                'service_options' => [
+                    'data' => [],
                 ],
             ],
         ];
