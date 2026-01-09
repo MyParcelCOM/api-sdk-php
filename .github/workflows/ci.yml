@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Composer
         uses: php-actions/composer@v6
         with:
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Composer
         uses: php-actions/composer@v6
         with:
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Composer
         uses: php-actions/composer@v6
         with:
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Composer
         uses: php-actions/composer@v6
         with:
@@ -60,4 +60,19 @@ jobs:
         with:
           version: 9
           php_version: 8.3
+          configuration: phpunit.xml
+  php84:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Composer
+        uses: php-actions/composer@v6
+        with:
+          php_version: 8.4
+      - name: PHPUnit
+        uses: php-actions/phpunit@v4
+        with:
+          version: 9
+          php_version: 8.4
           configuration: phpunit.xml

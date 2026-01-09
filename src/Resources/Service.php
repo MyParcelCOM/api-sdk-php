@@ -7,6 +7,7 @@ namespace MyParcelCom\ApiSdk\Resources;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CarrierInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ResourceInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceInterface;
+use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceOptionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ServiceRateInterface;
 use MyParcelCom\ApiSdk\Resources\Traits\JsonSerializable;
 use MyParcelCom\ApiSdk\Resources\Traits\ProcessIncludes;
@@ -33,9 +34,11 @@ class Service implements ServiceInterface
     const ATTRIBUTE_VOLUMETRIC_WEIGHT_DIVISOR = 'volumetric_weight_divisor';
 
     const RELATIONSHIP_CARRIER = 'carrier';
+    const RELATIONSHIP_SERVICE_OPTIONS = 'service_options';
 
     const INCLUDES = [
         ResourceInterface::TYPE_CARRIER => self::RELATIONSHIP_CARRIER,
+        ResourceInterface::TYPE_SERVICE_OPTION => self::RELATIONSHIP_SERVICE_OPTIONS,
     ];
 
     private ?string $id = null;
@@ -62,6 +65,9 @@ class Service implements ServiceInterface
     private array $relationships = [
         self::RELATIONSHIP_CARRIER => [
             'data' => null,
+        ],
+        self::RELATIONSHIP_SERVICE_OPTIONS => [
+            'data' => [],
         ],
     ];
 
@@ -141,6 +147,29 @@ class Service implements ServiceInterface
     public function getCarrier(): CarrierInterface
     {
         return $this->relationships[self::RELATIONSHIP_CARRIER]['data'];
+    }
+
+    public function setServiceOptions(array $serviceOptions): self
+    {
+        $this->relationships[self::RELATIONSHIP_SERVICE_OPTIONS]['data'] = [];
+
+        foreach ($serviceOptions as $serviceOption) {
+            $this->addServiceOption($serviceOption);
+        }
+
+        return $this;
+    }
+
+    public function addServiceOption(ServiceOptionInterface $serviceOption): self
+    {
+        $this->relationships[self::RELATIONSHIP_SERVICE_OPTIONS]['data'][] = $serviceOption;
+
+        return $this;
+    }
+
+    public function getServiceOptions(): array
+    {
+        return $this->relationships[self::RELATIONSHIP_SERVICE_OPTIONS]['data'];
     }
 
     public function setHandoverMethod(string $handoverMethod): self

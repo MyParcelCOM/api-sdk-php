@@ -158,7 +158,7 @@ interface ShipmentInterface extends ResourceInterface
     /**
      * @return FileInterface[]
      */
-    public function getFiles(string $type = null): array;
+    public function getFiles(?string $type = null): array;
 
     public function setShipmentStatus(ShipmentStatusInterface $status): self;
 

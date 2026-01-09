@@ -37,7 +37,10 @@ class ServiceTest extends TestCase
     public function testPackageType()
     {
         $service = new Service();
-        $this->assertEquals(Service::PACKAGE_TYPE_PARCEL, $service->setPackageType(Service::PACKAGE_TYPE_PARCEL)->getPackageType());
+        $this->assertEquals(
+            Service::PACKAGE_TYPE_PARCEL,
+            $service->setPackageType(Service::PACKAGE_TYPE_PARCEL)->getPackageType(),
+        );
     }
 
     /** @test */
@@ -199,11 +202,14 @@ class ServiceTest extends TestCase
                 'uses_volumetric_weight' => true,
             ],
             'relationships' => [
-                'carrier' => [
+                'carrier'         => [
                     'data' => [
                         'id'   => 'carrier-id-1',
                         'type' => 'carriers',
                     ],
+                ],
+                'service_options' => [
+                    'data' => [],
                 ],
             ],
         ], $service->jsonSerialize());
