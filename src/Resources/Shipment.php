@@ -53,6 +53,9 @@ class Shipment implements ShipmentInterface
     const ATTRIBUTE_PICKUP = 'pickup_location';
     const ATTRIBUTE_PICKUP_CODE = 'code';
     const ATTRIBUTE_PICKUP_ADDRESS = 'address';
+    const ATTRIBUTE_DROP_OFF = 'drop_off_location';
+    const ATTRIBUTE_DROP_OFF_CODE = 'code';
+    const ATTRIBUTE_DROP_OFF_ADDRESS = 'address';
     const ATTRIBUTE_CUSTOMS = 'customs';
     const ATTRIBUTE_ITEMS = 'items';
     const ATTRIBUTE_REGISTER_AT = 'register_at';
@@ -108,6 +111,7 @@ class Shipment implements ShipmentInterface
         self::ATTRIBUTE_SENDER_TAX_IDENTIFICATION_NUMBERS    => null,
         self::ATTRIBUTE_RETURN_ADDRESS                       => null,
         self::ATTRIBUTE_PICKUP                               => null,
+        self::ATTRIBUTE_DROP_OFF                             => null,
         self::ATTRIBUTE_CUSTOMS                              => null,
         self::ATTRIBUTE_ITEMS                                => null,
         self::ATTRIBUTE_REGISTER_AT                          => null,
@@ -324,6 +328,30 @@ class Shipment implements ShipmentInterface
     public function getPickupLocationAddress(): ?AddressInterface
     {
         return $this->attributes[self::ATTRIBUTE_PICKUP][self::ATTRIBUTE_PICKUP_ADDRESS] ?? null;
+    }
+
+    public function setDropOffLocationCode(?string $dropOffLocationCode): self
+    {
+        $this->attributes[self::ATTRIBUTE_DROP_OFF][self::ATTRIBUTE_DROP_OFF_CODE] = $dropOffLocationCode;
+
+        return $this;
+    }
+
+    public function getDropOffLocationCode(): ?string
+    {
+        return $this->attributes[self::ATTRIBUTE_DROP_OFF][self::ATTRIBUTE_DROP_OFF_CODE] ?? null;
+    }
+
+    public function setDropOffLocationAddress(?AddressInterface $dropOffLocationAddress): self
+    {
+        $this->attributes[self::ATTRIBUTE_DROP_OFF][self::ATTRIBUTE_DROP_OFF_ADDRESS] = $dropOffLocationAddress;
+
+        return $this;
+    }
+
+    public function getDropOffLocationAddress(): ?AddressInterface
+    {
+        return $this->attributes[self::ATTRIBUTE_DROP_OFF][self::ATTRIBUTE_DROP_OFF_ADDRESS] ?? null;
     }
 
     public function setChannel(?string $channel): self

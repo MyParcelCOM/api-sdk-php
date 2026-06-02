@@ -136,6 +136,22 @@ class ShipmentTest extends TestCase
     }
 
     /** @test */
+    public function testDropOffLocationCode()
+    {
+        $shipment = new Shipment();
+        $this->assertEquals('CODE123', $shipment->setDropOffLocationCode('CODE123')->getDropOffLocationCode());
+    }
+
+    /** @test */
+    public function testDropOffLocationAddress()
+    {
+        $shipment = new Shipment();
+        $address = $this->getMockBuilder(AddressInterface::class)->getMock();
+
+        $this->assertEquals($address, $shipment->setDropOffLocationAddress($address)->getDropOffLocationAddress());
+    }
+
+    /** @test */
     public function testChannel()
     {
         $shipment = new Shipment();
@@ -780,6 +796,7 @@ class ShipmentTest extends TestCase
             ->setDescription('Fidget spinners')
             ->setCustomerReference('#012ASD')
             ->setPickupLocationCode('CODE123')
+            ->setDropOffLocationCode('ABC456')
             ->setPrice(99)
             ->setTotalValueAmount(100)
             ->setTotalValueCurrency('EUR')
@@ -802,6 +819,7 @@ class ShipmentTest extends TestCase
             ->setSenderTaxNumber('G666666-66')
             ->setReturnAddress($returnAddress)
             ->setPickupLocationAddress($pudoAddress)
+            ->setDropOffLocationAddress($pudoAddress)
             ->setCustoms($customs)
             ->setItems([$item])
             ->setRegisterAt(9001)
@@ -881,6 +899,24 @@ class ShipmentTest extends TestCase
                 ],
                 'pickup_location'      => [
                     'code'    => 'CODE123',
+                    'address' => [
+                        'street_1'             => 'Diagonally',
+                        'street_2'             => 'Apartment 4',
+                        'street_number'        => 3,
+                        'street_number_suffix' => 'A',
+                        'postal_code'          => '1AR BR2',
+                        'city'                 => 'London',
+                        'region_code'          => 'NH',
+                        'country_code'         => 'AF',
+                        'first_name'           => 'Robert',
+                        'last_name'            => 'Drop Tables',
+                        'company'              => 'ACME co.',
+                        'email'                => 'rob@tables.com',
+                        'phone_number'         => '+31 (0)234 567 890',
+                    ],
+                ],
+                'drop_off_location'      => [
+                    'code'    => 'ABC456',
                     'address' => [
                         'street_1'             => 'Diagonally',
                         'street_2'             => 'Apartment 4',
