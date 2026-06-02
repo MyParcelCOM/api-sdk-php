@@ -189,6 +189,22 @@ class ResourceFactory implements ResourceFactoryInterface, ResourceProxyInterfac
             unset($data['attributes']['pickup_location']);
         }
 
+        if (isset($data['attributes']['drop_off_location']['code'])) {
+            $shipment->setDropOffLocationCode($data['attributes']['drop_off_location']['code']);
+        }
+
+        if (isset($data['attributes']['drop_off_location']['address'])) {
+            /** @var AddressInterface $pudoAddress */
+            $pudoAddress = $this->create(
+                AddressInterface::class,
+                $data['attributes']['drop_off_location']['address'],
+            );
+
+            $shipment->setDropOffLocationAddress($pudoAddress);
+
+            unset($data['attributes']['drop_off_location']);
+        }
+
         if (isset($data['id'])) {
             $shipment->setStatusHistoryCallback(function () use ($data) {
                 return $this->api->getResourcesFromUri(
