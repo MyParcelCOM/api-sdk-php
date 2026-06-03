@@ -68,6 +68,7 @@ class ShipmentProxyTest extends TestCase
         $this->assertEquals('|||||||||||||', $this->shipmentProxy->setBarcode('|||||||||||||')->getBarcode());
         $this->assertEquals(12, $this->shipmentProxy->setWeight(12)->getWeight());
         $this->assertEquals('80-90A', $this->shipmentProxy->setPickupLocationCode('80-90A')->getPickupLocationCode());
+        $this->assertEquals('80-90A', $this->shipmentProxy->setDropOffLocationCode('80-90A')->getDropOffLocationCode());
         $this->assertEquals('an-id-for-a-shipment', $this->shipmentProxy->setId('an-id-for-a-shipment')->getId());
 
         /** @var ServiceInterface $service */
@@ -101,6 +102,10 @@ class ShipmentProxyTest extends TestCase
         /** @var AddressInterface $pickupLocationAddress */
         $pickupLocationAddress = $this->getMockBuilder(AddressInterface::class)->getMock();
         $this->assertEquals($pickupLocationAddress, $this->shipmentProxy->setPickupLocationAddress($pickupLocationAddress)->getPickupLocationAddress());
+
+        /** @var AddressInterface $dropOffLocationAddress */
+        $dropOffLocationAddress = $this->getMockBuilder(AddressInterface::class)->getMock();
+        $this->assertEquals($dropOffLocationAddress, $this->shipmentProxy->setDropOffLocationAddress($dropOffLocationAddress)->getDropOffLocationAddress());
 
         /** @var AddressInterface $recipientAddress */
         $recipientAddress = $this->getMockBuilder(AddressInterface::class)->getMock();

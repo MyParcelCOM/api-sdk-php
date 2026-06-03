@@ -74,6 +74,14 @@ interface ShipmentInterface extends ResourceInterface
 
     public function getPickupLocationAddress(): ?AddressInterface;
 
+    public function setDropOffLocationCode(?string $dropOffLocationCode): self;
+
+    public function getDropOffLocationCode(): ?string;
+
+    public function setDropOffLocationAddress(?AddressInterface $dropOffLocationAddress): self;
+
+    public function getDropOffLocationAddress(): ?AddressInterface;
+
     public function setChannel(?string $channel): self;
 
     public function getChannel(): ?string;

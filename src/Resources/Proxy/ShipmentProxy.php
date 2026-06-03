@@ -184,6 +184,30 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
         return $this->getResource()->getPickupLocationAddress();
     }
 
+    public function setDropOffLocationCode(?string $dropOffLocationCode): self
+    {
+        $this->getResource()->setDropOffLocationCode($dropOffLocationCode);
+
+        return $this;
+    }
+
+    public function getDropOffLocationCode(): ?string
+    {
+        return $this->getResource()->getDropOffLocationCode();
+    }
+
+    public function setDropOffLocationAddress(?AddressInterface $dropOffLocationAddress): self
+    {
+        $this->getResource()->setDropOffLocationAddress($dropOffLocationAddress);
+
+        return $this;
+    }
+
+    public function getDropOffLocationAddress(): ?AddressInterface
+    {
+        return $this->getResource()->getDropOffLocationAddress();
+    }
+
     public function setChannel(?string $channel): self
     {
         $this->getResource()->setChannel($channel);
