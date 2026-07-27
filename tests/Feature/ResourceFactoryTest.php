@@ -449,7 +449,11 @@ class ResourceFactoryTest extends TestCase
         $this->assertEquals([
             'type' => 'shipments',
             'meta' => [
-                'label_mime_type' => 'application/pdf',
+                'add_to_next_collection' => false,
+                'label'                  => [
+                    'mime_type' => 'application/pdf',
+                    'size'      => 'A6',
+                ],
             ],
         ], $shipment->jsonSerialize());
     }
@@ -528,7 +532,7 @@ class ResourceFactoryTest extends TestCase
                         'phone_number'         => '+31 (0)234 567 890',
                     ],
                 ],
-                'drop_off_location'      => [
+                'drop_off_location'    => [
                     'code'    => 'ABC345',
                     'address' => [
                         'street_1'             => 'Diagonally',
@@ -557,7 +561,11 @@ class ResourceFactoryTest extends TestCase
                 'files'           => ['data' => [['id' => 'file-id-1', 'type' => 'files']]],
             ],
             'meta'          => [
-                'label_mime_type' => 'application/pdf',
+                'add_to_next_collection' => false,
+                'label'                  => [
+                    'mime_type' => 'application/pdf',
+                    'size'      => 'A6',
+                ],
             ],
         ];
 
@@ -640,7 +648,7 @@ class ResourceFactoryTest extends TestCase
                         'phone_number'         => '+31 (0)234 567 890',
                     ],
                 ],
-                'drop_off_location'      => [
+                'drop_off_location'    => [
                     'code'    => 'ABC345',
                     'address' => [
                         'street_1'             => 'Diagonally',
@@ -725,7 +733,11 @@ class ResourceFactoryTest extends TestCase
                 'files'           => ['data' => [['id' => 'file-id-1', 'type' => 'files']]],
             ],
             'meta'          => [
-                'label_mime_type' => 'application/pdf',
+                'add_to_next_collection' => false,
+                'label'                  => [
+                    'mime_type' => 'application/pdf',
+                    'size'      => 'A6',
+                ],
             ],
         ];
 
