@@ -7,6 +7,7 @@ namespace MyParcelCom\ApiSdk\Tests\Unit\Resources;
 use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
 use MyParcelCom\ApiSdk\Enums\TaxTypeEnum;
 use MyParcelCom\ApiSdk\Exceptions\MyParcelComException;
+use MyParcelCom\ApiSdk\LabelCombinerInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
@@ -534,15 +535,39 @@ class ShipmentTest extends TestCase
     }
 
     /** @test */
-    public function testLabelMimeType()
+    public function testCollectionMeta()
     {
         $shipment = new Shipment();
 
-        $this->assertEquals(FileInterface::MIME_TYPE_PDF, $shipment->jsonSerialize()['meta']['label_mime_type']);
+        $this->assertNotContains(Shipment::META_COLLECTION, $shipment->jsonSerialize()['meta']);
+
+        $shipment->setCollectionMeta(123, 456, 'desc');
+
+        $this->assertEquals(
+            [
+                'description'     => 'desc',
+                'collection_time' => [
+                    'from' => 123,
+                    'to'   => 456,
+                ],
+            ],
+            $shipment->jsonSerialize()['meta']['collection'],
+        );
+    }
+
+    /** @test */
+    public function testLabel()
+    {
+        $shipment = new Shipment();
+
+        $this->assertEquals(FileInterface::MIME_TYPE_PDF, $shipment->jsonSerialize()['meta']['label']['mime_type']);
+        $this->assertEquals(LabelCombinerInterface::PAGE_SIZE_A6, $shipment->jsonSerialize()['meta']['label']['size']);
 
         $shipment->setLabelMimeType(FileInterface::MIME_TYPE_ZPL);
+        $shipment->setLabelSize(LabelCombinerInterface::PAGE_SIZE_A4);
 
-        $this->assertEquals(FileInterface::MIME_TYPE_ZPL, $shipment->jsonSerialize()['meta']['label_mime_type']);
+        $this->assertEquals(FileInterface::MIME_TYPE_ZPL, $shipment->jsonSerialize()['meta']['label']['mime_type']);
+        $this->assertEquals(LabelCombinerInterface::PAGE_SIZE_A4, $shipment->jsonSerialize()['meta']['label']['size']);
     }
 
     /** @test */
@@ -915,7 +940,7 @@ class ShipmentTest extends TestCase
                         'phone_number'         => '+31 (0)234 567 890',
                     ],
                 ],
-                'drop_off_location'      => [
+                'drop_off_location'    => [
                     'code'    => 'ABC456',
                     'address' => [
                         'street_1'             => 'Diagonally',
@@ -972,7 +997,11 @@ class ShipmentTest extends TestCase
                 'collection'      => ['data' => ['id' => 'collection-id-1', 'type' => 'collections']],
             ],
             'meta'          => [
-                'label_mime_type' => 'application/pdf',
+                'add_to_next_collection' => false,
+                'label'                  => [
+                    'mime_type' => 'application/pdf',
+                    'size'      => 'A6',
+                ],
             ],
         ], $shipment->jsonSerialize());
     }

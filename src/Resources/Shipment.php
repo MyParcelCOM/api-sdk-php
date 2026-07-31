@@ -6,6 +6,7 @@ namespace MyParcelCom\ApiSdk\Resources;
 
 use DateTime;
 use MyParcelCom\ApiSdk\Enums\DimensionUnitEnum;
+use MyParcelCom\ApiSdk\LabelCombinerInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\AddressInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\CollectionInterface;
 use MyParcelCom\ApiSdk\Resources\Interfaces\ContractInterface;
@@ -74,7 +75,15 @@ class Shipment implements ShipmentInterface
     const RELATIONSHIP_COLLECTION = 'collection';
     const RELATIONSHIP_SHIPMENT_SURCHARGES = 'shipment_surcharges';
 
-    const META_LABEL_MIME_TYPE = 'label_mime_type';
+    const META_COLLECTION = 'collection';
+    const META_COLLECTION_DESCRIPTION = 'description';
+    const META_COLLECTION_TIME = 'collection_time';
+    const META_COLLECTION_TIME_FROM = 'from';
+    const META_COLLECTION_TIME_TO = 'to';
+    const META_ADD_TO_NEXT_COLLECTION = 'add_to_next_collection';
+    const META_LABEL = 'label';
+    const META_LABEL_MIME_TYPE = 'mime_type';
+    const META_LABEL_SIZE = 'size';
     const META_SERVICE_CODE = 'service_code';
 
     const INCLUDES = [
@@ -157,8 +166,13 @@ class Shipment implements ShipmentInterface
     ];
 
     private array $meta = [
-        self::META_LABEL_MIME_TYPE => FileInterface::MIME_TYPE_PDF,
-        self::META_SERVICE_CODE    => null,
+        self::META_COLLECTION             => [],
+        self::META_ADD_TO_NEXT_COLLECTION => false,
+        self::META_LABEL                  => [
+            self::META_LABEL_MIME_TYPE => FileInterface::MIME_TYPE_PDF,
+            self::META_LABEL_SIZE      => LabelCombinerInterface::PAGE_SIZE_A6,
+        ],
+        self::META_SERVICE_CODE           => null,
     ];
 
     /** @var ShipmentStatusInterface[] */
@@ -821,11 +835,47 @@ class Shipment implements ShipmentInterface
     }
 
     /**
+     * Only for POST /shipments used by MyParcelComApi::createShipment()
+     */
+    public function setAddToNextCollection(bool $addToNextCollection): self
+    {
+        $this->meta[self::META_ADD_TO_NEXT_COLLECTION] = $addToNextCollection;
+
+        return $this;
+    }
+
+    /**
+     * Only for POST /registered-shipments used by MyParcelComApi::createAndRegisterShipment()
+     */
+    public function setCollectionMeta(
+        DateTime|int|string $from,
+        DateTime|int|string $to,
+        ?string $description = null,
+    ): self {
+        $this->meta[self::META_COLLECTION] = [
+            self::META_COLLECTION_DESCRIPTION => $description,
+            self::META_COLLECTION_TIME        => [
+                self::META_COLLECTION_TIME_FROM => DateUtils::toTimestamp($from),
+                self::META_COLLECTION_TIME_TO   => DateUtils::toTimestamp($to),
+            ],
+        ];
+
+        return $this;
+    }
+
+    /**
      * Supported values are FileInterface::MIME_TYPE_PDF or FileInterface::MIME_TYPE_ZPL
      */
     public function setLabelMimeType(string $labelMimeType): self
     {
-        $this->meta[self::META_LABEL_MIME_TYPE] = $labelMimeType;
+        $this->meta[self::META_LABEL][self::META_LABEL_MIME_TYPE] = $labelMimeType;
+
+        return $this;
+    }
+
+    public function setLabelSize(string $labelSize): self
+    {
+        $this->meta[self::META_LABEL][self::META_LABEL_SIZE] = $labelSize;
 
         return $this;
     }

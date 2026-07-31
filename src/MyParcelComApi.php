@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk;
 
-use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
 use GuzzleHttp\Psr7\Message;
@@ -1004,7 +1003,6 @@ class MyParcelComApi implements MyParcelComApiInterface
      * @return list<array{ date_from: DateTimeImmutable, date_to: DateTimeImmutable }>
      * @throws RequestException
      * @throws JsonException
-     * @throws DateMalformedStringException
      */
     public function getDeliveryDates(
         string $carrierCode,

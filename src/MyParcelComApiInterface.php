@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MyParcelCom\ApiSdk;
 
-use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
 use JsonException;
@@ -278,7 +277,6 @@ interface MyParcelComApiInterface
      *  }>
      * @throws RequestException
      * @throws JsonException
-     * @throws DateMalformedStringException
      */
     public function getDeliveryDates(
         string $carrierCode,

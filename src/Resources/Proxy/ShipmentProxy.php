@@ -572,9 +572,33 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
         return $this;
     }
 
+    public function setAddToNextCollection(bool $addToNextCollection): self
+    {
+        $this->getResource()->setAddToNextCollection($addToNextCollection);
+
+        return $this;
+    }
+
+    public function setCollectionMeta(
+        DateTime|int|string $from,
+        DateTime|int|string $to,
+        ?string $description = null,
+    ): self {
+        $this->getResource()->setCollectionMeta($from, $to, $description);
+
+        return $this;
+    }
+
     public function setLabelMimeType(string $labelMimeType): self
     {
         $this->getResource()->setLabelMimeType($labelMimeType);
+
+        return $this;
+    }
+
+    public function setLabelSize(string $labelSize): self
+    {
+        $this->getResource()->setLabelSize($labelSize);
 
         return $this;
     }
