@@ -114,6 +114,10 @@ interface ShipmentInterface extends ResourceInterface
 
     public function getTrackingUrl(): ?string;
 
+    public function setExternalShipmentReference(?string $externalShipmentReference): self;
+
+    public function getExternalShipmentReference(): ?string;
+
     /**
      * @deprecated Use Shipment::getPhysicalProperties()->setWeight() instead.
      */

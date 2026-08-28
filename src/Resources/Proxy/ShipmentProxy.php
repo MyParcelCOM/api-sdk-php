@@ -316,6 +316,18 @@ class ShipmentProxy implements ShipmentInterface, ResourceProxyInterface
         return $this->getResource()->getTrackingPageUrl();
     }
 
+    public function setExternalShipmentReference(?string $externalShipmentReference): self
+    {
+        $this->getResource()->setExternalShipmentReference($externalShipmentReference);
+
+        return $this;
+    }
+
+    public function getExternalShipmentReference(): ?string
+    {
+        return $this->getResource()->getExternalShipmentReference();
+    }
+
     /**
      * @deprecated Use Shipment::getPhysicalProperties()->setWeight() instead.
      */
