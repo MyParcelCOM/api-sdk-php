@@ -40,6 +40,7 @@ class Shipment implements ShipmentInterface
     const ATTRIBUTE_CHANNEL = 'channel';
     const ATTRIBUTE_DESCRIPTION = 'description';
     const ATTRIBUTE_CUSTOMER_REFERENCE = 'customer_reference';
+    const ATTRIBUTE_EXTERNAL_SHIPMENT_REFERENCE = 'external_shipment_reference';
     const ATTRIBUTE_AMOUNT = 'amount';
     const ATTRIBUTE_PRICE = 'price';
     const ATTRIBUTE_CURRENCY = 'currency';
@@ -110,6 +111,7 @@ class Shipment implements ShipmentInterface
         self::ATTRIBUTE_CHANNEL                              => null,
         self::ATTRIBUTE_DESCRIPTION                          => null,
         self::ATTRIBUTE_CUSTOMER_REFERENCE                   => null,
+        self::ATTRIBUTE_EXTERNAL_SHIPMENT_REFERENCE          => null,
         self::ATTRIBUTE_PRICE                                => null,
         self::ATTRIBUTE_PHYSICAL_PROPERTIES                  => null,
         self::ATTRIBUTE_RECIPIENT_ADDRESS                    => null,
@@ -402,6 +404,18 @@ class Shipment implements ShipmentInterface
     public function getCustomerReference(): ?string
     {
         return $this->attributes[self::ATTRIBUTE_CUSTOMER_REFERENCE];
+    }
+
+    public function setExternalShipmentReference(?string $externalShipmentReference): self
+    {
+        $this->attributes[self::ATTRIBUTE_EXTERNAL_SHIPMENT_REFERENCE] = $externalShipmentReference;
+
+        return $this;
+    }
+
+    public function getExternalShipmentReference(): ?string
+    {
+        return $this->attributes[self::ATTRIBUTE_EXTERNAL_SHIPMENT_REFERENCE];
     }
 
     /**
